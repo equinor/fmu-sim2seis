@@ -1,0 +1,4 @@
+*.segy filter=lfs diff=lfs merge=lfs -text
+*.roff filter=lfs diff=lfs merge=lfs -text
+*.gri filter=lfs diff=lfs merge=lfs -text
+*.grdecl filter=lfs diff=lfs merge=lfs -text
