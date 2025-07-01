@@ -1,0 +1,18 @@
+-- This is the ert script for running cleanup of pickle files after a sim2seis workflow
+DEFINE <USER> $USER
+DEFINE <SCRATCH> /scratch/fmu
+DEFINE <MODEL_NAME> dev
+DEFINE <CONFIG_PATH> /project/fmu/tutorial/drogon/resmod/ff/users/<USER>/<MODEL_NAME>/rms/model
+
+NUM_REALIZATIONS 1
+RUNPATH     <SCRATCH>/<USER>/fmu_sim2seis_pem/realization-<IENS>/iter-<ITER>
+
+DEFINE <JOB_STARTDIR> <RUNPATH>/rms/model
+DEFINE <RELPATH_CONFIG_FILES> <RUNPATH>/sim2seis/model/pem
+DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_config.yml
+
+FORWARD_MODEL CLEANUP(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>)
+
+-- Optional: Can also run cleanup on observed data pickle files
+ DEFINE <OBS_CONFIG_FILE_NAME> obs_data_config.yml
+ FORWARD_MODEL CLEANUP(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<OBS_CONFIG_FILE_NAME>)
