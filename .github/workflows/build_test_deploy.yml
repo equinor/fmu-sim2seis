@@ -1,8 +1,11 @@
-name: Build and Test
+name: Build, test and (if release) deploy
 on:
   push:
     branches:
       - main
+  release:
+    types:
+      - published
   pull_request:
 
 jobs:
@@ -37,6 +40,20 @@ jobs:
       run: |
         pytest tests/
 
+    - name: Build a binary wheel and a source tarball
+      if: github.event_name == 'release'
+      run: |
+        pip install build
+        export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_FMU_SIM2SEIS=$GITHUB_REF_NAME
+        python -m build
+
+    - name: Upload artifact
+      if: github.event_name == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Python dist
+        path: dist/
+
     - name: Build configuration file user interface
       working-directory: ./documentation
       run: |
@@ -68,3 +85,25 @@ jobs:
           git commit -m "Update Github Pages"
           git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages
         fi
+
+  deploy:
+    name: Upload release to PyPI
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/fmu-sim2seis
+    permissions:
+      id-token: write  # required for Trusted Publishing to PyPI
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Python dist
+          path: dist/
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
