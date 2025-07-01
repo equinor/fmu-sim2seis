@@ -133,6 +133,9 @@ export const YamlEdit = () => {
             liveValidate
             uiSchema={{
               "ui:submitButtonOptions": { norender: true },
+              "ui:globalOptions": {
+                enableMarkdownInDescription: true,
+              },
             }}
             showErrorList={false}
           />
