@@ -44,7 +44,7 @@ jobs:
       if: github.event_name == 'release'
       run: |
         pip install build
-        export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_FMU_PEM=$GITHUB_REF_NAME
+        export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_FMU_SIM2SEIS=$GITHUB_REF_NAME
         python -m build
 
     - name: Upload artifact
