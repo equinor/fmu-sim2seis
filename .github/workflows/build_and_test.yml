@@ -1,0 +1,109 @@
+name: Build, test and (if release) deploy
+on:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Git LFS
+      run: |
+        sudo apt-get update
+        sudo apt-get install git-lfs
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        lfs: true
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install test dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+
+    - name: Install package
+      run: |
+        pip install .[tests]
+
+    - name: Run tests
+      run: |
+        pytest tests/
+
+    - name: Build a binary wheel and a source tarball
+      if: github.event_name == 'release'
+      run: |
+        pip install build
+        export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_FMU_PEM=$GITHUB_REF_NAME
+        python -m build
+
+    - name: Upload artifact
+      if: github.event_name == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Python dist
+        path: dist/
+
+    - name: Build configuration file user interface
+      working-directory: ./documentation
+      run: |
+        npm ci
+        npm run create-json-schema
+        npm run docs:build
+
+    - name: 📚 Update GitHub pages
+      # Update on merge to main
+      if: github.ref_name == 'main'
+      run: |
+        # Move the built documentation out of working directory, in order to delete everything else afterwards
+        cp -R ./documentation/docs/.vitepress/dist ../dist
+
+        git config --local user.email "fmu-sim2seis-github-action"
+        git config --local user.name "fmu-sim2seis-github-action"
+        git fetch origin gh-pages
+        git checkout -f --track origin/gh-pages
+        git clean -f -f -d -x
+        git rm -r *
+
+        cp -R ../dist/* .
+
+        git add .
+
+        if git diff-index --quiet HEAD; then
+          echo "No changes in documentation. Skip documentation deploy."
+        else
+          git commit -m "Update Github Pages"
+          git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages
+        fi
+
+  deploy:
+    name: Upload release to PyPI
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/fmu-sim2seis
+    permissions:
+      id-token: write  # required for Trusted Publishing to PyPI
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Python dist
+          path: dist/
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
