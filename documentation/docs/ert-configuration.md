@@ -1,0 +1,23 @@
+# ERT configuration file
+
+You can include `sim2seis` in your ERT setup by including the following snippet:
+
+````ert
+-- Define your variables:
+DEFINE <JOB_STARTDIR> <RUNPATH>/rms/model
+DEFINE <RELPATH_CONFIG_FILES> <RUNPATH>/sim2seis/model
+DEFINE <PEM_CONFIG_FILE_NAME> pem_config.yml
+DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_config.yml
+DEFINE <VERBOSE_OUTPUT> False
+
+-- Run the pre-installed ERT forward models:
+FORWARD_MODEL PEM(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<PEM_CONFIG_FILE_NAME>)
+FORWARD_MODEL SEISMIC_FORWARD(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <VERBOSE>=<VERBOSE_OUTPUT>)
+FORWARD_MODEL RELATIVE_INVERSION(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <VERBOSE>=<VERBOSE_OUTPUT>)
+FORWARD_MODEL MAP_ATTRIBUTES(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <ATTRIBUTE>='amplitude')
+FORWARD_MODEL MAP_ATTRIBUTES(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <ATTRIBUTE>='relai')
+````
+
+On the next page you will get help setting up your `sim2seis_config.yml`.
+
+For details on how to configure your `pem_config.yml`, see corresponding [FMU PEM](https://equinor.github.io/fmu-pem/) documentation.
