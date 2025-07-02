@@ -36,7 +36,7 @@ class SeismicForward(BaseModel):
     )
     pem_output_dir: SkipJsonSchema[DirectoryPath] = Field(
         default=Path("../../sim2seis/output/pem"),
-        description="Folder for results from sim2seis. All folder "
+        description="Folder for results from `sim2seis`. All folder "
         "references in the FMU structure are relative to "
         "./rms/model, where '.' is the top folder in each "
         "realization",
@@ -44,7 +44,7 @@ class SeismicForward(BaseModel):
     pickle_file_prefix: SkipJsonSchema[str] = Field(
         default="seismic_fwd",
         description="Pickle files are intermediate save formats in "
-        "sim2seis. Each task has its own prefix for "
+        "`sim2seis`. Each task has its own prefix for "
         "identification",
     )
     segy_depth: SkipJsonSchema[Path] = Field(
@@ -65,11 +65,13 @@ class SeismicForward(BaseModel):
         description="Folder for the XML model files listed in 'stack_models'",
     )
     stack_models: dict[StackDef, Path] = Field(
-        description="XML files describing modelling of partial or full stack. "
+        description="Path to XML files describing modelling of different seismic stacks (partial or full). "
         "The parameters in the files should reflect the case, e.g. "
-        "settings for Vp, Vs and Density for the depth intervals. "
+        "settings for `Vp`, `Vs` and density for the depth intervals. "
         "Documentation to XML tags and values are found in  "
-        "https://github.com/equinor/seismic-forward/blob/main/doc/Seismic_Forward_usermanual_ver_4.3.pdf"
+        "[the `seismic-forward` documentation](https://github.com/equinor/seismic-forward/blob/main/doc/Seismic_Forward_usermanual_ver_4.3.pdf). "
+        "Allowed key values are: `full`, `near`, `mid`, `far`"
+        # We list the enum values here while waiting on input on https://github.com/rjsf-team/react-jsonschema-form/issues/4682 
     )
     twt_model: SkipJsonSchema[FilePath] = Field(
         default=Path("../../sim2seis/model/model_file_twt.xml"),
@@ -107,7 +109,7 @@ class SeismicDiff(BaseModel):
     pickle_file_prefix: str = Field(
         default="seismic_fwd_diff",
         description="Pickle files are intermediate save formats in "
-        "sim2seis. Each task has its own prefix for "
+        "`sim2seis`. Each task has its own prefix for "
         "identification",
     )
 
@@ -122,8 +124,8 @@ class DepthConvertConfig(BaseModel):
     depth_suffix: SkipJsonSchema[str] = Field(
         default="--depth.gri",
         description="Horizon names used in time to depth conversion "
-        "have extension '.gri', of type RMS binary, with "
-        "name ending on '--depth'",
+        "have extension `.gri`, of type RMS binary, with "
+        "name ending on `--depth`",
     )
     horizon_dir: DirectoryPath = Field(
         default=Path("../../share/results/maps"),
@@ -131,27 +133,33 @@ class DepthConvertConfig(BaseModel):
     )
     horizon_names: List[str] = Field(
         description="Horizons should be of type RMS binary, but with extension "
-        "'.gri' to avoid confusion with other '.bin' files. "
+        "`.gri` to avoid confusion with other `.bin` files. "
         "The naming standard is to have lower-case letters "
-        "in the name, and a suffix of '--depth' or '--time'"
+        "in the name, and a suffix of `--depth` or `--time`"
     )
     min_depth: int = Field(
-        description="For the depth converted cubes: minimum depth in meters"
+        title="Minimum depth",
+        description="For the depth converted cubes. Unit in `meters`"
     )
     max_depth: int = Field(
-        description="For the depth converted cubes: maximum depth in meters"
+        title="Maximum depth",
+        description="For the depth converted cubes. Unit in `meters`"
     )
     z_inc: int = Field(
-        description="For the depth converted cubes: depth increment in meters"
+        title="Depth increment",
+        description="For the depth converted cubes. Unit in `meters`"
     )
     min_time: int = Field(
-        description="For the time converted cubes: minimum time in milliseconds"
+        title="Minimum time",
+        description="For the time converted cubes. Unit in `milliseconds`"
     )
     max_time: int = Field(
-        description="For the time converted cubes: maximum time in milliseconds"
+        title="Maximum time",
+        description="For the time converted cubes. Unit in `milliseconds`"
     )
     t_inc: int = Field(
-        description="For the time converted cubes: time increment in milliseconds"
+        title="Time increment",
+        description="For the time converted cubes. Unit in `milliseconds`"
     )
     time_cube_dir: SkipJsonSchema[DirectoryPath] = Field(
         default=Path("../../share/results/cubes"),
@@ -209,7 +217,7 @@ class InversionMapConfig(BaseModel):
         default="relai_maps",
         json_schema_extra={"readOnly": True},
         description="Pickle files are intermediate save formats in "
-        "sim2seis. Each task has its own prefix for "
+        "`sim2seis`. Each task has its own prefix for "
         "identification",
     )
 
@@ -223,7 +231,7 @@ class AmplitudeMapConfig(BaseModel):
     pickle_file_prefix: str = Field(
         default="amplitude_maps",
         description="Pickle files are intermediate save formats in "
-        "sim2seis. Each task has its own prefix for "
+        "`sim2seis`. Each task has its own prefix for "
         "identification",
     )
 
@@ -386,7 +394,7 @@ class SeismicInversionConfig(BaseModel):
     pickle_file_prefix: str = Field(
         default="relai_diff",
         description="Pickle files are intermediate save formats in "
-        "sim2seis. Each task has its own prefix for "
+        "`sim2seis`. Each task has its own prefix for "
         "identification",
     )
     remove_unused_files: bool = Field(
@@ -411,7 +419,7 @@ class Sim2SeisConfig(BaseModel):
     flowsim_is_prediction: bool = Field(
         description="The simulation run is either a history matching or a "
         "prediction. Setting this parameter will decide which "
-        "global parameter file will be added to the sim2seis "
+        "global parameter file will be added to the `sim2seis` "
         "parameters"
     )
     config_file_name: SkipJsonSchema[Path] = Field(
@@ -426,7 +434,7 @@ class Sim2SeisConfig(BaseModel):
         description="Yaml file with definition of all intervals for calculating "
         "attributes of forward seismic and relative inversion cubes. "
         "It is assumed to be placed in the same directory as the "
-        "Yaml file for all sim2seis parameters"
+        "Yaml file for all `sim2seis` parameters"
     )
     depth_conversion: DepthConvertConfig
     global_params: SkipJsonSchema[FromGlobal | None] = Field(
