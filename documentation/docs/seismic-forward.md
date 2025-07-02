@@ -10,8 +10,34 @@ use in `sim2seis` is to produce one or more angle stacks, commonly `full`, `near
 The resulting angle stacks will be compared to observed/acquired seismic data, and for this reason the parameters
 in the `XML` files should be set to match the seismic acquisition and processing. 
 
-An example `XML` file is shown in [Figure 1](#figure-1-example-xml-file) below. In the following paragraphs, some
-of the most common XML tags are discussed. These are the ones that are likely to be edited to match the case. Section
+## Yaml-file section
+Default settings are normally sufficient for seismic forward modelling. [Figure 1](#figure-1-seismic-fwd-in-yaml) shows the `seismic-forward`-part
+of the `sim2seis` configuration file.
+
+```yaml
+## Section for seismic forward 4D
+#______________________________________________________________________________________________________________________#
+seismic_fwd:
+  # Comment out lines with full/near/far models if you don't want those stacks modelled
+  # At least one line must be present
+  stack_models:
+    full: model_file.xml
+#    near: model_file_near.xml
+#    far: model_file_far.xml
+#  stack_model_path: ../../sim2seis/model/seismic_forward/
+#  attribute: &seismic_attribute amplitude
+#  pem_output_dir: ../../sim2seis/output/pem
+#  seismic_output_dir: ../../share/results/cubes
+#  twt_model: ../../sim2seis/model/seismic_forward/model_file_twt.xml
+#  segy_depth: syntseis_temp_seismic_depth_stack.segy
+#  segy_time: syntseis_temp_seismic_timeshift_stack.segy  # <= not used anymore
+#  pickle_file_prefix: seis_4d
+```
+<span id="figure-1-seismic-fwd-in-yaml"><strong>Figure 2:</strong> Parameters in the sim2seis configuration file related to seismic forward.</span>
+
+## XML model files
+An example `XML` file is shown in [Figure 2](#figure-2-example-xml-file) below. In the following paragraphs, some
+of the most common XML tags are discussed. These are the ones that are likely to be edited to match the case. Sections
 in the XML file that are commented out show alternatives that are normally not used.
 
 ```xml
@@ -131,7 +157,7 @@ in the XML file that are commented out show alternatives that are normally not u
    </project-settings>
 </seismic-forward>
 ```
-<span id="figure-1-example-xml-file"><strong>Figure 1:</strong> Example XML file for full stack synthetic seismic in depth domain.</span>
+<span id="figure-2-example-xml-file"><strong>Figure 2:</strong> Example XML file for full stack synthetic seismic in depth domain.</span>
 
 ### 1. Default values
 As the geomodel and reservoir simulator model are likely to cover the reservoir section only, we need to define 
