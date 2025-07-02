@@ -41,7 +41,7 @@ class ObservedData(ForwardModelStepPlugin):
             description="",
             examples=(
                 "code-block:: console\n\n"
-                "FORWARD_MODEL MAP_ATTRIBUTES(<START_DIR>=.../rms/model, "
+                "FORWARD_MODEL OBSERVED_DATA(<START_DIR>=.../rms/model, "
                 "<CONFIG_DIR>=../../sim2seis/model, "
                 "<CONFIG_FILE>=obs_data.yml)"
             ),
