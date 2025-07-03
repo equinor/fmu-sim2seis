@@ -33,7 +33,7 @@ seismic_fwd:
 #  segy_time: syntseis_temp_seismic_timeshift_stack.segy  # <= not used anymore
 #  pickle_file_prefix: seis_4d
 ```
-<span id="figure-1-seismic-fwd-in-yaml"><strong>Figure 2:</strong> Parameters in the sim2seis configuration file related to seismic forward.</span>
+<span id="figure-1-seismic-fwd-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to seismic forward.</span>
 
 ## XML model files
 An example `XML` file is shown in [Figure 2](#figure-2-example-xml-file) below. In the following paragraphs, some

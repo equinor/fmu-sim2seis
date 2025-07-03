@@ -13,9 +13,13 @@ The following steps are typically done when calculating synthetic seismic from r
    in each grid cell. Static and dynamic parameters from the geomodel and simulation model are inputs to the PEM.
 1. [Synthetic seismic cubes](seismic-forward.md) are generated based on the input from the two steps above and a seismic wavelet.
 1. [Depth-to-time conversion](./time-depth-conversion.md) is performed on the synthetic seismic cube to prepare for relative seismic inversion.
-1. Optional: relative seismic inversion is run on the time-converted synthetic seismic cubes.
+1. Optional: [relative seismic inversion](./relative-seismic-inversion.md) is run on the time-converted synthetic seismic cubes.
 1. Time shift estimation is made, based on the synthetic seismic differences.
 1. We can then extract different results like:
    * attribute maps from the synthetic seismic and relative seismic inversion. The list of possible attributes
      are found in [xtgeo.cubes](https://xtgeo.readthedocs.io/en/stable/api-cubes.html#xtgeo.Cube.compute_attributes_in_window)
    * time shift change maps
+
+`sim2seis` settings are read from a `yaml` file. The section links above will discuss the part of the yaml-file that
+controls the matching part in the `sim2seis` workflow. Lines in the configuration yaml-file which are commented, 
+indicate that there is a default value which is the preferred value, such as file names, directory names etc.
