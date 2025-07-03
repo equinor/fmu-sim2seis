@@ -24,11 +24,11 @@ seismic_fwd:
     full: model_file.xml
 #    near: model_file_near.xml
 #    far: model_file_far.xml
-#  stack_model_path: ../../sim2seis/model/seismic_forward/
+#  stack_model_path: ../../sim2seis/model
 #  attribute: &seismic_attribute amplitude
 #  pem_output_dir: ../../sim2seis/output/pem
 #  seismic_output_dir: ../../share/results/cubes
-#  twt_model: ../../sim2seis/model/seismic_forward/model_file_twt.xml
+#  twt_model: ../../sim2seis/model/model_file_twt.xml
 #  segy_depth: syntseis_temp_seismic_depth_stack.segy
 #  segy_time: syntseis_temp_seismic_timeshift_stack.segy  # <= not used anymore
 #  pickle_file_prefix: seis_4d
@@ -43,9 +43,9 @@ depth_conversion:
   min_time: 1500.0
   max_time: 2000.0
   t_inc: 4.0
-#  time_cube_dir: *rel_ai_path
+#  time_cube_dir: ../../share/results/cubes
 #  depth_cube_dir: ../../share/results/cubes
-#  horizon_dir: ../output/maps
+#  horizon_dir: ../../share/results/maps
 #  depth_suffix: --depth.gri
 #  time_suffix: --time.gri
 
