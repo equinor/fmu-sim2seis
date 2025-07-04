@@ -16,7 +16,7 @@ The following steps are typically done when calculating synthetic seismic from r
 1. Optional: [relative seismic inversion](./relative-seismic-inversion.md) is run on the time-converted synthetic seismic cubes.
 1. Time shift estimation is made, based on the synthetic seismic differences.
 1. We can then extract different results like:
-   * attribute maps from the synthetic seismic and relative seismic inversion. The list of possible attributes
+   * [attribute maps](./attribute-maps.md) from the synthetic seismic and relative seismic inversion. The list of possible attributes
      are found in [xtgeo.cubes](https://xtgeo.readthedocs.io/en/stable/api-cubes.html#xtgeo.Cube.compute_attributes_in_window)
    * time shift change maps
 
