@@ -9,16 +9,16 @@ hero:
   actions:
     - theme: brand
       text: Why sim2seis?
-      link: /use-cases
+      link: ./use-cases
     - theme: brand
       text: ERT configuration
-      link: /ert-configuration
+      link: ./ert-configuration
     - theme: brand
       text: Sim2seis configuration
-      link: /sim2seis-configuration
+      link: ./sim2seis-configuration
     - theme: alt
       text: Input & output overview
-      link: /input-output
+      link: ./input-output
 
 features:
   - icon: 🛠️

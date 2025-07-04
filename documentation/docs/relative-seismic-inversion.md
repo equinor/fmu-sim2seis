@@ -13,25 +13,5 @@ seismic inversion have default values. However, revisiting these parameters may 
 results by controlling the smoothness of the results in both lateral and vertical directions, as well as between 
 seismic vintages.
 
-```yaml
-## Section for relative seismic inversion
-#______________________________________________________________________________________________________________________#
-# seismic_inversion:
-#  attribute: &inversion_attribute relai
-#  path: &rel_ai_path ../../share/results/cubes
-#  domain: [time]
-#  d_syn_0: ../../sim2seis/output/seismic_forward/syntseis--d_syn0.sgy
-#  rel_ai_0: ../../sim2seis/output/seismic_forward/syntseis--relai_0.sgy
-#  d_syn_1: ../../sim2seis/output/seismic_forward/syntseis--d_syn1.sgy
-#  rel_ai_1: ../../sim2seis/output/seismic_forward/syntseis--relai_1.sgy
-#  remove_unused_files: True
-#  inversion_params:
-#      lateral_smoothing_4d: 0.05
-#      damping_3d: 0.001
-#      damping_4d: 0.001
-#      lateral_smoothing_3d:  0.01
-#      max_iter: 100
-#      segments: 1
-#  pickle_file_prefix: relai_diff
-```
+<<< ../../tests/data/sim2seis/model/sim2seis_config.yml#seismic_inversion{yml}
 <span id="figure-1-seismic-inversion-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to seismic inversion.</span>

@@ -18,21 +18,5 @@ horizon names, with a postfix of `--time.gri` or `--depth.gri`, depending on the
 
 Depth parameters are specified in units of `m`, while time parameters are in units of `ms`.
 
-```yaml
-## Section for depth conversion
-#______________________________________________________________________________________________________________________#
-depth_conversion:
-  horizon_names: [MSL, TopVolantis, BaseVolantis, BaseVelmodel]
-  min_depth: 1500.0
-  max_depth: 2000.0
-  z_inc: 4.0
-  min_time: 1500.0
-  max_time: 2000.0
-  t_inc: 4.0
-#  time_cube_dir: ../../share/results/cubes
-#  depth_cube_dir: ../../share/results/cubes
-#  horizon_dir: ../../share/results/maps
-#  depth_suffix: --depth.gri
-#  time_suffix: --time.gri
-```
+<<< ../../tests/data/sim2seis/model/sim2seis_config.yml#depth_conversion{yml}
 <span id="figure-1-domain-conversion-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to seismic forward.</span>
