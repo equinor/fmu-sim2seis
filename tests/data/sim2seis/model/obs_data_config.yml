@@ -22,8 +22,8 @@ attribute_definition_file: observed_data_intervals_drogon.yml
 #______________________________________________________________________________________________________________________#
 observed_depth_surf:
   # paths and standard naming. Depth maps are read from horizon folder INPUT
-  suffix_name: depth
-  horizon_names: [MSL, TopVolantis, BaseVolantis, BaseVelmodel]
+  # suffix_name: depth
+  horizon_names: [ MSL, TopVolantis, BaseVolantis, BaseVelmodel ]
   # depth_dir: ../../share/observations/maps
 
 
@@ -38,9 +38,9 @@ depth_conversion:
 # Section for ert and webviz export
 #______________________________________________________________________________________________________________________#
 webviz_map:
-  grid_file: simgrid.roff
-  zone_file: simgrid--zone.roff
-  region_file: simgrid--region.roff
+#  grid_file: simgrid.roff
+#  zone_file: simgrid--zone.roff
+#  region_file: simgrid--region.roff
   attribute_error: 0.07
 #  grid_path: ../../sim2seis/input/pem
   output_path: ../../share/observations/tables
