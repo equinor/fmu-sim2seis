@@ -1,4 +1,4 @@
-# Attribute maps
+# Attribute Maps
 
 Attribute maps can be generated both from observed seismic data and from modelled seismics. The definition of intervals
 for estimating attribute maps is controlled by a separate YAML file.
@@ -30,7 +30,7 @@ file:
 attribute_definition_file: modelled_data_intervals_drogon.yml
 ```
 
-## Interval definition YAML  file
+## Interval Definition YAML  File
 The interval definition file provides flexibility in defining intervals, resulting in a complex structure.
 [Figure 2](#figure-2-interval-definiiton-in-yaml) illustrates the structure of the interval definition YAML file.
 

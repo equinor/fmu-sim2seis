@@ -23,3 +23,7 @@ The following steps are typically done when calculating synthetic seismic from r
 `sim2seis` settings are read from a `YAML ` file. The section links above will discuss the part of the YAML file that
 controls the matching part in the `sim2seis` workflow. Lines in the configuration YAML file which are commented, 
 indicate that there is a default value which is the preferred value, such as file names, directory names etc.
+
+There are two related commands which are optional to the `sim2seis` workflow:
+1. Observed data processing
+2. 
