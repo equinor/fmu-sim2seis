@@ -6,7 +6,8 @@ for estimating attribute maps is controlled by a separate YAML file.
 ## YAML File Section
 Default values typically apply for attribute map generation in the `sim2seis` configuration file, as most information is
 derived from the dedicated interval definition file. [Figure 1](#igure-1-seismic-attributes-in-yaml) shows the relevant
-sections of the configuration file.
+sections of the configuration file. `webviz_map` refers to export of attribute maps in formats that can be read by
+`webviz` and `ert` for visualisation and history matching.
 
 <<< ../../tests/data/sim2seis/model/sim2seis_config.yml#attr_map{yml}
 <span id="figure-1-seismic-attributes-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to attribute maps.</span>
