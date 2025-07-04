@@ -1,11 +1,12 @@
 # Attribute maps
 
-Attribute maps can be generated both from observed seismic data and from modelled seismics. Definition of intervals
-in which the attribute maps are estimated are controlled by a separate yaml-file.
+Attribute maps can be generated both from observed seismic data and from modelled seismics. The definition of intervals
+for estimating attribute maps is controlled by a separate YAML file.
 
-## Yaml-file section
-Default values normally apply for attribute map generation in the `sim2seis` *config* file, as most information is
-taken from the dedicated interval definition file, see [Figure 1](#igure-1-seismic-attributes-in-yaml).
+## YAML File Section
+Default values typically apply for attribute map generation in the `sim2seis` configuration file, as most information is
+derived from the dedicated interval definition file. [Figure 1](#igure-1-seismic-attributes-in-yaml) shows the relevant
+sections of the configuration file.
 
 ```yaml
 ## Section for seismic forward amplitude maps
@@ -23,16 +24,15 @@ taken from the dedicated interval definition file, see [Figure 1](#igure-1-seism
 ```
 <span id="figure-1-seismic-attributes-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to attribute maps.</span>
 
-In addition, the file name for the interval definition file is set in the main part of the config yaml file:
+In addition, the file name for the interval definition file is specified in the main part of the configuration YAML  
+file:
 ```yaml
 attribute_definition_file: modelled_data_intervals_drogon.yml
 ```
 
-## Interval definition yaml file
-The design criterion for interval definitions is to have much freedom, which results in a rather complicated
-structure in the yaml file, [Figure 2](#figure-2-interval-definiiton-in-yaml). The different sections in the interval 
-definition are described below. A separate file is required for defining attribute map intervals for observed
-seismic data.
+## Interval definition YAML  file
+The interval definition file provides flexibility in defining intervals, resulting in a complex structure.
+[Figure 2](#figure-2-interval-definiiton-in-yaml) illustrates the structure of the interval definition YAML file.
 
 ```yaml
 global:
@@ -88,29 +88,32 @@ cubes:  # Setup for the cubes for which maps will be generated
 ```
 <span id="figure-2-interval-definition-in-yaml"><strong>Figure 2:</strong> Parameters to define intervals for attribute map estimation.</span>
 
-#### global:
-`global` sets up parameters that apply to all interval definitions, unless they are overruled later. 
-- The *horizon path* is normally controlled by `fmu-dataio`, the default value is shown
-- The *list of attributes* is chosen in each case. Make a selection of attributes that can highlight important features 
-  in the 4D seismic
-- *Scale factor* can be used to match values in similar attributes from observed seismic data
-- *Metadata fields* are used in `fmu-dataio`
+#### Global Section
+The `global` section defines parameters that apply to all interval definitions unless overridden later:
 
-#### cubes:
-- *Cube names* are arbitrary values
-- *Cube prefix* is concatenated with the seismic difference dates that are defined in the global config file and all 
-  matching cubes are selected
-- *Seismic path* is normally controlled by `fmu-dataio`, the default value is shown
-- *Vertical domain* is by default *depth*
+- Horizon path: Controlled by `fmu-dataio`, default value shown.
+- Attributes: Select attributes to highlight important features in the 4D seismic.
+- Scale factor: Used to match values in similar attributes from observed seismic data.
+- Metadata fields: Used in `fmu-dataio`.
 
-#### formations:
-Several formations can be defined under each cube. There are several ways the intervals can be defined:
+#### Cube Section
+- Cube names: Arbitrary values.
+- Cube prefix: Concatenated with seismic difference dates defined in the global config file.
+- Seismic path: Controlled by `fmu-dataio`, default value shown.
+- Vertical domain: Default is `depth`.
 
-- Top and base horizon, with optional shift for each of them
-- Top horizon and interval length, with optional shift of the top horizon
+#### Formations Section
+Several formations can be defined under each cube. Interval settings apply to all attribute calculations listed in the 
+`global` section unless specific values are set. Intervals can be defined in two ways:
 
-The interval settings will apply to all attribute calculations that are listed in the `global` section, unless a 
-specific value is set. In the case above, for the `relai_depth`-cubes, `min` and `mean` are calculated from 
-`Top Volantis` shifted 5 ms up to `Base Volantis` shifted 10 ms down, whereas the `rms` attribute is calculated from
-`Top Volantis` shifted 15 ms up to `Base Volantis`. For the cubes `amplitude_depth`, `mean` has a separate interval 
-definition from `rms` and `min`, and `min` has a different scaling than the others.
+1. **Top and Base Horizon**: Specify the top and base horizons, with optional shifts for each.
+2. **Top Horizon and Interval Length**: Specify the top horizon and the interval length, with an optional shift of the 
+   top horizon.
+
+For example:
+- For `relai_depth` cubes:
+  - `min` and `mean` are calculated from `Top Volantis` shifted 5 ms up to `Base Volantis` shifted 10 ms down.
+  - `rms` is calculated from `Top Volantis` shifted 15 ms up to `Base Volantis`.
+- For `amplitude_depth` cubes:
+  - `mean` has a separate interval definition from `rms` and `min`.
+  - `min` has a different scaling factor than the others.

@@ -20,6 +20,6 @@ The following steps are typically done when calculating synthetic seismic from r
      are found in [xtgeo.cubes](https://xtgeo.readthedocs.io/en/stable/api-cubes.html#xtgeo.Cube.compute_attributes_in_window)
    * time shift change maps
 
-`sim2seis` settings are read from a `yaml` file. The section links above will discuss the part of the yaml-file that
-controls the matching part in the `sim2seis` workflow. Lines in the configuration yaml-file which are commented, 
+`sim2seis` settings are read from a `YAML ` file. The section links above will discuss the part of the YAML file that
+controls the matching part in the `sim2seis` workflow. Lines in the configuration YAML file which are commented, 
 indicate that there is a default value which is the preferred value, such as file names, directory names etc.

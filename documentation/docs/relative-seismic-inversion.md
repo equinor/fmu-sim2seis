@@ -1,17 +1,17 @@
 # Relative seismic inversion
 
-If seismic inversion data is available for the observed seismics, seismic inversion should also be performed
-on the generated synthetic seismic data. A method earlier named `simpli` (now `si4ti` is used, this is a relative 
+If seismic inversion data is available for the observed seismics, inversion should also be performed
+on the generated synthetic seismic data. A method previously named `simpli` (now `si4ti`) is used. This is a relative 
 seismic inversion method, meaning that there is no need for a low-frequency model.
 
-More documentation of the method is found on the [GitHub homepage](https://github.com/equinor/si4ti/tree/main/doc) 
+Further documentation of the method can be found on the [GitHub homepage](https://github.com/equinor/si4ti/tree/main/doc) 
 of `si4ti`.
 
-## Yaml-file section
-As seen in [Figure 1](#figure-1-seismic-inversion-in-yaml) below, all of the parameters controlling the relative
-seismic inversion have default values. However, the inversion parameters can be worth revisiting. They will affect 
-the inversion results by controlling smoothness of the results, both in lateral and vertical direction, and also 
-between seismic vintages. 
+## YAML file section
+As shown in [Figure 1](#figure-1-seismic-inversion-in-yaml) below, all parameters controlling the relative
+seismic inversion have default values. However, revisiting these parameters may be beneficial, as they influence the inversion 
+results by controlling the smoothness of the results in both lateral and vertical directions, as well as between 
+seismic vintages.
 
 ```yaml
 ## Section for relative seismic inversion
