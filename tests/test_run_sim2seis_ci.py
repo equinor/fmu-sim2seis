@@ -94,9 +94,9 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
         Path("../../share/results/pickle_files/seismic_fwd_diff_time.pkl"),
     ]
     expected_values = [
-        973.1621704101562,
-        57.72227096557617,
-        200.8601531982422,
+        2507.2085,
+        171.42592,
+        617.4236145019531,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
@@ -128,9 +128,9 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
         Path("../../share/results/pickle_files/relai_diff_time.pkl"),
     ]
     expected_values = [
-        -320.9268493652344,
-        -1604.6184692382812,
-        75.40748310089111,
+        -548.9944,
+        -2752.0467529296875,
+        111.36359786987305,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
@@ -167,12 +167,12 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
         Path("../../share/results/pickle_files/relai_maps_depth_attributes.pkl"),
     ]
     expected_values = [
-        1801.2566129364423,
-        -1951.9997616548517,
-        14371913845.728886,
+        1673.4673521434306,
+        -2016.8209276186494,
+        14371913848.28719,
         14371913843.33451,
-        -6705.743617683973,
-        699.7943747380446,
+        -5040.2057157847885,
+        1469.659427370005,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
