@@ -4,7 +4,7 @@ easily be read into a notebook using `xtgeo`. A simple example is shown below, w
 relative AI maps are compared, both visually and in cross plots.
 
 
-```jupyter
+```python
 # Import modules
 import xtgeo
 import matplotlib.pyplot as plt
@@ -20,9 +20,8 @@ obs_relai_map = "topvolantis--relai_mean_depth--20180701_20180101.gri"
 
 mod_amplitude_map = "topvolantis--amplitude_full_mean_depth--20180701_20180101.gri"
 mod_relai_map = "topvolantis--relai_full_mean_depth--20180701_20180101.gri"
-```
 
-```jupyter
+
 # Import data
 os.chdir(project_dir + os.path.sep + rel_dir_obs_maps)
 obs_maps = {
@@ -35,9 +34,8 @@ mod_maps = {
     'amp': xtgeo.surface.surface_from_file(mod_amplitude_map, fformat='irap_binary'),
     'relai': xtgeo.surface.surface_from_file(mod_relai_map, fformat='irap_binary'),
 }
-```
 
-```jupyter
+
 # Plot data
 # Calculate the value range for amplitude
 amp_min = min(obs_maps['amp'].values.min(), mod_maps['amp'].values.min())
