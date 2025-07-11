@@ -15,6 +15,7 @@ attribute_definition_file: modelled_data_intervals_drogon.yml
 #rel_path_global_config: ../../fmuconfig/output
 #pickle_file_output_path: ../../share/results/pickle_files
 
+#region snip_seis_fwd
 ## Section for seismic forward 4D
 #______________________________________________________________________________________________________________________#
 seismic_fwd:
@@ -24,15 +25,17 @@ seismic_fwd:
     full: model_file.xml
 #    near: model_file_near.xml
 #    far: model_file_far.xml
-#  stack_model_path: ../../sim2seis/model/seismic_forward/
+#  stack_model_path: ../../sim2seis/model
 #  attribute: &seismic_attribute amplitude
 #  pem_output_dir: ../../sim2seis/output/pem
 #  seismic_output_dir: ../../share/results/cubes
-#  twt_model: ../../sim2seis/model/seismic_forward/model_file_twt.xml
+#  twt_model: ../../sim2seis/model/model_file_twt.xml
 #  segy_depth: syntseis_temp_seismic_depth_stack.segy
 #  segy_time: syntseis_temp_seismic_timeshift_stack.segy  # <= not used anymore
 #  pickle_file_prefix: seis_4d
+#endregion snip_seis_fwd
 
+#region depth_conversion
 ## Section for depth conversion
 #______________________________________________________________________________________________________________________#
 depth_conversion:
@@ -43,21 +46,24 @@ depth_conversion:
   min_time: 1500.0
   max_time: 2000.0
   t_inc: 4.0
-#  time_cube_dir: *rel_ai_path
+#  time_cube_dir: ../../share/results/cubes
 #  depth_cube_dir: ../../share/results/cubes
-#  horizon_dir: ../output/maps
+#  horizon_dir: ../../share/results/maps
 #  depth_suffix: --depth.gri
 #  time_suffix: --time.gri
+#endregion depth_conversion
 
+#region attr_map
 # # Section for ert and webviz export
 #______________________________________________________________________________________________________________________#
 webviz_map:
-  grid_file: simgrid.roff
-  zone_file: simgrid--zone.roff
-  region_file: simgrid--region.roff
+  # grid_file: simgrid.roff
+  # zone_file: simgrid--zone.roff
+  # region_file: simgrid--region.roff
   attribute_error: 0.07
 #  grid_path: ../../sim2seis/input/pem
 #  output_path: ../../ert/input/observations/seismic
+
 
 
 ## Section for seismic forward amplitude maps
@@ -72,12 +78,14 @@ webviz_map:
 # inversion_map:
 #  attribute: *inversion_attribute
 #  pickle_file_prefix: relai_maps
+#endregion attr_map
 
 ## Section for difference of seismic cubes
 #______________________________________________________________________________________________________________________#
 # seismic_diff:
 #  pickle_file_prefix: seis_4d_diff
 
+#region seismic_inversion
 ## Section for relative seismic inversion
 #______________________________________________________________________________________________________________________#
 # seismic_inversion:
@@ -97,6 +105,7 @@ webviz_map:
 #      max_iter: 100
 #      segments: 1
 #  pickle_file_prefix: relai_diff
+#endregion seismic_inversion
 
 ########################################################################################################################
 #

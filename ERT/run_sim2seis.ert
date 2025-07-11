@@ -5,7 +5,7 @@ DEFINE <MODEL_NAME> dev
 DEFINE <CONFIG_PATH> /project/fmu/tutorial/drogon/resmod/ff/users/<USER>/<MODEL_NAME>/rms/model
 
 NUM_REALIZATIONS 1
-RUNPATH     <SCRATCH>/<USER>/fmu_sim2seis_pem/realization-<IENS>/iter-<ITER>
+RUNPATH     <SCRATCH>/<USER>/fmu_sim2seis/realization-<IENS>/iter-<ITER>
 
 -- Create input directories and copy from project
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/fmuconfig/output)
@@ -17,6 +17,8 @@ FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/results/cubes)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/results/seismic)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/results/tables)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/observations/seismic)
+FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/observations/tables)
+FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/observations/maps)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/bin)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/input/pem)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/model)
@@ -38,10 +40,11 @@ FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/input/seismic_f
 FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/model, <TO>=<RUNPATH>/sim2seis)
 FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/output/seismic_forward, <TO>=<RUNPATH>/sim2seis/output)
 FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../output/maps, <TO>=<RUNPATH>/rms/output)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/observations/maps, <TO>=<RUNPATH>/share/observations)
 
 --Comment the two following lines if ert re-run is made without deleting the realization directory
-FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/input/seismic_forward)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/observations/cubes, <TO>=<RUNPATH>/share/observations)
+--FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/input/seismic_forward)
+--FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/observations/cubes, <TO>=<RUNPATH>/share/observations)
 
 -- Create start directory -
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/rms/model)
@@ -51,6 +54,11 @@ DEFINE <RELPATH_CONFIG_FILES> <RUNPATH>/sim2seis/model
 DEFINE <PEM_CONFIG_FILE_NAME> new_pem_config.yml
 DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_config.yml
 DEFINE <VERBOSE_OUTPUT> False
+DEFINE <OBS_DATA_CONFIG_FILE_NAME> obs_data_config.yml
+
+-- Run observed data processing
+FORWARD_MODEL OBSERVED_DATA(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<OBS_DATA_CONFIG_FILE_NAME>, <VERBOSE>=<VERBOSE_OUTPUT>)
+
 
 -- Run the PEM
 FORWARD_MODEL PEM(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<PEM_CONFIG_FILE_NAME>)

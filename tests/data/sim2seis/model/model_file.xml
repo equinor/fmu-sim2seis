@@ -24,11 +24,10 @@
      </parameter-names>
 
      # type of interpolation to use ++:
-     <cornerpt-interpolation-in-depth>no</cornerpt-interpolation-in-depth>
-     <zero-thickness-limit>0.1</zero-thickness-limit>
-     <remove-negative-delta-z>yes</remove-negative-delta-z>
-     <vertical-interpolation-of-undefined-cells>yes</vertical-interpolation-of-undefined-cells>
-     <fixed-triangularization-of-eclipse-grid>no</fixed-triangularization-of-eclipse-grid>
+     <cornerpt-interpolation-in-depth> no </cornerpt-interpolation-in-depth>
+     <zero-thickness-limit> 0.1 </zero-thickness-limit>
+     <remove-negative-delta-z> yes </remove-negative-delta-z>
+
    </elastic-param>
 
    # incident angle that are modelled. Here modelled 0 offset:
@@ -43,9 +42,9 @@
      <seafloor-depth>150</seafloor-depth>
      <velocity-water>1500</velocity-water>
      <offset>
-       <offset-0>0</offset-0>
-       <doffset>200</doffset>
-       <offset-max>1000</offset-max>
+       <offset-0>      0  </offset-0>
+       <doffset>    400  </doffset>
+       <offset-max> 2000  </offset-max>
      </offset>
    </nmo-stretch>
 
@@ -62,7 +61,7 @@
    # Note that the noise is added to the inputgrid, and not to the seismic grid
    # This means that the noise will vary depending on the grid. This is not ideal
 #   <white-noise>
-#        <standard-deviation>0.0015</standard-deviation>
+#        <standard-deviation>0.001</standard-deviation>
 #   </white-noise>
 
    # Definition of output grid.

@@ -5,6 +5,7 @@ import ert
 from fmu.sim2seis.forward_models import (
     Cleanup,
     MapAttributes,
+    ObservedData,
     RelativeInversion,
     SeismicForward,
 )
@@ -24,4 +25,5 @@ def installable_forward_model_steps() -> list[ert.ForwardModelStepPlugin]:
         RelativeInversion,
         SeismicForward,
         Cleanup,
+        ObservedData
     ]

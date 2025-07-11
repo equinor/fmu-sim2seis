@@ -38,9 +38,9 @@ depth_conversion:
 # Section for ert and webviz export
 #______________________________________________________________________________________________________________________#
 webviz_map:
-  grid_file: simgrid.roff
-  zone_file: simgrid--zone.roff
-  region_file: simgrid--region.roff
+#  grid_file: simgrid.roff
+#  zone_file: simgrid--zone.roff
+#  region_file: simgrid--region.roff
   attribute_error: 0.07
 #  grid_path: ../../sim2seis/input/pem
   output_path: ../../share/observations/tables
