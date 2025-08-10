@@ -9,6 +9,7 @@ build-backend = "setuptools.build_meta"
 write_to = "src/fmu/sim2seis/version.py"
 
 [tool.setuptools.packages.find]
+include = ["src"]
 exclude = ["tests", "documentation", "ERT"]
 
 [project]
