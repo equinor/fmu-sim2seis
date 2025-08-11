@@ -16,6 +16,15 @@ import {
 
 import { copy } from "@equinor/eds-icons";
 
+import { TranslatableString, englishStringTranslator, replaceStringParameters } from '@rjsf/utils';
+
+function customStrings(stringToTranslate: TranslatableString, params?: string[]): string {
+  if(stringToTranslate === TranslatableString.KeyLabel) {
+    return replaceStringParameters('Key:', params);
+  }
+
+  return englishStringTranslator(stringToTranslate, params);
+}
 
 export const YamlEdit = () => {
   const [validInput, setValidInput] = React.useState(false);
@@ -138,6 +147,7 @@ export const YamlEdit = () => {
               },
             }}
             showErrorList={false}
+            translateString={customStrings}
           />
         </div>
       </div>
