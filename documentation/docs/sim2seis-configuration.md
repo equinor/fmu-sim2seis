@@ -75,35 +75,44 @@ legend {
   position: relative;
   top: 1px;
   display: inline-block;
-  font-family: "Glyphicons Halflings";
   font-style: normal;
-  font-weight: normal;
   line-height: 1;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .glyphicon-plus:before {
-  content: "➕";
+  content: "Add new";
   padding: 5px;
   border-radius: 5px;
-  background-color: oklch(92.5% 0.084 155.995)
-}
-
-.dark .glyphicon-plus:before {
-  background-color: oklch(39.3% 0.095 152.535)
+  color: oklch(53.2% 0.157 131.589);
+  background-color: oklch(96.7% 0.067 122.328);
+  border: 1px solid oklch(89.7% 0.196 126.665);
 }
 
 .glyphicon-remove:before {
-  content: "🗑️";
+  content: "Delete";
   padding: 5px;
   border-radius: 5px;
+  color: oklch(44.4% 0.177 26.899);
   background-color: oklch(93.6% 0.032 17.717);
   border: 1px solid oklch(88.5% 0.062 18.334);
 }
 .glyphicon-arrow-up:before {
-  content: "🢁";
+  content: "Move up";
+  padding: 5px;
+  border-radius: 5px;
+  color: oklch(68.1% 0.162 75.834);
+  background-color: oklch(97.3% 0.071 103.193);
+  border: 1px solid oklch(94.5% 0.129 101.54);
 }
 .glyphicon-arrow-down:before {
-  content: "🢃";
+  content: "Move down";
+  padding: 5px;
+  border-radius: 5px;
+  color: oklch(68.1% 0.162 75.834);
+  background-color: oklch(97.3% 0.071 103.193);
+  border: 1px solid oklch(94.5% 0.129 101.54);
 }
 
 .checkbox > label {
