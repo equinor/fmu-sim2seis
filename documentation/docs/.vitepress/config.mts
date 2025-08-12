@@ -1,4 +1,8 @@
+import {readFileSync} from "fs"
 import {defineConfig} from 'vitepress'
+
+// Copied from https://github.com/equinor/vscode-lang-ert/blob/master/syntaxes/ert.tmLanguage.json
+const ertLanguageGrammar = JSON.parse(readFileSync("./docs/ert.tmLanguage.json"))
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -8,7 +12,8 @@ export default defineConfig({
         ["link", {rel: "stylesheet", href: "https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"}]
     ],
     markdown: {
-        math: true
+        math: true,
+        languages: [ertLanguageGrammar]
     },
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
