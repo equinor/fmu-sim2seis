@@ -9,7 +9,7 @@ from fmu.sim2seis.utilities import (
 
 def read_time_data(
     config: Sim2SeisConfig,
-) -> tuple[dict[(str, str), SingleSeismic], dict[str, xtgeo.RegularSurface]]:
+) -> tuple[dict[tuple[str, str], SingleSeismic], dict[str, xtgeo.RegularSurface]]:
     time_cube_dict = {}
     # Extract file names with the correct prefix
     time_cube_names = [

@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import yaml
-
 from fmu.pem.pem_utilities import get_global_params_and_dates
 
 from .obs_data_config_validation import ObservedDataConfig
@@ -30,7 +29,7 @@ def read_yaml_file(
 
         if not parse_inputs:
             return data
-
+        conf: ObservedDataConfig | Sim2SeisConfig
         if "observed_depth_surf" in data:
             conf = ObservedDataConfig(**data)
         elif "seismic_fwd" in data:

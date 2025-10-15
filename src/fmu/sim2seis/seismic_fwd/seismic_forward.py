@@ -2,6 +2,7 @@ from pathlib import Path
 from shutil import copy2, move as rename
 
 import xtgeo
+from fmu.tools import DomainConversion
 from seismic_forward.simulation import run_simulation
 
 from fmu.sim2seis.utilities import (
@@ -11,15 +12,13 @@ from fmu.sim2seis.utilities import (
     SingleSeismic,
     libseis,
 )
-from fmu.tools import DomainConversion
 
 
 def exe_seismic_forward(
     config_file: Sim2SeisConfig,
     velocity_model: DomainConversion,
     verbose: bool = False,
-    # ) -> Tuple[dict[SeismicName, SingleSeismic], dict[SeismicName, SingleSeismic]]:
-) -> (dict[SeismicName, SingleSeismic], dict[SeismicName, SingleSeismic]):
+) -> tuple[dict[SeismicName, SingleSeismic], dict[SeismicName, SingleSeismic]]:
     """
     Run seismic forward model, perform domain conversion on the depth
     cubes to time, return both depth and time cubes
@@ -87,7 +86,7 @@ def exe_seismic_forward(
 
 def read_time_and_depth_horizons(
     config: Sim2SeisConfig,
-) -> (dict[str, xtgeo.RegularSurface], dict[str, xtgeo.RegularSurface]):
+) -> tuple[dict[str, xtgeo.RegularSurface], dict[str, xtgeo.RegularSurface]]:
     """
     Read the time and depth surfaces that are listed in the configuration file
     for time/depth conversions

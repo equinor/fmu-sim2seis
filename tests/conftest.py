@@ -64,7 +64,7 @@ def sample_seismic_name():
         domain="depth",
         date="20200101",
         stack="full",
-        ext="segy"
+        ext="segy",
     )
 
 
@@ -74,7 +74,7 @@ def sample_single_seismic(sample_cube, sample_seismic_name):
         from_dir=Path("/path/to/dir"),
         cube_name=sample_seismic_name,
         cube=sample_cube,
-        date="20200101"
+        date="20200101",
     )
 
 
@@ -87,9 +87,6 @@ def sample_difference_seismic(sample_single_seismic):
         from_dir=Path("/path/to/dir"),
         cube_name=sample_single_seismic.cube_name,
         cube=cube,
-        date="20200202"
+        date="20200202",
     )
-    return DifferenceSeismic(
-        base=sample_single_seismic,
-        monitor=monitor_seismic
-    )
+    return DifferenceSeismic(base=sample_single_seismic, monitor=monitor_seismic)

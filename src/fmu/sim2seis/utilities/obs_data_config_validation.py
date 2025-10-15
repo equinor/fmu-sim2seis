@@ -1,15 +1,14 @@
 from pathlib import Path
 from typing import List, Optional
 
+from fmu.pem.pem_utilities.pem_config_validation import (
+    FromGlobal,
+)
 from pydantic import (
     BaseModel,
     DirectoryPath,
     Field,
     field_validator,
-)
-
-from fmu.pem.pem_utilities.pem_config_validation import (
-    FromGlobal,
 )
 
 from .sim2seis_config_validation import WebvizMap

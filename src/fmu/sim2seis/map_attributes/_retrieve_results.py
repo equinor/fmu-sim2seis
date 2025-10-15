@@ -1,19 +1,19 @@
 from pathlib import Path
 
 import xtgeo
-
+from typing import Any
 from fmu.sim2seis.utilities import SeismicName, Sim2SeisConfig, retrieve_result_objects
 
 
 def retrieve_inversion_results(
     config: Sim2SeisConfig,
-) -> tuple[dict[SeismicName, any], dict[str, xtgeo.RegularSurface]]:
+) -> tuple[dict[SeismicName, Any], dict[str, xtgeo.RegularSurface]]:
     return retrieve_seismic_forward_results(config=config, inversion_flag=True)
 
 
 def retrieve_seismic_forward_results(
     config: Sim2SeisConfig, inversion_flag: bool = False
-) -> tuple[dict[SeismicName, any], dict[str, xtgeo.RegularSurface]]:
+) -> tuple[dict[SeismicName, Any], dict[str, xtgeo.RegularSurface]]:
     """
     Retrieve pickled objects from seismic forward modelling
     """

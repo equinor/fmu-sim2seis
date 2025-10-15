@@ -137,12 +137,14 @@ def make_symlink(
         )
 
 
-def run_external_silent(commands: List[str], timeout: int | None = None) -> str:
+def run_external_silent(commands: list[str], timeout: int | None = None) -> str:
     result = subprocess.run(
         commands,
         capture_output=True,
         timeout=timeout,
+        text=True,
+        check=False,
     )
     if result.returncode != 0:
         raise RuntimeError(f"Command failed with error: {result.stderr}")
-    return str(result.stdout)
+    return result.stdout
