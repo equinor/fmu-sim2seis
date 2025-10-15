@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import xtgeo
+from fmu.tools import DomainConversion
 
 from fmu.sim2seis.utilities import (
     DifferenceSeismic,
@@ -9,7 +10,6 @@ from fmu.sim2seis.utilities import (
     SingleSeismic,
     dump_result_objects,
 )
-from fmu.tools import DomainConversion
 
 
 def _dump_results(

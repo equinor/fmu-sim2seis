@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 from fmu.pem.pem_utilities import restore_dir
+
 from fmu.sim2seis.utilities import (
     attribute_export,
     check_startup_dir,
@@ -98,7 +99,6 @@ def main(arguments=None):
             start_dir=run_folder,
             is_observed=True,
         )
-
 
 
 if __name__ == "__main__":

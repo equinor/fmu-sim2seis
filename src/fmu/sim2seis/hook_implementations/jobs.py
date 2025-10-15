@@ -25,5 +25,5 @@ def installable_forward_model_steps() -> list[ert.ForwardModelStepPlugin]:
         RelativeInversion,
         SeismicForward,
         Cleanup,
-        ObservedData
+        ObservedData,
     ]

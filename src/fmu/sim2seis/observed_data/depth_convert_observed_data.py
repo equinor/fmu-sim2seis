@@ -2,6 +2,7 @@
 relative ai"""
 
 import xtgeo
+from fmu.tools.domainconversion import DomainConversion
 
 from fmu.sim2seis.utilities import (
     DifferenceSeismic,
@@ -9,7 +10,6 @@ from fmu.sim2seis.utilities import (
     SeismicName,
     SingleSeismic,
 )
-from fmu.tools.domainconversion import DomainConversion
 
 
 def depth_convert_observed_data(
