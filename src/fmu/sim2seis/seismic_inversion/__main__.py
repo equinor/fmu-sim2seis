@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 from fmu.pem.pem_utilities import restore_dir
+
 from fmu.sim2seis.utilities import (
     check_startup_dir,
     cube_export,

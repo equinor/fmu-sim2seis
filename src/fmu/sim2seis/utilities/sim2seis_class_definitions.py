@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Class definitions for sim2seis workflow
 """
@@ -19,7 +21,7 @@ import xtgeo
 
 
 class SeismicDate:
-    def __init__(self, value: str):
+    def __init__(self, value: str | SeismicDate):
         self._single_date: datetime | None = None
         self._diff_date: Tuple[datetime, datetime] | None = None
         self._set_dates(value)
@@ -67,7 +69,7 @@ class SeismicDate:
         return ""
 
     @date.setter
-    def date(self, value: Self | str):
+    def date(self, value: SeismicDate | str) -> None:
         self._set_dates(value)
 
     @property
@@ -287,7 +289,6 @@ class SingleSeismic:
 class DifferenceSeismic:
     base: SingleSeismic
     monitor: SingleSeismic
-    cube_name: SeismicName | None = None
 
     def __post_init__(self):
         # Ensure base and monitor are instances of SingleSeismic
@@ -352,17 +353,18 @@ class SeismicAttribute:
     from_cube: SingleSeismic | DifferenceSeismic
     domain: Literal["depth", "time"]
     scale_factor: float = 1.0
-    window_length: Optional[float] = None
+    window_length: float | None = None
     base_surface: xtgeo.RegularSurface | None = None
     top_surface_shift: float = 0.0  # Use signed values for shift
     base_surface_shift: float = 0.0  # Use signed values for shift
     info: dict | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # Need to verify that either a base surface or a window length is defined
         # Adjust the top and base surface according to the shift values
         if self.base_surface is None:
-            assert self.window_length is not None
+            if self.window_length is None:
+                raise ValueError("Either 'base_surface' or 'window_length' must be provided")
             # Calculate the base surface from the top surface and window length.
             # Take the top surface shift into consideration to get the window length
             # correct
@@ -380,8 +382,9 @@ class SeismicAttribute:
 
     @property
     def value(self) -> list[xtgeo.RegularSurface]:
+        assert self.base_surface is not None
         attributes = self.from_cube.cube.compute_attributes_in_window(
             self.surface + self.top_surface_shift,
             self.base_surface + self.base_surface_shift,
         )
-        return [attributes[str(calc)] * self.scale_factor for calc in self.calc_types]  # type: ignore
+        return [attributes[str(calc)] * self.scale_factor for calc in self.calc_types]

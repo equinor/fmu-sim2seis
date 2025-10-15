@@ -1,0 +1,46 @@
+name: lint
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - name: Checkout commit locally
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install fmu-sim2seis with deps
+        run: |
+          pip install -U pip
+          pip install ".[tests, docs]"
+
+      - name: Format and lint with ruff
+        run: |
+          ruff format . --check
+          ruff check .
+
+      - name: Check typing with mypy
+        run: mypy src/fmu/sim2seis

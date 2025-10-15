@@ -1,11 +1,11 @@
 from pathlib import Path
 from pickle import dump, load
-
+from typing import Any
 
 def dump_result_objects(
     output_path: Path,
     file_name: Path,
-    output_obj: any,
+    output_obj: Any,
 ) -> None:
     try:
         output_path.mkdir(parents=True, exist_ok=True)
@@ -19,7 +19,7 @@ def dump_result_objects(
 def retrieve_result_objects(
     input_path: Path,
     file_name: Path,
-) -> any:
+) -> Any:
     try:
         full_path = input_path / file_name
         with full_path.open(mode="rb") as f_in:
@@ -32,11 +32,10 @@ def clear_result_objects(
     output_path: Path,
     prefix_list: list[str] | None = None,
 ) -> None:
+    patterns = ["*.pkl"] if prefix_list is None else [f"{prefix}*.pkl" for prefix in prefix_list]
     try:
-        if not prefix_list:
-            [f.unlink() for f in output_path.glob("*.pkl")]
-        else:
-            for pre_fix in prefix_list:
-                [f.unlink() for f in output_path.glob(pre_fix + "*.pkl")]
+        for pattern in patterns:
+            for file in output_path.glob(pattern):
+                file.unlink()
     except FileNotFoundError as e:
         raise ValueError(f"{__file__}: unable to remove file\nError message: {e}")

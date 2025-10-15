@@ -3,9 +3,9 @@ from os import getenv, symlink, unlink
 from pathlib import Path
 
 import xtgeo
+from fmu.pem.pem_utilities import restore_dir
 
 from fmu import dataio, tools
-from fmu.pem.pem_utilities import restore_dir
 
 from .sim2seis_class_definitions import (
     DifferenceSeismic,
@@ -100,11 +100,11 @@ def attribute_export(
                     config=global_variables,
                     content="seismic",
                     content_metadata={
-                            "attribute": attr.from_cube.cube_name.attribute,
-                            "calculation": calc,
-                            "zrange": attr.window_length,
-                            "stacking_offset": attr.from_cube.cube_name.stack,
-                        },
+                        "attribute": attr.from_cube.cube_name.attribute,
+                        "calculation": calc,
+                        "zrange": attr.window_length,
+                        "stacking_offset": attr.from_cube.cube_name.stack,
+                    },
                     timedata=[
                         [attr.from_cube.monitor_date, "monitor"],
                         [attr.from_cube.base_date, "base"],
@@ -135,10 +135,7 @@ def attribute_export(
                             unlink(Path(webviz_filename))
                         except FileNotFoundError:
                             pass
-                    symlink(
-                        src=meta_data,
-                        dst=Path(webviz_filename)
-                    )
+                    symlink(src=meta_data, dst=Path(webviz_filename))
                     # attr_df.to_csv(webviz_filename, index=False)
                     attr_df.to_csv(
                         ert_filename,
@@ -153,7 +150,7 @@ def attribute_export(
 def _get_grid_info(
     config_file: Sim2SeisConfig,
     start_dir: Path,
-) -> (xtgeo.Grid, xtgeo.GridProperty, xtgeo.GridProperty):
+) -> tuple[xtgeo.Grid, xtgeo.GridProperty, xtgeo.GridProperty]:
     # Import grid, zones, regions
     with restore_dir(start_dir):
         grid = xtgeo.grid_from_file(

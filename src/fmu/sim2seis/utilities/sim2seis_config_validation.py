@@ -1,7 +1,8 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 import xtgeo
+from fmu.pem.pem_utilities.pem_config_validation import FromGlobal
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -10,12 +11,11 @@ from pydantic import (
     FilePath,
     field_validator,
     model_validator,
+    AfterValidator,
 )
 from pydantic.json_schema import SkipJsonSchema
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self, get_args
-
-from fmu.pem.pem_utilities.pem_config_validation import FromGlobal
 
 from .sim2seis_class_definitions import (
     AttributeDef,
@@ -26,6 +26,7 @@ from .sim2seis_class_definitions import (
 # SkipJsonSchema is used in cases where it is not expected that a user needs to
 # modify default values, and the class/property is therefore hidden from the
 # interface.
+
 
 class SeismicForward(BaseModel):
     model_config = ConfigDict(title="Seismic forward modelling")
@@ -65,13 +66,13 @@ class SeismicForward(BaseModel):
         description="Folder for the XML model files listed in 'stack_models'",
     )
     stack_models: dict[StackDef, Path] = Field(
-        description="Path to XML files describing modelling of different seismic stacks (partial or full). "
+        description="Path to XML files describing modelling of different seismic stacks (partial or full). "  # noqa: E501
         "The parameters in the files should reflect the case, e.g. "
         "settings for `Vp`, `Vs` and density for the depth intervals. "
         "Documentation to XML tags and values are found in  "
-        "[the `seismic-forward` documentation](https://github.com/equinor/seismic-forward/blob/main/doc/Seismic_Forward_usermanual_ver_4.3.pdf). "
+        "[the `seismic-forward` documentation](https://github.com/equinor/seismic-forward/blob/main/doc/Seismic_Forward_usermanual_ver_4.3.pdf). "  # noqa: E501
         "Allowed key values are: `full`, `near`, `mid`, `far`"
-        # We list the enum values here while waiting on input on https://github.com/rjsf-team/react-jsonschema-form/issues/4682 
+        # We list the enum values here while waiting on input on https://github.com/rjsf-team/react-jsonschema-form/issues/4682
     )
     twt_model: SkipJsonSchema[FilePath] = Field(
         default=Path("../../sim2seis/model/model_file_twt.xml"),
@@ -139,27 +140,27 @@ class DepthConvertConfig(BaseModel):
     )
     min_depth: int = Field(
         title="Minimum depth",
-        description="For the depth converted cubes. Unit in `meters`"
+        description="For the depth converted cubes. Unit in `meters`",
     )
     max_depth: int = Field(
         title="Maximum depth",
-        description="For the depth converted cubes. Unit in `meters`"
+        description="For the depth converted cubes. Unit in `meters`",
     )
     z_inc: int = Field(
         title="Depth increment",
-        description="For the depth converted cubes. Unit in `meters`"
+        description="For the depth converted cubes. Unit in `meters`",
     )
     min_time: int = Field(
         title="Minimum time",
-        description="For the time converted cubes. Unit in `milliseconds`"
+        description="For the time converted cubes. Unit in `milliseconds`",
     )
     max_time: int = Field(
         title="Maximum time",
-        description="For the time converted cubes. Unit in `milliseconds`"
+        description="For the time converted cubes. Unit in `milliseconds`",
     )
     t_inc: int = Field(
         title="Time increment",
-        description="For the time converted cubes. Unit in `milliseconds`"
+        description="For the time converted cubes. Unit in `milliseconds`",
     )
     time_cube_dir: SkipJsonSchema[DirectoryPath] = Field(
         default=Path("../../share/results/cubes"),
@@ -235,26 +236,34 @@ class AmplitudeMapConfig(BaseModel):
         "identification",
     )
 
+def validate_file_exists(file_path: str | Path, info: ValidationInfo) -> Path:
+    full_path = info.data.get("grid_path", Path()) / file_path
+    print(full_path)
+    if not full_path.is_file():
+        raise ValueError(f"webvisMap: {str(full_path)} is not a file")
+    return Path(file_path)
 
 class WebvizMap(BaseModel):
+    model_config = ConfigDict(validate_default=True)
+
     grid_path: DirectoryPath = Field(
         default=Path("../../sim2seis/input/pem"),
         description="This directory is the standard place for grid definition files",
     )
-    grid_file: Path = Field(
+    grid_file: Annotated[Path, AfterValidator(validate_file_exists)] = Field(
         default=Path("simgrid.roff"),
         description="The file name for grid definition file, 'roff' format is normally "
-        "used"
+        "used",
     )
-    zone_file: Path = Field(
+    zone_file: Annotated[Path, AfterValidator(validate_file_exists)] = Field(
         default=Path("simgrid--zone.roff"),
         description="The file name for zone definition file, 'roff' format is normally "
-        "used"
+        "used",
     )
-    region_file: Path = Field(
+    region_file: Annotated[Path, AfterValidator(validate_file_exists)] = Field(
         default=Path("simgrid--region.roff"),
         description="The file name for region definition file, 'roff' format is "
-        "normally used"
+        "normally used",
     )
     attribute_error: float | Path = Field(
         description="Attribute error is normally given as a fractional number, "
@@ -268,28 +277,8 @@ class WebvizMap(BaseModel):
         description="Ascii files for WebViz or ERT are written to this directory",
     )
 
-    @field_validator("grid_file", mode="before")
-    def grid_file_check(cls, v: str, values: ValidationInfo):
-        full_name = values.data.get("grid_path").joinpath(v)
-        if not full_name.is_file():
-            raise ValueError(f"webvisMap: {str(full_name)} is not a file")
-        return Path(v)
-
-    @field_validator("zone_file", mode="before")
-    def zone_file_check(cls, v: str, values: ValidationInfo):
-        full_name = values.data.get("grid_path").joinpath(v)
-        if not full_name.is_file():
-            raise ValueError(f"webvisMap: {str(full_name)} is not a file")
-        return Path(v)
-
-    @field_validator("region_file", mode="before")
-    def region_file_check(cls, v: str, values: ValidationInfo):
-        full_name = values.data.get("grid_path").joinpath(v)
-        if not full_name.is_file():
-            raise ValueError(f"webvisMap: {str(full_name)} is not a file")
-        return Path(v)
-
     @field_validator("attribute_error", mode="before")
+    @classmethod
     def attribute_error_check(cls, v: float | Path):
         if isinstance(v, float):
             assert v > 0.0
@@ -301,12 +290,6 @@ class WebvizMap(BaseModel):
         except ValueError:
             raise ValueError(f"attribute error surface file not recognised: {v}")
         return v
-
-    @model_validator(mode="after")
-    def output_path_check(self) -> Self:
-        if not self.output_path.is_dir():
-            raise ValueError(f"output_path: {str(self.output_path)} is not a directory")
-        return self
 
 
 class InversionParameters(BaseModel):
@@ -424,7 +407,7 @@ class Sim2SeisConfig(BaseModel):
     )
     config_file_name: SkipJsonSchema[Path] = Field(
         description="Full file name is added to the config structure",
-        default=Path(r"../../sim2seis/model/sim2seis_config.yml")
+        default=Path(r"../../sim2seis/model/sim2seis_config.yml"),
     )
     seismic_fwd: SeismicForward
     amplitude_map: SkipJsonSchema[AmplitudeMapConfig] = Field(

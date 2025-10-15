@@ -4,16 +4,16 @@ relative ai"""
 import copy
 
 import xtgeo
+from fmu.tools.domainconversion import DomainConversion
 
 from fmu.sim2seis.utilities import DifferenceSeismic, SeismicName, Sim2SeisConfig
-from fmu.tools.domainconversion import DomainConversion
 
 
 def depth_convert_ai(
     difference_cubes: dict[SeismicName, DifferenceSeismic],
     velocity_model: DomainConversion,
     config: Sim2SeisConfig,
-) -> dict[(str, str), DifferenceSeismic]:
+) -> dict[tuple[str, str], DifferenceSeismic]:
     """
     Perform depth conversion using the velocity model established in seismic forward
     """

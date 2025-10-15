@@ -22,7 +22,7 @@ from .sim2seis_class_definitions import (
 )
 from .sim2seis_config_validation import Sim2SeisConfig
 
-__all__ = {
+__all__ = [
     "DifferenceSeismic",
     "ObservedDataConfig",
     "SeismicAttribute",
@@ -44,4 +44,4 @@ __all__ = {
     "populate_seismic_attributes",
     "read_yaml_file",
     "retrieve_result_objects",
-}
+]

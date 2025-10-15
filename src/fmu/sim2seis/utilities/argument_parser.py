@@ -32,48 +32,49 @@ def parse_arguments(
         required=True,
         help="Configuration yaml file name",
     )
-    if "attribute" in extra_arguments:
-        parser.add_argument(
-            "-a",
-            "--attribute",
-            type=str,
-            required=False,
-            default=False,
-            help="Selection of 'amplitude' or 'relai' attributes. "
-            "For sim2seis_map_attributes only",
-        )
-    if "verbose" in extra_arguments:
-        parser.add_argument(
-            "-v",
-            "--verbose",
-            type=bool,
-            required=False,
-            default=False,
-            help="Select verbose or minimal output",
-        )
-    if "no_attributes" in extra_arguments:
-        parser.add_argument(
-            "-n",
-            "--no_attributes",
-            type=bool,
-            required=False,
-            default=False,
-            help="Skip generation of observed data attributes",
-        )
-    if "cleanup" in extra_arguments:
-        parser.add_argument(
-            "-p",
-            "--prefixlist",
-            required=False,
-            default=False,
-            nargs="+",
-            type=str,
-            help="(Optional) List of prefixes in result pickle files to remove.\n"
-            "Possible values: \n"
-            "'observed_data', 'seis_4d', 'seis_4d_diff', 'relai', "
-            "'depth_convert', 'amplitude_maps', 'relai_maps')\n"
-            "If no prefixes are given, all pickle files will be removed",
-        )
+    if extra_arguments is not None:
+        if "attribute" in extra_arguments:
+            parser.add_argument(
+                "-a",
+                "--attribute",
+                type=str,
+                required=False,
+                default=False,
+                help="Selection of 'amplitude' or 'relai' attributes. "
+                "For sim2seis_map_attributes only",
+            )
+        if "verbose" in extra_arguments:
+            parser.add_argument(
+                "-v",
+                "--verbose",
+                type=bool,
+                required=False,
+                default=False,
+                help="Select verbose or minimal output",
+            )
+        if "no_attributes" in extra_arguments:
+            parser.add_argument(
+                "-n",
+                "--no_attributes",
+                type=bool,
+                required=False,
+                default=False,
+                help="Skip generation of observed data attributes",
+            )
+        if "cleanup" in extra_arguments:
+            parser.add_argument(
+                "-p",
+                "--prefixlist",
+                required=False,
+                default=False,
+                nargs="+",
+                type=str,
+                help="(Optional) List of prefixes in result pickle files to remove.\n"
+                "Possible values: \n"
+                "'observed_data', 'seis_4d', 'seis_4d_diff', 'relai', "
+                "'depth_convert', 'amplitude_maps', 'relai_maps')\n"
+                "If no prefixes are given, all pickle files will be removed",
+            )
     return parser.parse_args(arguments)
 
 

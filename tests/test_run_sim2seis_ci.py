@@ -4,9 +4,9 @@ from pathlib import Path
 import pandas as pd
 import xtgeo.surface
 import yaml
+from fmu.pem.pem_utilities import restore_dir
 from numpy import isclose
 
-from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.map_attributes import main as map_attributes
 from fmu.sim2seis.observed_data import main as run_obs_data
 from fmu.sim2seis.seismic_fwd import main as run_seismic_forward
@@ -35,20 +35,31 @@ def test_obs_data(monkeypatch, data_dir):
     )
     with open(rel_path_config_file / fout_name, "w") as fout:
         yaml.safe_dump(conf_dict, fout)
-    run_obs_data([
-        "--startdir",
-        str(start_dir),
-        "--configdir",
-        str(rel_path_config_file),
-        "--configfile",
-        str(fout_name)])
+    run_obs_data(
+        [
+            "--startdir",
+            str(start_dir),
+            "--configdir",
+            str(rel_path_config_file),
+            "--configfile",
+            str(fout_name),
+        ]
+    )
 
     # Check values in some of the resulting data files against truth values
     test_files = [
-        Path("../../share/observations/maps/topvolantis--amplitude_rms_depth--20200701_20180101.gri"),
-        Path("../../share/observations/maps/topvolantis--relai_min_depth--20200701_20180101.gri"),
-        Path("../../share/observations/tables/topvolantis--amplitude_mean_depth--20200701_20180101.csv"),
-        Path("../../share/observations/tables/topvolantis--relai_rms_depth--20200701_20180101.csv"),
+        Path(
+            "../../share/observations/maps/topvolantis--amplitude_rms_depth--20200701_20180101.gri"
+        ),
+        Path(
+            "../../share/observations/maps/topvolantis--relai_min_depth--20200701_20180101.gri"
+        ),
+        Path(
+            "../../share/observations/tables/topvolantis--amplitude_mean_depth--20200701_20180101.csv"
+        ),
+        Path(
+            "../../share/observations/tables/topvolantis--relai_rms_depth--20200701_20180101.csv"
+        ),
         Path("../../share/observations/pickle_files/observed_data_time_cubes.pkl"),
     ]
     expected_values = [
@@ -61,8 +72,10 @@ def test_obs_data(monkeypatch, data_dir):
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
         if CALIBRATE:
-            print(f"Value: {value}, {Path(__file__).name}, "
-                  f"test comparison: {test_file.name}")
+            print(
+                f"Value: {value}, {Path(__file__).name}, "
+                f"test comparison: {test_file.name}"
+            )
         else:
             assert isclose(value, truth_value, atol=a_tol, rtol=r_tol)
 
@@ -76,21 +89,25 @@ def test_sim2seis(monkeypatch, data_dir):
 def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
     start_dir = data_dir / "rms/model"
     monkeypatch.chdir(start_dir)
-    run_seismic_forward([
-        "--startdir",
-        str(start_dir),
-        "--configdir",
-        str(rel_path_config_file),
-        "--configfile",
-        str(sim2seis_config_file_name),
-        "--verbose",
-        False,
-    ])
+    run_seismic_forward(
+        [
+            "--startdir",
+            str(start_dir),
+            "--configdir",
+            str(rel_path_config_file),
+            "--configfile",
+            str(sim2seis_config_file_name),
+            "--verbose",
+            False,
+        ]
+    )
 
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path("../../share/results/cubes/syntseis--amplitude_full_depth--20200701.segy"),
-        Path("../../share/results/cubes/syntseis--amplitude_full_depth--20180701_20180101.segy"),
+        Path(
+            "../../share/results/cubes/syntseis--amplitude_full_depth--20180701_20180101.segy"
+        ),
         Path("../../share/results/pickle_files/seismic_fwd_diff_time.pkl"),
     ]
     expected_values = [
@@ -101,8 +118,10 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
         if CALIBRATE:
-            print(f"Value: {value}, {Path(__file__).name}, "
-                  f"test comparison: {test_file.name}")
+            print(
+                f"Value: {value}, {Path(__file__).name}, "
+                f"test comparison: {test_file.name}"
+            )
         else:
             assert isclose(value, truth_value, atol=a_tol, rtol=r_tol)
 
@@ -110,20 +129,24 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
 def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
     start_dir = data_dir / "rms/model"
     monkeypatch.chdir(start_dir)
-    run_seismic_inversion([
-        "--startdir",
-        str(start_dir),
-        "--configdir",
-        str(rel_path_config_file),
-        "--configfile",
-        str(sim2seis_config_file_name),
-        "--verbose",
-        False,
-    ])
+    run_seismic_inversion(
+        [
+            "--startdir",
+            str(start_dir),
+            "--configdir",
+            str(rel_path_config_file),
+            "--configfile",
+            str(sim2seis_config_file_name),
+            "--verbose",
+            False,
+        ]
+    )
 
     # Check values in some of the resulting data files against truth values
     test_files = [
-        Path("../../share/results/cubes/syntseis--relai_full_depth--20180701_20180101.segy"),
+        Path(
+            "../../share/results/cubes/syntseis--relai_full_depth--20180701_20180101.segy"
+        ),
         Path("../../share/results/pickle_files/relai_diff_depth.pkl"),
         Path("../../share/results/pickle_files/relai_diff_time.pkl"),
     ]
@@ -135,8 +158,10 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
         if CALIBRATE:
-            print(f"Value: {value}, {Path(__file__).name}, "
-                  f"test comparison: {test_file.name}")
+            print(
+                f"Value: {value}, {Path(__file__).name}, "
+                f"test comparison: {test_file.name}"
+            )
         else:
             assert isclose(value, truth_value, atol=a_tol, rtol=r_tol)
 
@@ -146,23 +171,33 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
     monkeypatch.chdir(start_dir)
     for attribute in ["amplitude", "relai"]:
         with restore_dir(start_dir):
-            map_attributes([
-                "--startdir",
-                str(start_dir),
-                "--configdir",
-                str(rel_path_config_file),
-                "--configfile",
-                str(sim2seis_config_file_name),
-                "--attribute",
-                attribute,
-            ])
+            map_attributes(
+                [
+                    "--startdir",
+                    str(start_dir),
+                    "--configdir",
+                    str(rel_path_config_file),
+                    "--configfile",
+                    str(sim2seis_config_file_name),
+                    "--attribute",
+                    attribute,
+                ]
+            )
 
     # Check values in some of the resulting data files against truth values
     test_files = [
-        Path("../../share/results/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"),
-        Path("../../share/results/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"),
-        Path("../../share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"),
-        Path("../../share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.csv"),
+        Path(
+            "../../share/results/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
+        ),
+        Path(
+            "../../share/results/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
+        ),
+        Path(
+            "../../share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
+        ),
+        Path(
+            "../../share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.csv"
+        ),
         Path("../../share/results/pickle_files/amplitude_maps_depth_attributes.pkl"),
         Path("../../share/results/pickle_files/relai_maps_depth_attributes.pkl"),
     ]
@@ -177,8 +212,10 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
         if CALIBRATE:
-            print(f"Value: {value}, {Path(__file__).name}, "
-                  f"test comparison: {test_file.name}")
+            print(
+                f"Value: {value}, {Path(__file__).name}, "
+                f"test comparison: {test_file.name}"
+            )
         else:
             assert isclose(value, truth_value, atol=a_tol, rtol=r_tol)
 
@@ -189,7 +226,7 @@ def get_sum_value(file_name: Path) -> float:
     a sum of the values.
     """
 
-    def get_gri_sum_value(f_name: Path)-> float:
+    def get_gri_sum_value(f_name: Path) -> float:
         surf = xtgeo.surface_from_file(str(f_name))
         return surf.values.sum()
 
@@ -197,17 +234,17 @@ def get_sum_value(file_name: Path) -> float:
         cube = xtgeo.cube_from_file(str(f_name))
         return cube.values.sum()
 
-    def get_csv_sum_value(f_name: Path)-> float:
+    def get_csv_sum_value(f_name: Path) -> float:
         df = pd.read_csv(f_name)
         return df.values.sum()
 
-    def get_attribute_sum_value(attr: SeismicAttribute)-> float:
+    def get_attribute_sum_value(attr: SeismicAttribute) -> float:
         return sum(single_attribute.values.sum() for single_attribute in attr.value)
 
     def get_seismic_sum(single_seismic: SingleSeismic | DifferenceSeismic) -> float:
         return single_seismic.cube.values.sum()
 
-    def get_pickle_sum_value(f_name: Path)-> float:
+    def get_pickle_sum_value(f_name: Path) -> float:
         """
         The pickle object can be a single class object, a dict or a list
         """
@@ -217,10 +254,9 @@ def get_sum_value(file_name: Path) -> float:
         value_list = []
         if isinstance(pickle_obj, dict):
             obj_list = list(pickle_obj.values())
-        elif isinstance(pickle_obj, (
-                SingleSeismic,
-                DifferenceSeismic,
-                SeismicAttribute)):
+        elif isinstance(
+            pickle_obj, (SingleSeismic, DifferenceSeismic, SeismicAttribute)
+        ):
             obj_list = [pickle_obj]
         elif isinstance(pickle_obj, list):
             obj_list = pickle_obj  # already a list

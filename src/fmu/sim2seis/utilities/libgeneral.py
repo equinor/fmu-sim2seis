@@ -29,11 +29,12 @@ def global_config(path_to_global_var_yml_file: Path | str) -> dict:
     """
 
     cfg = utils.yaml_load(str(path_to_global_var_yml_file))
-
+    if cfg is None:
+        raise ValueError(f"Failed to load config file from {path_to_global_var_yml_file}")
     for required_key in ["global", "masterdata", "access", "model"]:
         if required_key not in cfg and WARN_METADATA:
             print(
-                "Warning! The global config is missing {required_key}! "
+                f"Warning! The global config is missing {required_key}! "
                 "The fmu.dataio will export data, but without metadata."
             )
 
@@ -137,12 +138,14 @@ def make_symlink(
         )
 
 
-def run_external_silent(commands: List[str], timeout: int | None = None) -> str:
+def run_external_silent(commands: list[str], timeout: int | None = None) -> str:
     result = subprocess.run(
         commands,
         capture_output=True,
         timeout=timeout,
+        text=True,
+        check=False,
     )
     if result.returncode != 0:
         raise RuntimeError(f"Command failed with error: {result.stderr}")
-    return str(result.stdout)
+    return result.stdout
