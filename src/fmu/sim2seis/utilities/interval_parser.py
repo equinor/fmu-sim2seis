@@ -1,18 +1,22 @@
+from __future__ import annotations
+
 """
 Parse yaml file with interval definitions and populate SeismicAttribute objects
 """
 
 from collections import defaultdict
-from dataclasses import dataclass
-from typing import Optional
-
+from pydantic import BaseModel, ConfigDict, DirectoryPath, Field, model_validator
+from typing import Any, get_args
 import xtgeo
+from pathlib import Path
 
 from .sim2seis_class_definitions import (
     DifferenceSeismic,
     SeismicAttribute,
     SeismicName,
     SingleSeismic,
+    KnownAttributes,
+    DomainDef,
 )
 
 # Type aliases
@@ -20,9 +24,7 @@ SeismicCube = SingleSeismic | DifferenceSeismic
 SurfaceDict = dict[str, xtgeo.RegularSurface]
 CubeDict = dict[SeismicName, SeismicCube]
 
-
-@dataclass(frozen=True)
-class GlobalConfig:
+class GlobalConfig(BaseModel):
     """Global configuration settings for seismic attribute generation.
 
     Args:
@@ -31,25 +33,77 @@ class GlobalConfig:
         surface_postfix: Postfix to append to surface names
         scale_factor: Global scaling factor applied to all values
     """
+    model_config = ConfigDict(frozen=True)
 
-    gridhorizon_path: str
-    attributes: list[str]
+    gridhorizon_path: DirectoryPath
+    attributes: list[KnownAttributes]
     surface_postfix: str
     scale_factor: float
 
+class RootConfig(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    global_config: GlobalConfig = Field(alias="global")
+    cubes: dict[str, CubeConfig] = Field(default_factory=dict)
+
+class CubeConfig(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    cube_prefix : str
+    filename_tag_prefix : str
+    seismic_path: DirectoryPath
+    vertical_domain : DomainDef
+    depth_reference : str
+    offset : str
+    formations: dict[str, FormationSettings]
+
+class FormationSettings(BaseModel):
+    """Settings for a formation, including horizons, shifts, and attributes."""
+    model_config = ConfigDict(frozen=True)
+
+    top_horizon: str
+    bottom_horizon: str
+
+    top_surface_shift: float = 0
+    base_surface_shift: float = 0
+    window_length: float | None = None
+
+    attribute_overrides: dict[KnownAttributes, dict[str, Any]] = Field(default_factory=dict, exclude=True)
+
+    @model_validator(mode="before")
     @classmethod
-    def from_dict(cls, config: dict) -> "GlobalConfig":
-        """Create GlobalConfig from configuration dictionary."""
-        return cls(
-            gridhorizon_path=config["gridhorizon_path"],
-            attributes=config["attributes"],
-            surface_postfix=config["surface_postfix"],
-            scale_factor=config["scale_factor"],
-        )
+    def extract_attributes(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+        attribute_overrides = {}
+        for attr in get_args(KnownAttributes):
+            if attr in data:
+                attribute_overrides[attr] = data.pop(attr)
+        
+        data["attribute_overrides"] = attribute_overrides
+        return data
 
+    def build_interval_config(
+        self,
+        attribute: KnownAttributes,
+        global_scale_factor: float
+    ) -> IntervalConfig:
+        config_dict: dict[str, Any]
+        config_dict = {
+            "top_horizon": self.top_horizon,
+            "bottom_horizon": self.bottom_horizon,
+            "top_surface_shift": self.top_surface_shift,
+            "base_surface_shift": self.base_surface_shift,
+            "window_length": self.window_length,
+            "scale_factor": global_scale_factor,
+        }
+        
+        if attribute in self.attribute_overrides:
+            config_dict.update(self.attribute_overrides[attribute])
+        
+        return IntervalConfig(**config_dict)
 
-@dataclass(frozen=True)
-class IntervalConfig:
+class IntervalConfig(BaseModel):
     """Configuration for a seismic interval.
 
     An interval is uniquely defined by six parameters:
@@ -61,102 +115,32 @@ class IntervalConfig:
     - window_length: Optional fixed interval length from top surface
     - scale_factor: Scaling factor applied to the values
     """
+    model_config = ConfigDict(frozen=True)
 
     top_horizon: str
     bottom_horizon: str
+
     top_surface_shift: float
     base_surface_shift: float
-    window_length: Optional[float]
+    window_length: float | None = None
     scale_factor: float
 
 
-@dataclass(frozen=True)
-class FormationSettings:
-    """Settings for a formation, including horizons, shifts, and attributes."""
-
-    top_horizon: str
-    bottom_horizon: str
-    top_surface_shift: float
-    base_surface_shift: float
-    window_length: Optional[float]
-    attributes: list[str]
-
-
-def _create_interval_key(
-    top_horizon: str,
-    bottom_horizon: str,
-    top_surface_shift: float,
-    base_surface_shift: float,
-    window_length: float | None,
-    scale_factor: float,
-) -> IntervalConfig:
-    """Create an IntervalConfig that uniquely identifies an interval configuration."""
-    return IntervalConfig(
-        top_horizon=top_horizon,
-        bottom_horizon=bottom_horizon,
-        top_surface_shift=top_surface_shift,
-        base_surface_shift=base_surface_shift,
-        window_length=window_length,
-        scale_factor=scale_factor,
-    )
-
-
-def _get_attribute_interval_settings(
-    attribute: str,
-    formation_info: dict,
-    defaults: dict,
-) -> IntervalConfig:
-    """Get interval settings for a specific attribute, falling back to defaults if not
-    specified.
-    """
-    # Get attribute-specific overrides, empty dict if none exist
-    attr_overrides = formation_info.get(attribute, {})
-
-    # For each setting, use attribute override if it exists, otherwise use formation
-    # default
-    return _create_interval_key(
-        top_horizon=attr_overrides.get("top_horizon", defaults["top_horizon"]),
-        bottom_horizon=attr_overrides.get("bottom_horizon", defaults["bottom_horizon"]),
-        top_surface_shift=attr_overrides.get(
-            "top_surface_shift", defaults["top_surface_shift"]
-        ),
-        base_surface_shift=attr_overrides.get(
-            "base_surface_shift", defaults["base_surface_shift"]
-        ),
-        window_length=attr_overrides.get("window_length", defaults["window_length"]),
-        scale_factor=attr_overrides.get("scale_factor", defaults["scale_factor"]),
-    )
-
-
 def _group_attributes_by_interval(
-    attributes: list[str],
-    formation_info: dict,
-    top_horizon: str,
-    bottom_horizon: str,
-    top_surface_shift: float,
-    base_surface_shift: float,
-    window_length: Optional[float],
+    formation_settings: FormationSettings,
     global_config: GlobalConfig,
-) -> dict[IntervalConfig, list[str]]:
+) -> dict[IntervalConfig, list[KnownAttributes]]:
     """Group attributes that share the same interval configuration.
 
     Each attribute (e.g., 'rms', 'mean', 'min') can override the formation's default
     interval settings. Attributes that end up with identical settings are grouped
     together.
     """
-    defaults = {
-        "top_horizon": top_horizon,
-        "bottom_horizon": bottom_horizon,
-        "top_surface_shift": top_surface_shift,
-        "base_surface_shift": base_surface_shift,
-        "window_length": window_length,
-        "scale_factor": global_config.scale_factor,
-    }
 
     interval_groups = defaultdict(list)
-    for attribute in attributes:
-        interval_key = _get_attribute_interval_settings(
-            attribute, formation_info, defaults
+    for attribute in global_config.attributes:
+        interval_key = formation_settings.build_interval_config(
+            attribute, global_config.scale_factor
         )
         interval_groups[interval_key].append(attribute)
 
@@ -167,7 +151,7 @@ def _load_surface(
     surface_name: str,
     surfaces: dict[str, xtgeo.RegularSurface],
     horizon_postfix: str,
-    gridhorizon_path: str,
+    gridhorizon_path: Path,
     window_length: float | None = None,
     base_surface: xtgeo.RegularSurface | None = None,
 ) -> xtgeo.RegularSurface:
@@ -188,10 +172,10 @@ def _load_surface(
 
 def _create_seismic_attribute(
     interval_config: IntervalConfig,
-    attributes: list[str],
+    attributes: list[KnownAttributes],
     surfaces: SurfaceDict,
     global_config: GlobalConfig,
-    cube_info: dict,
+    cube_info: CubeConfig,
     cube: SeismicCube,
 ) -> SeismicAttribute:
     """Create a single SeismicAttribute object for a given interval configuration."""
@@ -216,28 +200,12 @@ def _create_seismic_attribute(
         calc_types=attributes,
         scale_factor=interval_config.scale_factor,
         from_cube=cube,
-        domain=cube_info["vertical_domain"],
+        domain=cube_info.vertical_domain,
         window_length=interval_config.window_length,
         base_surface=attr_bottom_surface,
         top_surface_shift=interval_config.top_surface_shift,
         base_surface_shift=interval_config.base_surface_shift,
         info=cube_info,
-    )
-
-
-def _get_formation_settings(
-    formation_info: dict, global_config: GlobalConfig
-) -> FormationSettings:
-    """Extract formation settings with fallbacks to global defaults."""
-    return FormationSettings(
-        top_horizon=formation_info.get("top_horizon", global_config.gridhorizon_path),
-        bottom_horizon=formation_info.get(
-            "bottom_horizon", global_config.gridhorizon_path
-        ),
-        top_surface_shift=formation_info.get("top_surface_shift", 0),
-        base_surface_shift=formation_info.get("base_surface_shift", 0),
-        window_length=formation_info.get("window_length"),
-        attributes=formation_info.get("attributes", global_config.attributes),
     )
 
 
@@ -251,8 +219,8 @@ def _get_matching_cubes(cubes: CubeDict, cube_prefix: str) -> list[SeismicCube]:
 
 
 def _create_formation_attributes(
-    interval_groups: dict[IntervalConfig, list[str]],
-    cube_info: dict,
+    interval_groups: dict[IntervalConfig, list[KnownAttributes]],
+    cube_info: CubeConfig,
     cubes: CubeDict,
     surfaces: SurfaceDict,
     global_config: GlobalConfig,
@@ -260,7 +228,7 @@ def _create_formation_attributes(
     """Create SeismicAttribute objects for each interval group and matching cube."""
     formation_attributes = []
     for interval_config, attrs in interval_groups.items():
-        matching_cubes = _get_matching_cubes(cubes, cube_info["cube_prefix"])
+        matching_cubes = _get_matching_cubes(cubes, cube_info.cube_prefix)
         for seismic_cube in matching_cubes:
             attribute = _create_seismic_attribute(
                 interval_config=interval_config,
@@ -275,23 +243,16 @@ def _create_formation_attributes(
 
 
 def _process_formation(
-    formation_info: dict,
-    cube_info: dict,
+    formation_settings: FormationSettings,
+    cube_info: CubeConfig,
     cubes: CubeDict,
     surfaces: SurfaceDict,
     global_config: GlobalConfig,
 ) -> list[SeismicAttribute]:
     """Process a single formation and create its SeismicAttribute objects."""
-    settings = _get_formation_settings(formation_info, global_config)
 
     interval_groups = _group_attributes_by_interval(
-        attributes=settings.attributes,
-        formation_info=formation_info,
-        top_horizon=settings.top_horizon,
-        bottom_horizon=settings.bottom_horizon,
-        top_surface_shift=settings.top_surface_shift,
-        base_surface_shift=settings.base_surface_shift,
-        window_length=settings.window_length,
+        formation_settings=formation_settings,
         global_config=global_config,
     )
 
@@ -305,7 +266,7 @@ def _process_formation(
 
 
 def populate_seismic_attributes(
-    config: dict,
+    config: dict[str, Any],
     cubes: CubeDict,
     surfaces: SurfaceDict,
 ) -> list[SeismicAttribute]:
@@ -324,17 +285,16 @@ def populate_seismic_attributes(
         ValueError: If no attributes could be generated (likely due to configuration
         mismatch)
     """
-    global_config = GlobalConfig.from_dict(config["global"])
+    root_config = RootConfig(**config)
     seismic_attributes = []
-
-    for cube_info in config["cubes"].values():
-        for formation_info in cube_info["formations"].values():
+    for cube_info in root_config.cubes.values():
+        for formation_settings in cube_info.formations.values():
             formation_attributes = _process_formation(
-                formation_info=formation_info,
+                formation_settings=formation_settings,
                 cube_info=cube_info,
                 cubes=cubes,
                 surfaces=surfaces,
-                global_config=global_config,
+                global_config=root_config.global_config,
             )
             seismic_attributes.extend(formation_attributes)
 
