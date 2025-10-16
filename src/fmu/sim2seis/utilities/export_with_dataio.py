@@ -101,6 +101,7 @@ def attribute_export(
                     content="seismic",
                     content_metadata={
                         "attribute": attr.from_cube.cube_name.attribute,
+                        "workflow": "sim2seis",
                         "calculation": calc,
                         "zrange": attr.window_length,
                         "stacking_offset": attr.from_cube.cube_name.stack,
