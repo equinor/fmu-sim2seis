@@ -22,7 +22,7 @@ def cube_export(
     start_dir: Path,
     is_observed: bool = False,
 ) -> None:
-    global_variables = config_file.global_params.global_config
+    global_variables = config_file.global_config
     """Output depth cube via fmu.dataio"""
     try:
         # _ERT_RUNPATH will point to the top of the fmu directory structure, as

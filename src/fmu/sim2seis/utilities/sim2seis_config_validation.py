@@ -465,6 +465,16 @@ class Sim2SeisConfig(BaseModel):
         return self
 
     @property
+    def global_config(self):
+        if self.global_params is None:
+            raise ValueError(
+                "global_params not set. Call update_with_global() first"
+            )
+        if self.global_params.global_config is None:
+            raise ValueError("global_config not set in global_params")
+        return self.global_params.global_config
+
+    @property
     def global_config_file(self) -> FilePath:
         """Dynamically determine the global_config_file based on
         flowsim_is_prediction."""
