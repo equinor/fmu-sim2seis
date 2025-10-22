@@ -9,12 +9,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     Literal,
     Optional,
     Self,
     Tuple,
     get_args,
-    TYPE_CHECKING,
 )
 
 import numpy as np

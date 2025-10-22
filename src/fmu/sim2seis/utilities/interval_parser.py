@@ -5,18 +5,19 @@ Parse yaml file with interval definitions and populate SeismicAttribute objects
 """
 
 from collections import defaultdict
-from pydantic import BaseModel, ConfigDict, DirectoryPath, Field, model_validator
-from typing import Any, get_args
-import xtgeo
 from pathlib import Path
+from typing import Any, get_args
+
+import xtgeo
+from pydantic import BaseModel, ConfigDict, DirectoryPath, Field, model_validator
 
 from .sim2seis_class_definitions import (
     DifferenceSeismic,
+    DomainDef,
+    KnownAttributes,
     SeismicAttribute,
     SeismicName,
     SingleSeismic,
-    KnownAttributes,
-    DomainDef,
 )
 
 # Type aliases
@@ -94,8 +95,7 @@ class FormationSettings(BaseModel):
     def build_interval_config(
         self, attribute: KnownAttributes, global_scale_factor: float
     ) -> IntervalConfig:
-        config_dict: dict[str, Any]
-        config_dict = {
+        config_dict: dict[str, Any] = {
             "top_horizon": self.top_horizon,
             "bottom_horizon": self.bottom_horizon,
             "top_surface_shift": self.top_surface_shift,
