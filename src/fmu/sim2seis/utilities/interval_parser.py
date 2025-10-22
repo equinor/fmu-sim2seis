@@ -24,6 +24,7 @@ SeismicCube = SingleSeismic | DifferenceSeismic
 SurfaceDict = dict[str, xtgeo.RegularSurface]
 CubeDict = dict[SeismicName, SeismicCube]
 
+
 class GlobalConfig(BaseModel):
     """Global configuration settings for seismic attribute generation.
 
@@ -33,6 +34,7 @@ class GlobalConfig(BaseModel):
         surface_postfix: Postfix to append to surface names
         scale_factor: Global scaling factor applied to all values
     """
+
     model_config = ConfigDict(frozen=True)
 
     gridhorizon_path: DirectoryPath
@@ -40,25 +42,29 @@ class GlobalConfig(BaseModel):
     surface_postfix: str
     scale_factor: float
 
+
 class RootConfig(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     global_config: GlobalConfig = Field(alias="global")
     cubes: dict[str, CubeConfig] = Field(default_factory=dict)
 
+
 class CubeConfig(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    cube_prefix : str
-    filename_tag_prefix : str
+    cube_prefix: str
+    filename_tag_prefix: str
     seismic_path: DirectoryPath
-    vertical_domain : DomainDef
-    depth_reference : str
-    offset : str
+    vertical_domain: DomainDef
+    depth_reference: str
+    offset: str
     formations: dict[str, FormationSettings]
+
 
 class FormationSettings(BaseModel):
     """Settings for a formation, including horizons, shifts, and attributes."""
+
     model_config = ConfigDict(frozen=True)
 
     top_horizon: str
@@ -68,7 +74,9 @@ class FormationSettings(BaseModel):
     base_surface_shift: float = 0
     window_length: float | None = None
 
-    attribute_overrides: dict[KnownAttributes, dict[str, Any]] = Field(default_factory=dict, exclude=True)
+    attribute_overrides: dict[KnownAttributes, dict[str, Any]] = Field(
+        default_factory=dict, exclude=True
+    )
 
     @model_validator(mode="before")
     @classmethod
@@ -79,14 +87,12 @@ class FormationSettings(BaseModel):
         for attr in get_args(KnownAttributes):
             if attr in data:
                 attribute_overrides[attr] = data.pop(attr)
-        
+
         data["attribute_overrides"] = attribute_overrides
         return data
 
     def build_interval_config(
-        self,
-        attribute: KnownAttributes,
-        global_scale_factor: float
+        self, attribute: KnownAttributes, global_scale_factor: float
     ) -> IntervalConfig:
         config_dict: dict[str, Any]
         config_dict = {
@@ -97,11 +103,12 @@ class FormationSettings(BaseModel):
             "window_length": self.window_length,
             "scale_factor": global_scale_factor,
         }
-        
+
         if attribute in self.attribute_overrides:
             config_dict.update(self.attribute_overrides[attribute])
-        
+
         return IntervalConfig(**config_dict)
+
 
 class IntervalConfig(BaseModel):
     """Configuration for a seismic interval.
@@ -115,6 +122,7 @@ class IntervalConfig(BaseModel):
     - window_length: Optional fixed interval length from top surface
     - scale_factor: Scaling factor applied to the values
     """
+
     model_config = ConfigDict(frozen=True)
 
     top_horizon: str
