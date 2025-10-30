@@ -12,7 +12,7 @@ def test_read_yaml_config(monkeypatch, data_dir):
         file_name=rel_path_conf / config_file,
         start_dir=start_dir,
         update_with_global=True,
-        parse_inputs=True
+        parse_inputs=True,
     )
 
     # Make some random validations according to default settings
@@ -33,7 +33,7 @@ def test_read_obs_data_yaml_file(monkeypatch, data_dir):
         file_name=rel_path_conf / config_file,
         start_dir=start_dir,
         update_with_global=True,
-        parse_inputs=True
+        parse_inputs=True,
     )
     # Make some random validations according to default settings
     assert conf.depth_conversion.min_depth < conf.depth_conversion.max_depth

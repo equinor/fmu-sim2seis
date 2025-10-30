@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 from fmu.pem.pem_utilities import restore_dir
+
 from fmu.sim2seis.utilities import (
     attribute_export,
     check_startup_dir,

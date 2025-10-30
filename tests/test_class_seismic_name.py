@@ -16,9 +16,9 @@ def test_seismic_name_init():
         process=process,  # type: ignore
         stack=stack,  # type: ignore
         domain=domain,  # type: ignore
-        attribute=attribute  # type: ignore
+        attribute=attribute,  # type: ignore
     )
-    assert isinstance(seis_name_obj,SeismicName)
+    assert isinstance(seis_name_obj, SeismicName)
     assert seis_name_obj.attribute == attribute
     assert seis_name_obj.date == date
     assert seis_name_obj.domain == domain
@@ -47,21 +47,13 @@ def test_seismic_name_property_types():
         attribute=attribute,  # type: ignore
         ext=ext,
     )
-    assert isinstance(seis_name_obj.process, str) and (
-        seis_name_obj.process == process
-    )
+    assert isinstance(seis_name_obj.process, str) and (seis_name_obj.process == process)
     assert isinstance(seis_name_obj.attribute, str) and (
         seis_name_obj.attribute == attribute
     )
-    assert isinstance(seis_name_obj.domain, str) and (
-        seis_name_obj.domain == domain
-    )
-    assert isinstance(seis_name_obj.date, str) and (
-        seis_name_obj.date == date
-    )
-    assert isinstance(seis_name_obj.ext, str) and (
-        seis_name_obj.ext == ext
-    )
+    assert isinstance(seis_name_obj.domain, str) and (seis_name_obj.domain == domain)
+    assert isinstance(seis_name_obj.date, str) and (seis_name_obj.date == date)
+    assert isinstance(seis_name_obj.ext, str) and (seis_name_obj.ext == ext)
 
 
 def test_seismic_name_hash():
@@ -71,7 +63,7 @@ def test_seismic_name_hash():
         stack="full",  # type: ignore
         domain="depth",  # type: ignore
         attribute="relai",  # type: ignore
-        ext="segy"
+        ext="segy",
     )
     name2 = SeismicName(
         date="20200101",
@@ -79,7 +71,7 @@ def test_seismic_name_hash():
         stack="full",  # type: ignore
         domain="depth",  # type: ignore
         attribute="relai",  # type: ignore
-        ext="segy"
+        ext="segy",
     )
     name3 = SeismicName(
         date="20200102",
@@ -87,7 +79,7 @@ def test_seismic_name_hash():
         stack="full",  # type: ignore
         domain="depth",  # type: ignore
         attribute="relai",  # type: ignore
-        ext="segy"
+        ext="segy",
     )
 
     # Check that the hash values of name1 and name2 are the same
@@ -105,7 +97,7 @@ def test_seismic_name_str():
         stack="full",  # type: ignore
         domain="depth",  # type: ignore
         attribute="relai",  # type: ignore
-        ext="segy"
+        ext="segy",
     )
     assert str(seis_name_obj) == name_str
 
@@ -117,7 +109,7 @@ def test_seismic_name_eq():
         stack="full",  # type: ignore
         domain="depth",  # type: ignore
         attribute="relai",  # type: ignore
-        ext="segy"
+        ext="segy",
     )
     name2 = SeismicName(
         date="20200101",
@@ -125,7 +117,7 @@ def test_seismic_name_eq():
         stack="full",  # type: ignore
         domain="depth",  # type: ignore
         attribute="relai",  # type: ignore
-        ext="segy"
+        ext="segy",
     )
     name3 = SeismicName(
         date="20200102",
@@ -133,7 +125,7 @@ def test_seismic_name_eq():
         stack="full",  # type: ignore
         domain="depth",  # type: ignore
         attribute="relai",  # type: ignore
-        ext="segy"
+        ext="segy",
     )
 
     assert name1 == name2
@@ -147,7 +139,7 @@ def test_seismic_name_iter():
         stack="full",  # type: ignore
         domain="depth",  # type: ignore
         attribute="relai",  # type: ignore
-        ext="segy"
+        ext="segy",
     )
     properties = list(seis_name_obj)
     expected_properties = ["seismic", "relai", "depth", "full", "20200101"]

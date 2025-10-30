@@ -14,9 +14,9 @@ JRIV/EZA/RNYB/HFLE
 import os
 from pathlib import Path
 
+from fmu.pem.pem_utilities import restore_dir
 from si4ti import compute_impedance
 
-from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.utilities import (
     DifferenceSeismic,
     SeismicDate,
@@ -27,17 +27,18 @@ from fmu.sim2seis.utilities import (
 
 
 def run_relative_inversion_si4ti(
-        start_dir: Path,
-        time_cubes: dict[SeismicName, DifferenceSeismic],
-        config: Sim2SeisConfig,
+    start_dir: Path,
+    time_cubes: dict[SeismicName, DifferenceSeismic],
+    config: Sim2SeisConfig,
 ) -> dict[SeismicName, DifferenceSeismic]:
     # To get the paths right, both when run from ERT and command line -
-    try:
+    run_path_env = os.getenv("_ERT_RUNPATH")
+    if run_path_env is not None:
         # _ERT_RUNPATH will point to the top of the fmu directory structure, as
         # is expected by fmu-dataio, so no need to move up
-        run_path = Path(os.getenv("_ERT_RUNPATH"))
-        rel_dir= Path(".")
-    except TypeError:
+        run_path = Path(run_path_env)
+        rel_dir = Path(".")
+    else:
         # in case this is run from command line, _ERT_RUNPATH is not set, and start_dir
         # is at ./rms/model, relative to the top of the fmu directory structure. To get
         # the requirements of fmu-dataio right, we need to move up two levels

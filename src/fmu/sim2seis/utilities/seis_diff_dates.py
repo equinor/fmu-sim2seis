@@ -13,6 +13,6 @@ def get_pred_or_hist_seis_diff_dates(conf: Sim2SeisConfig):
         else:
             use_dates = "SEISMIC_HIST_DIFFDATES"
 
-        global_config = conf.global_params.global_config
+        global_config = conf.global_config
 
         return get_listed_seis_diff_dates(global_config["global"]["dates"][use_dates])

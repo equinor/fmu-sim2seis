@@ -18,6 +18,8 @@ import sys
 from pathlib import Path
 
 from fmu.pem.pem_utilities import restore_dir
+from fmu.tools import DomainConversion
+
 from fmu.sim2seis.utilities import (
     check_startup_dir,
     cube_export,
@@ -25,7 +27,6 @@ from fmu.sim2seis.utilities import (
     parse_arguments,
     read_yaml_file,
 )
-from fmu.tools import DomainConversion
 
 from ._dump_results import _dump_results
 from .seismic_diff import calculate_seismic_diff
