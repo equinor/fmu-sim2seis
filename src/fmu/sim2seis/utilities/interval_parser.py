@@ -56,7 +56,7 @@ class CubeConfig(BaseModel):
 
     cube_prefix: str
     filename_tag_prefix: str
-    seismic_path: DirectoryPath
+    seismic_path: Path
     vertical_domain: DomainDef
     depth_reference: str
     offset: str
