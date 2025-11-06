@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Class definitions for sim2seis workflow
 """
@@ -7,6 +9,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     Literal,
     Optional,
     Self,
@@ -16,6 +19,9 @@ from typing import (
 
 import numpy as np
 import xtgeo
+
+if TYPE_CHECKING:
+    from .interval_parser import CubeConfig
 
 
 class SeismicDate:
@@ -350,13 +356,13 @@ class SeismicAttribute:
     surface: xtgeo.RegularSurface
     calc_types: KnownAttributes | list[KnownAttributes]
     from_cube: SingleSeismic | DifferenceSeismic
-    domain: Literal["depth", "time"]
+    domain: DomainDef
     scale_factor: float = 1.0
     window_length: Optional[float] = None
     base_surface: xtgeo.RegularSurface | None = None
     top_surface_shift: float = 0.0  # Use signed values for shift
     base_surface_shift: float = 0.0  # Use signed values for shift
-    info: dict | None = None
+    info: CubeConfig | None = None
 
     def __post_init__(self):
         # Need to verify that either a base surface or a window length is defined

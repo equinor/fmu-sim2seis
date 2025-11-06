@@ -5,10 +5,12 @@ from fmu.sim2seis.utilities import SingleSeismic, SeismicName
 from fmu.sim2seis.utilities.interval_parser import populate_seismic_attributes
 
 @pytest.fixture
-def real_yaml_config():
+def real_yaml_config(tmp_path):
+    grid_path = tmp_path / "maps"
+    grid_path.mkdir()
     return {
         "global": {
-            "gridhorizon_path": "../../share/observations/maps",
+            "gridhorizon_path": f"{grid_path}",
             "attributes": ["rms", "mean", "min"],
             "scale_factor": 1.0,
             "workflow": "rms/sim2seis",
