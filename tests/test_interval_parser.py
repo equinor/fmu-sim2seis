@@ -3,17 +3,21 @@ from unittest.mock import Mock, patch
 
 import pytest
 import xtgeo
-
+from pathlib import Path
 from fmu.sim2seis.utilities import SeismicName, SingleSeismic
 from fmu.sim2seis.utilities.interval_parser import (
     GlobalConfig,
-    _get_attribute_interval_settings,
-    _get_formation_settings,
     _get_matching_cubes,
     _group_attributes_by_interval,
     populate_seismic_attributes,
+    FormationSettings,
 )
 
+@pytest.fixture
+def patch_directory_validation():
+    """Patch Path.is_dir() to allow non-existent directories in tests"""
+    with patch.object(Path, "is_dir", return_value=True):
+        yield
 
 @pytest.fixture
 def real_yaml_config(tmp_path):
@@ -149,7 +153,7 @@ def test_identical_interval_attributes_are_grouped(
     assert grouped_attr[0].scale_factor == 1.0
 
 
-def test_window_length_creates_virtual_base_surface(recwarn, caplog):
+def test_window_length_creates_virtual_base_surface(recwarn, caplog, patch_directory_validation):
     """
     Tests that if window length is provided, then the bottom_horizon is ignored,
     and no warning is emitted.
@@ -171,9 +175,11 @@ def test_window_length_creates_virtual_base_surface(recwarn, caplog):
                 "offset": "full",
                 "formations": {
                     "alpha": {
-                        "top_horizon": "topalpha",
                         "bottom_horizon": "basealpha",
                         "window_length": 25.0,
+                        "rms": {
+                            "top_horizon": "my_horizon",
+                        }
                     }
                 },
             }
@@ -210,7 +216,7 @@ def test_window_length_creates_virtual_base_surface(recwarn, caplog):
     assert result[0].base_surface is top_surface.__add__.return_value
 
 
-def test_missing_surfaces_are_loaded_from_disk():
+def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
     """
     Tests that if the surfaces are not provided to `populate_seismic_attributes`
     then they are loaded to disk as
@@ -276,7 +282,7 @@ def test_missing_surfaces_are_loaded_from_disk():
     assert loaded_surfaces["basebeta"].name == "basebeta"
 
 
-def test_populate_raises_when_no_matching_cubes(real_yaml_config, mock_surfaces):
+def test_populate_raises_when_no_matching_cubes(real_yaml_config, mock_surfaces, patch_directory_validation):
     """
     Should maybe be a more specific error message?
     """
@@ -287,7 +293,7 @@ def test_populate_raises_when_no_matching_cubes(real_yaml_config, mock_surfaces)
 
 
 def test_attribute_specific_scale_factor_override(
-    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
+    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader, patch_directory_validation
 ):
     # rms in relai_depth has scale_factor override = 1.02 while global is 1.0
     attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
@@ -305,7 +311,7 @@ def test_attribute_specific_scale_factor_override(
 
 
 def test_different_attribute_overrides_result_in_separate_groups(
-    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
+    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader, patch_directory_validation
 ):
     # In amplitude_depth:
     # mean overrides top/base shifts, min only scale_factor
@@ -324,7 +330,7 @@ def test_different_attribute_overrides_result_in_separate_groups(
     assert all_calc_types == {"mean", "min", "rms"}
 
 
-def test_value_property_applies_shifts_and_scale():
+def test_value_property_applies_shifts_and_scale(patch_directory_validation):
     config = {
         "global": {
             "gridhorizon_path": "/grids",
@@ -394,7 +400,7 @@ def test_value_property_applies_shifts_and_scale():
     cube_obj.compute_attributes_in_window.assert_called_once()
 
 
-def test_missing_surface_raises_value_error():
+def test_missing_surface_raises_value_error(patch_directory_validation):
     config = {
         "global": {
             "gridhorizon_path": "/grids",
@@ -436,7 +442,7 @@ def test_missing_surface_raises_value_error():
         populate_seismic_attributes(config, cubes, surfaces)
 
 
-def test_multiple_cubes_same_prefix_duplicate_attributes():
+def test_multiple_cubes_same_prefix_duplicate_attributes(patch_directory_validation):
     """
     One cube_prefix can match on several cubes.
     """
@@ -496,52 +502,9 @@ def test_multiple_cubes_same_prefix_duplicate_attributes():
     assert cubes_in_attrs == expected_cubes
 
 
-def test_empty_attributes_in_formation_raises_value_error():
-    """
-    If one specifies the attributes section underneath a formation, then
-    that will override the global.attributes. Should probably not be allowed?
-    """
-    config = {
-        "global": {
-            "gridhorizon_path": "/grids",
-            "attributes": ["rms"],  # global default
-            "scale_factor": 1.0,
-            "surface_postfix": "--depth.gri",
-        },
-        "cubes": {
-            "amp_depth": {
-                "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
-                "formations": {
-                    "theta": {
-                        "top_horizon": "toptheta",
-                        "bottom_horizon": "basetheta",
-                        "attributes": [],  # explicitly empty
-                    }
-                },
-            }
-        },
-    }
-    cubes = {
-        SeismicName(
-            process="seismic", attribute="amplitude", domain="depth", date="20200101"
-        ): Mock(spec=SingleSeismic)
-    }
-    surfaces = {}
-    surf = Mock(spec=xtgeo.RegularSurface)
-    with patch(
-        "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
-        return_value=surf,
-    ), pytest.raises(ValueError, match="No attributes generated"):
-        populate_seismic_attributes(config, cubes, surfaces)
-
 
 def test_window_interval_retains_base_surface_shift_current_behavior(
-    patch_surface_loader,
+    patch_surface_loader, patch_directory_validation
 ):
     """
     Document current (possibly unintended) behavior:
@@ -591,92 +554,22 @@ def test_window_interval_retains_base_surface_shift_current_behavior(
     assert attr.base_surface_shift == 5.0
 
 
-@pytest.mark.parametrize(
-    "formation_info,expected_values",
-    [
-        # No overrides - all use defaults
-        (
-            {},
-            {
-                "top_horizon": "tophorizon",
-                "bottom_horizon": "basehorizon",
-                "top_surface_shift": 5.0,
-                "base_surface_shift": 10.0,
-                "window_length": None,
-                "scale_factor": 2.0,
-            },
-        ),
-        # All overrides
-        (
-            {
-                "rms": {
-                    "top_horizon": "custom_top",
-                    "bottom_horizon": "custom_base",
-                    "top_surface_shift": -20.0,
-                    "base_surface_shift": 15.0,
-                    "window_length": 30.0,
-                    "scale_factor": 3.5,
-                }
-            },
-            {
-                "top_horizon": "custom_top",
-                "bottom_horizon": "custom_base",
-                "top_surface_shift": -20.0,
-                "base_surface_shift": 15.0,
-                "window_length": 30.0,
-                "scale_factor": 3.5,
-            },
-        ),
-        # Partial overrides
-        (
-            {"rms": {"top_surface_shift": -8.0, "scale_factor": 1.8}},
-            {
-                "top_horizon": "tophorizon",
-                "bottom_horizon": "basehorizon",
-                "top_surface_shift": -8.0,
-                "base_surface_shift": 10.0,
-                "window_length": None,
-                "scale_factor": 1.8,
-            },
-        ),
-    ],
-    ids=["no_overrides", "all_overrides", "partial_overrides"],
-)
-def test_get_attribute_interval_settings(formation_info, expected_values):
-    defaults = {
-        "top_horizon": "tophorizon",
-        "bottom_horizon": "basehorizon",
-        "top_surface_shift": 5.0,
-        "base_surface_shift": 10.0,
-        "window_length": None,
-        "scale_factor": 2.0,
-    }
-    result = _get_attribute_interval_settings("rms", formation_info, defaults)
-
-    assert result.top_horizon == expected_values["top_horizon"]
-    assert result.bottom_horizon == expected_values["bottom_horizon"]
-    assert result.top_surface_shift == expected_values["top_surface_shift"]
-    assert result.base_surface_shift == expected_values["base_surface_shift"]
-    assert result.window_length == expected_values["window_length"]
-    assert result.scale_factor == expected_values["scale_factor"]
-
-
-def test_group_attributes_by_interval_all_same():
+def test_group_attributes_by_interval_all_same(patch_directory_validation):
     global_config = GlobalConfig(
         gridhorizon_path="/grids",
         attributes=["rms", "mean", "min"],
         surface_postfix="--depth.gri",
         scale_factor=1.0,
     )
-    formation_info = {}
-    result = _group_attributes_by_interval(
-        attributes=["rms", "mean", "min"],
-        formation_info=formation_info,
+    formation_settings = FormationSettings(
         top_horizon="top",
         bottom_horizon="base",
         top_surface_shift=0.0,
         base_surface_shift=0.0,
         window_length=None,
+    )
+    result = _group_attributes_by_interval(
+        formation_settings=formation_settings,
         global_config=global_config,
     )
     assert len(result) == 1
@@ -684,82 +577,29 @@ def test_group_attributes_by_interval_all_same():
     assert sorted(result[interval_key]) == ["mean", "min", "rms"]
 
 
-def test_group_attributes_by_interval_all_different():
+def test_group_attributes_by_interval_all_different(patch_directory_validation):
     global_config = GlobalConfig(
         gridhorizon_path="/grids",
         attributes=["rms", "mean", "min"],
         surface_postfix="--depth.gri",
         scale_factor=1.0,
     )
-    formation_info = {
-        "rms": {"scale_factor": 1.5},
-        "mean": {"top_surface_shift": -5.0},
-        "min": {"base_surface_shift": 10.0},
-    }
-    result = _group_attributes_by_interval(
-        attributes=["rms", "mean", "min"],
-        formation_info=formation_info,
+    formation_settings = FormationSettings(
         top_horizon="top",
         bottom_horizon="base",
         top_surface_shift=0.0,
         base_surface_shift=0.0,
         window_length=None,
+        # Overrides go at top level, not in attribute_overrides!
+        rms={"scale_factor": 1.5},
+        mean={"top_surface_shift": -5.0},
+        min={"base_surface_shift": 10.0},
+    )
+    result = _group_attributes_by_interval(
+        formation_settings=formation_settings,
         global_config=global_config,
     )
     assert len(result) == 3
-
-
-@pytest.mark.parametrize(
-    "formation_info,expected_values",
-    [
-        # All defaults
-        (
-            {},
-            {
-                "top_horizon": "/grids",  # Does it make sense to default to this?
-                "bottom_horizon": "/grids",
-                "top_surface_shift": 0,
-                "base_surface_shift": 0,
-                "window_length": None,
-                "attributes": ["rms", "mean"],
-            },
-        ),
-        # With overrides
-        (
-            {
-                "top_horizon": "custom_top",
-                "bottom_horizon": "custom_base",
-                "top_surface_shift": -5.0,
-                "base_surface_shift": 10.0,
-                "window_length": 25.0,
-            },
-            {
-                "top_horizon": "custom_top",
-                "bottom_horizon": "custom_base",
-                "top_surface_shift": -5.0,
-                "base_surface_shift": 10.0,
-                "window_length": 25.0,
-                "attributes": ["rms", "mean"],  # Still uses global default
-            },
-        ),
-    ],
-    ids=["all_defaults", "with_overrides"],
-)
-def test_get_formation_settings(formation_info, expected_values):
-    global_config = GlobalConfig(
-        gridhorizon_path="/grids",
-        attributes=["rms", "mean"],
-        surface_postfix="--depth.gri",
-        scale_factor=1.0,
-    )
-    settings = _get_formation_settings(formation_info, global_config)
-
-    assert settings.top_horizon == expected_values["top_horizon"]
-    assert settings.bottom_horizon == expected_values["bottom_horizon"]
-    assert settings.top_surface_shift == expected_values["top_surface_shift"]
-    assert settings.base_surface_shift == expected_values["base_surface_shift"]
-    assert settings.window_length == expected_values["window_length"]
-    assert settings.attributes == expected_values["attributes"]
 
 
 @pytest.mark.parametrize(
@@ -791,7 +631,7 @@ def test_get_matching_cubes(match_results, expected_count):
         assert cube in result
 
 
-def test_multiple_formations_in_single_cube():
+def test_multiple_formations_in_single_cube(patch_directory_validation):
     config = {
         "global": {
             "gridhorizon_path": "/grids",
@@ -845,7 +685,7 @@ def test_multiple_formations_in_single_cube():
     assert all(a.from_cube is cube for a in attrs)
 
 
-def test_attribute_with_only_horizon_override():
+def test_attribute_with_only_horizon_override(patch_directory_validation):
     config = {
         "global": {
             "gridhorizon_path": "/grids",
@@ -902,7 +742,7 @@ def test_attribute_with_only_horizon_override():
     assert len(mean_attrs) == 1
 
 
-def test_surface_loaded_only_once_when_reused():
+def test_surface_loaded_only_once_when_reused(patch_directory_validation):
     config = {
         "global": {
             "gridhorizon_path": "/grids",
@@ -961,7 +801,7 @@ def test_surface_loaded_only_once_when_reused():
     assert load_count["basexi"] == 1
 
 
-def test_attribute_with_window_length_override():
+def test_attribute_with_window_length_override(patch_directory_validation):
     config = {
         "global": {
             "gridhorizon_path": "/grids",
