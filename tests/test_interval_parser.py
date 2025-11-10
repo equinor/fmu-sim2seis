@@ -1,23 +1,26 @@
 import logging
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
 import xtgeo
-from pathlib import Path
+
 from fmu.sim2seis.utilities import SeismicName, SingleSeismic
 from fmu.sim2seis.utilities.interval_parser import (
+    FormationSettings,
     GlobalConfig,
     _get_matching_cubes,
     _group_attributes_by_interval,
     populate_seismic_attributes,
-    FormationSettings,
 )
+
 
 @pytest.fixture
 def patch_directory_validation():
     """Patch Path.is_dir() to allow non-existent directories in tests"""
     with patch.object(Path, "is_dir", return_value=True):
         yield
+
 
 @pytest.fixture
 def real_yaml_config(tmp_path):
@@ -153,10 +156,12 @@ def test_identical_interval_attributes_are_grouped(
     assert grouped_attr[0].scale_factor == 1.0
 
 
-def test_window_length_creates_virtual_base_surface(recwarn, caplog, patch_directory_validation):
+def test_window_length_creates_virtual_base_surface(
+    recwarn, caplog, patch_directory_validation
+):
     """
     Tests that if window length is provided, then the bottom_horizon is ignored,
-    and no warning is emitted.
+    and a warning is emitted.
     """
     config = {
         "global": {
@@ -178,8 +183,8 @@ def test_window_length_creates_virtual_base_surface(recwarn, caplog, patch_direc
                         "bottom_horizon": "basealpha",
                         "window_length": 25.0,
                         "rms": {
-                            "top_horizon": "my_horizon",
-                        }
+                            "top_horizon": "topalpha",
+                        },
                     }
                 },
             }
@@ -201,14 +206,12 @@ def test_window_length_creates_virtual_base_surface(recwarn, caplog, patch_direc
             config=config, cubes=cubes, surfaces=surfaces
         )
 
-    # Assert that code emits no warnings, despite ignoring one config option
-    warning_messages = [
-        record.message for record in caplog.records if record.levelno >= logging.WARNING
-    ]
-    assert len(warning_messages) == 0, (
-        f"Expected no warnings, but got: {warning_messages}"
+    # Assert that code emits a warnings, despite ignoring one config option
+    assert len(recwarn) == 1
+    assert (
+        "Both 'bottom_horizon' ('basealpha') and 'window_length' (25.0) are specified."
+        in str(recwarn[0].message)
     )
-    assert len(recwarn) == 0
 
     assert surface_from_file.call_count == 1
     assert surface_from_file.call_args[0][0] == "/grids/topalpha--depth.gri"
@@ -282,7 +285,9 @@ def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
     assert loaded_surfaces["basebeta"].name == "basebeta"
 
 
-def test_populate_raises_when_no_matching_cubes(real_yaml_config, mock_surfaces, patch_directory_validation):
+def test_populate_raises_when_no_matching_cubes(
+    real_yaml_config, mock_surfaces, patch_directory_validation
+):
     """
     Should maybe be a more specific error message?
     """
@@ -293,7 +298,11 @@ def test_populate_raises_when_no_matching_cubes(real_yaml_config, mock_surfaces,
 
 
 def test_attribute_specific_scale_factor_override(
-    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader, patch_directory_validation
+    real_yaml_config,
+    mock_surfaces,
+    mock_cubes,
+    patch_surface_loader,
+    patch_directory_validation,
 ):
     # rms in relai_depth has scale_factor override = 1.02 while global is 1.0
     attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
@@ -311,7 +320,11 @@ def test_attribute_specific_scale_factor_override(
 
 
 def test_different_attribute_overrides_result_in_separate_groups(
-    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader, patch_directory_validation
+    real_yaml_config,
+    mock_surfaces,
+    mock_cubes,
+    patch_surface_loader,
+    patch_directory_validation,
 ):
     # In amplitude_depth:
     # mean overrides top/base shifts, min only scale_factor
@@ -502,7 +515,6 @@ def test_multiple_cubes_same_prefix_duplicate_attributes(patch_directory_validat
     assert cubes_in_attrs == expected_cubes
 
 
-
 def test_window_interval_retains_base_surface_shift_current_behavior(
     patch_surface_loader, patch_directory_validation
 ):
@@ -551,7 +563,7 @@ def test_window_interval_retains_base_surface_shift_current_behavior(
     assert len(seismic_attr_list) == 1
     attr = seismic_attr_list[0]
     assert attr.window_length == 12.0
-    assert attr.base_surface_shift == 5.0
+    assert attr.base_surface_shift == 0.0
 
 
 def test_group_attributes_by_interval_all_same(patch_directory_validation):
@@ -571,6 +583,8 @@ def test_group_attributes_by_interval_all_same(patch_directory_validation):
     result = _group_attributes_by_interval(
         formation_settings=formation_settings,
         global_config=global_config,
+        formation_name="my_formation",
+        cube_name="my_cube",
     )
     assert len(result) == 1
     interval_key = list(result.keys())[0]
@@ -598,6 +612,8 @@ def test_group_attributes_by_interval_all_different(patch_directory_validation):
     result = _group_attributes_by_interval(
         formation_settings=formation_settings,
         global_config=global_config,
+        formation_name="my_formation",
+        cube_name="my_cube",
     )
     assert len(result) == 3
 
