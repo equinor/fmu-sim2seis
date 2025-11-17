@@ -23,6 +23,23 @@ def patch_directory_validation():
 
 
 @pytest.fixture
+def create_chainable_surface():
+    """Create a mock surface that supports chained additions."""
+
+    def _create():
+        surface = Mock(spec=xtgeo.RegularSurface)
+        intermediate = Mock(spec=xtgeo.RegularSurface)
+        final = Mock(spec=xtgeo.RegularSurface)
+
+        surface.__add__ = Mock(return_value=intermediate)
+        intermediate.__add__ = Mock(return_value=final)
+
+        return surface, intermediate, final
+
+    return _create
+
+
+@pytest.fixture
 def real_yaml_config(tmp_path):
     grid_path = tmp_path / "maps"
     grid_path.mkdir()
@@ -157,7 +174,10 @@ def test_identical_interval_attributes_are_grouped(
 
 
 def test_window_length_creates_virtual_base_surface(
-    recwarn, caplog, patch_directory_validation
+    recwarn,
+    caplog,
+    patch_directory_validation,
+    create_chainable_surface,
 ):
     """
     Tests that if window length is provided, then the bottom_horizon is ignored,
@@ -190,8 +210,7 @@ def test_window_length_creates_virtual_base_surface(
             }
         },
     }
-    top_surface = Mock(spec=xtgeo.RegularSurface)
-    top_surface.__add__ = Mock(return_value=Mock(spec=xtgeo.RegularSurface))
+    top_surface, intermediate, final = create_chainable_surface()
     surfaces = {"topalpha--depth.gri": top_surface}
     cubes = {
         SeismicName(
@@ -213,10 +232,10 @@ def test_window_length_creates_virtual_base_surface(
         in str(recwarn[0].message)
     )
 
-    assert surface_from_file.call_count == 1
     assert surface_from_file.call_args[0][0] == "/grids/topalpha--depth.gri"
-    top_surface.__add__.assert_called_once_with(25.0)
-    assert result[0].base_surface is top_surface.__add__.return_value
+    top_surface.__add__.assert_called_once_with(0.0)
+    intermediate.__add__.assert_called_once_with(25.0)
+    assert result[0].base_surface is final
 
 
 def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
@@ -516,7 +535,9 @@ def test_multiple_cubes_same_prefix_duplicate_attributes(patch_directory_validat
 
 
 def test_window_interval_retains_base_surface_shift_current_behavior(
-    patch_surface_loader, patch_directory_validation
+    patch_surface_loader,
+    patch_directory_validation,
+    create_chainable_surface,
 ):
     """
     Document current (possibly unintended) behavior:
@@ -549,8 +570,7 @@ def test_window_interval_retains_base_surface_shift_current_behavior(
             }
         },
     }
-    top = Mock(spec=xtgeo.RegularSurface)
-    top.__add__ = Mock(return_value=Mock(spec=xtgeo.RegularSurface))
+    top, _intermediate, _final = create_chainable_surface()
     surfaces = {"topiota--depth.gri": top}
     cubes = {
         SeismicName(
@@ -817,7 +837,10 @@ def test_surface_loaded_only_once_when_reused(patch_directory_validation):
     assert load_count["basexi"] == 1
 
 
-def test_attribute_with_window_length_override(patch_directory_validation):
+def test_attribute_with_window_length_override(
+    patch_directory_validation,
+    create_chainable_surface,
+):
     config = {
         "global": {
             "gridhorizon_path": "/grids",
@@ -846,10 +869,8 @@ def test_attribute_with_window_length_override(patch_directory_validation):
         },
     }
 
-    top_surf = Mock(spec=xtgeo.RegularSurface)
+    top_surf, _inter, _final = create_chainable_surface()
     base_surf = Mock(spec=xtgeo.RegularSurface)
-    virtual_base = Mock(spec=xtgeo.RegularSurface)
-    top_surf.__add__ = Mock(return_value=virtual_base)
 
     surfaces = {
         "topomicron--depth.gri": top_surf,

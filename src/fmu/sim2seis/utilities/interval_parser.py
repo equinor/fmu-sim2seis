@@ -221,16 +221,14 @@ def _group_attributes_by_interval(
 
 
 def _load_surface(
-    surface_name: str,
+    surface_name: str | None,
     surfaces: dict[str, xtgeo.RegularSurface],
     horizon_postfix: str,
     gridhorizon_path: Path,
-    window_length: float | None = None,
-    base_surface: xtgeo.RegularSurface | None = None,
 ) -> xtgeo.RegularSurface:
-    """Load a surface from either the surfaces dictionary or from file."""
-    if window_length is not None and base_surface is not None:
-        return base_surface + window_length
+    """
+    Load a surface from either the surfaces dictionary or from file.
+    """
 
     surface_key = surface_name + horizon_postfix
     try:
@@ -258,15 +256,16 @@ def _create_seismic_attribute(
         horizon_postfix=global_config.surface_postfix,
         gridhorizon_path=global_config.gridhorizon_path,
     )
-
-    attr_bottom_surface = _load_surface(
-        surface_name=interval_config.bottom_horizon,
-        surfaces=surfaces,
-        horizon_postfix=global_config.surface_postfix,
-        gridhorizon_path=global_config.gridhorizon_path,
-        window_length=interval_config.window_length,
-        base_surface=attr_top_surface,
-    )
+    if interval_config.window_length is not None:
+        # Calculated in post init of SeismicAttribute
+        attr_bottom_surface = None
+    else:
+        attr_bottom_surface = _load_surface(
+            surface_name=interval_config.bottom_horizon,
+            surfaces=surfaces,
+            horizon_postfix=global_config.surface_postfix,
+            gridhorizon_path=global_config.gridhorizon_path,
+        )
 
     return SeismicAttribute(
         surface=attr_top_surface,
