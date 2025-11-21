@@ -36,7 +36,7 @@ def main(arguments=None):
     with restore_dir(run_folder):
         # Read configuration file, including global configuration
         config = read_yaml_file(
-            args.startdir / args.configdir / args.configfile, args.startdir
+            run_folder / args.configdir / args.configfile, run_folder
         )
 
         # Establish symlinks to the observed seismic data, make exception for
@@ -64,8 +64,8 @@ def main(arguments=None):
         else:
             attr_list = populate_seismic_attributes(
                 config=read_yaml_file(
-                    args.startdir / args.configdir / config.attribute_definition_file,
-                    args.startdir,
+                    run_folder / args.configdir / config.attribute_definition_file,
+                    run_folder,
                     update_with_global=False,
                     parse_inputs=False,
                 ),

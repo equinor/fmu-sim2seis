@@ -20,7 +20,7 @@
      <parameter-names> 
        <vp>VP</vp>
        <vs>VS</vs>
-       <rho>DENS</rho>
+       <rho>DENSITY</rho>
      </parameter-names>
 
      # type of interpolation to use ++:

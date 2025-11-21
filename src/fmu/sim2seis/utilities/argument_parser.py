@@ -78,13 +78,10 @@ def parse_arguments(
 
 
 def check_startup_dir(cwd: Path) -> Path:
-    if str(cwd.absolute()).endswith("rms/model"):
-        run_folder = cwd
-    else:
-        try:
-            run_folder = cwd.joinpath("rms/model")
-            assert run_folder.exists() and run_folder.is_dir()
-        except AssertionError as e:
-            warn(f"sim2seis workflow should be run from the rms/model folder. {e}")
-            run_folder = cwd
+    run_folder = cwd.absolute()
+    if not str(run_folder).endswith("rms/model"):
+        warn(f"sim2seis workflow should be run from the rms/model folder.")
+    if not run_folder.exists() and run_folder.is_dir():
+        raise ValueError(f"Start directory does not exist or is not a directory: "
+                         f"{run_folder}")
     return run_folder

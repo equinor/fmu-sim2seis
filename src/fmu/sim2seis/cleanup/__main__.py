@@ -46,7 +46,7 @@ def main(arguments=None):
 
     with restore_dir(run_folder):
         config = read_yaml_file(
-            args.startdir / args.configdir / args.configfile, args.startdir
+            run_folder / args.configdir / args.configfile, run_folder
         )
         if hasattr(args, "prefixlist"):
             clear_result_objects(

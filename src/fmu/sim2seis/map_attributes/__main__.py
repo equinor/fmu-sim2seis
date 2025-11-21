@@ -27,7 +27,7 @@ def main(arguments=None):
     with restore_dir(run_folder):
         # Read configuration file
         config = read_yaml_file(
-            args.startdir / args.configdir / args.configfile, args.startdir
+            run_folder / args.configdir / args.configfile, run_folder
         )
 
         # Determine if the attributes are from seismic amplitude or inverted
@@ -46,8 +46,8 @@ def main(arguments=None):
         # Generate attributes
         attr_list = populate_seismic_attributes(
             config=read_yaml_file(
-                args.startdir / args.configdir / config.attribute_definition_file,
-                args.startdir,
+                run_folder / args.configdir / config.attribute_definition_file,
+                run_folder,
                 update_with_global=False,
                 parse_inputs=False,
             ),
@@ -67,7 +67,7 @@ def main(arguments=None):
         attribute_export(
             config_file=config,
             export_attributes=attr_list,
-            start_dir=args.startdir,
+            start_dir=run_folder,
             is_observed=False,
         )
 
