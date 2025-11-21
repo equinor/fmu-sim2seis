@@ -23,7 +23,7 @@ hero:
 features:
   - icon: 🛠️
     title: Less maintenance
-    details: No need for custom scripts in your FMU or RMS project. Sim2seis is maintained centrally by Equinor, and available as pre-installert ERT forward models.
+    details: No need for custom scripts in your FMU or RMS project. Sim2seis is maintained centrally by Equinor, and available as pre-installed ERT forward models.
   - icon: 🤝
     title: Shared rock physics library
     details: FMU sim2seis uses the same underlying rock physics library as RokDoc plugins - ensuring consistent output across the software portfolio.
