@@ -27,6 +27,7 @@ from .sim2seis_class_definitions import (
 # modify default values, and the class/property is therefore hidden from the
 # interface.
 
+
 class SeismicForward(BaseModel):
     model_config = ConfigDict(title="Seismic forward modelling")
     attribute: SkipJsonSchema[AttributeDef] = Field(
@@ -65,13 +66,14 @@ class SeismicForward(BaseModel):
         description="Folder for the XML model files listed in 'stack_models'",
     )
     stack_models: dict[StackDef, Path] = Field(
-        description="Path to XML files describing modelling of different seismic stacks (partial or full). "
+        description="Path to XML files describing modelling of different seismic stacks"
+        " (partial or full). "
         "The parameters in the files should reflect the case, e.g. "
         "settings for `Vp`, `Vs` and density for the depth intervals. "
         "Documentation to XML tags and values are found in  "
-        "[the `seismic-forward` documentation](https://github.com/equinor/seismic-forward/blob/main/doc/Seismic_Forward_usermanual_ver_4.3.pdf). "
+        "[the `seismic-forward` documentation](https://github.com/equinor/seismic-forward/blob/main/doc/Seismic_Forward_usermanual_ver_4.3.pdf). "  # noqa: E501
         "Allowed key values are: `full`, `near`, `mid`, `far`"
-        # We list the enum values here while waiting on input on https://github.com/rjsf-team/react-jsonschema-form/issues/4682 
+        # We list the enum values here while waiting on input on https://github.com/rjsf-team/react-jsonschema-form/issues/4682
     )
     twt_model: SkipJsonSchema[FilePath] = Field(
         default=Path("../../sim2seis/model/model_file_twt.xml"),
@@ -139,27 +141,27 @@ class DepthConvertConfig(BaseModel):
     )
     min_depth: int = Field(
         title="Minimum depth",
-        description="For the depth converted cubes. Unit in `meters`"
+        description="For the depth converted cubes. Unit in `meters`",
     )
     max_depth: int = Field(
         title="Maximum depth",
-        description="For the depth converted cubes. Unit in `meters`"
+        description="For the depth converted cubes. Unit in `meters`",
     )
     z_inc: int = Field(
         title="Depth increment",
-        description="For the depth converted cubes. Unit in `meters`"
+        description="For the depth converted cubes. Unit in `meters`",
     )
     min_time: int = Field(
         title="Minimum time",
-        description="For the time converted cubes. Unit in `milliseconds`"
+        description="For the time converted cubes. Unit in `milliseconds`",
     )
     max_time: int = Field(
         title="Maximum time",
-        description="For the time converted cubes. Unit in `milliseconds`"
+        description="For the time converted cubes. Unit in `milliseconds`",
     )
     t_inc: int = Field(
         title="Time increment",
-        description="For the time converted cubes. Unit in `milliseconds`"
+        description="For the time converted cubes. Unit in `milliseconds`",
     )
     time_cube_dir: SkipJsonSchema[DirectoryPath] = Field(
         default=Path("../../share/results/cubes"),
@@ -244,17 +246,17 @@ class WebvizMap(BaseModel):
     grid_file: Path = Field(
         default=Path("simgrid.roff"),
         description="The file name for grid definition file, 'roff' format is normally "
-        "used"
+        "used",
     )
     zone_file: Path = Field(
         default=Path("simgrid--zone.roff"),
         description="The file name for zone definition file, 'roff' format is normally "
-        "used"
+        "used",
     )
     region_file: Path = Field(
         default=Path("simgrid--region.roff"),
         description="The file name for region definition file, 'roff' format is "
-        "normally used"
+        "normally used",
     )
     attribute_error: float | Path = Field(
         description="Attribute error is normally given as a fractional number, "
@@ -424,7 +426,7 @@ class Sim2SeisConfig(BaseModel):
     )
     config_file_name: SkipJsonSchema[Path] = Field(
         description="Full file name is added to the config structure",
-        default=Path(r"../../sim2seis/model/sim2seis_config.yml")
+        default=Path(r"../../sim2seis/model/sim2seis_config.yml"),
     )
     seismic_fwd: SeismicForward
     amplitude_map: SkipJsonSchema[AmplitudeMapConfig] = Field(
