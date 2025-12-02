@@ -16,16 +16,27 @@ def test_surfaces():
     values = np.ones((ny, nx))
 
     surf1 = xtgeo.RegularSurface(
-        ncol=nx, nrow=ny, xori=xori, yori=yori,
-        xinc=xinc, yinc=yinc, values=values  # type: ignore
+        ncol=nx,
+        nrow=ny,
+        xori=xori,
+        yori=yori,
+        xinc=xinc,
+        yinc=yinc,
+        values=values,  # type: ignore
     )
 
     surf2 = xtgeo.RegularSurface(
-        ncol=nx, nrow=ny, xori=xori, yori=yori,
-        xinc=xinc, yinc=yinc, values=values * 2  # type: ignore
+        ncol=nx,
+        nrow=ny,
+        xori=xori,
+        yori=yori,
+        xinc=xinc,
+        yinc=yinc,
+        values=values * 2,  # type: ignore
     )
 
     return {"surface1": surf1, "surface2": surf2}
+
 
 def verify_loaded_surfaces(loaded_dict, original_dict):
     """Verify that loaded surfaces match the original ones."""
@@ -34,9 +45,9 @@ def verify_loaded_surfaces(loaded_dict, original_dict):
     for key in original_dict:
         assert isinstance(loaded_dict[key], xtgeo.RegularSurface)
         np.testing.assert_array_equal(
-            loaded_dict[key].values,
-            original_dict[key].values
+            loaded_dict[key].values, original_dict[key].values
         )
+
 
 def test_absolute_paths(tmp_path, test_surfaces, monkeypatch):
     """Test dumping and retrieving with absolute paths."""
@@ -53,6 +64,7 @@ def test_absolute_paths(tmp_path, test_surfaces, monkeypatch):
     loaded_dict = retrieve_result_objects(output_dir.absolute(), file_name)
     verify_loaded_surfaces(loaded_dict, test_surfaces)
 
+
 def test_relative_paths(tmp_path, test_surfaces, monkeypatch):
     """Test dumping and retrieving with relative paths."""
     monkeypatch.chdir(tmp_path)
@@ -68,6 +80,7 @@ def test_relative_paths(tmp_path, test_surfaces, monkeypatch):
     loaded_dict = retrieve_result_objects(output_dir, file_name)
     verify_loaded_surfaces(loaded_dict, test_surfaces)
 
+
 def test_error_on_readonly_dump(tmp_path):
     """Test error handling with read-only directory for dump."""
     output_dir = tmp_path / "readonly"
@@ -75,16 +88,10 @@ def test_error_on_readonly_dump(tmp_path):
     output_dir.chmod(0o444)  # Read-only
 
     with pytest.raises(ValueError, match="unable to dump pickle objects"):
-        dump_result_objects(
-            output_dir,
-            Path("test.pkl"),
-            {"test": "data"}
-        )
+        dump_result_objects(output_dir, Path("test.pkl"), {"test": "data"})
+
 
 def test_error_on_missing_file_retrieve(tmp_path):
     """Test error handling when trying to retrieve non-existent file."""
     with pytest.raises(ValueError, match="unable to load pickle objects"):
-        retrieve_result_objects(
-            tmp_path,
-            Path("nonexistent.pkl")
-        )
+        retrieve_result_objects(tmp_path, Path("nonexistent.pkl"))

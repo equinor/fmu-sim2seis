@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from ert import (
@@ -47,7 +46,7 @@ class SeismicForward(ForwardModelStepPlugin):
             _ = read_yaml_file(model_dir / config_file, start_dir)
         except Exception as e:
             raise ForwardModelStepValidationError(
-                f"sim2seis observed data validation failed:\n {e}"
+                f"sim2seis seismic forward validation failed:\n {e}"
             )
 
     @staticmethod

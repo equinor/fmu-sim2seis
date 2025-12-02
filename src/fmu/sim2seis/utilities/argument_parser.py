@@ -37,8 +37,8 @@ def parse_arguments(
         "--model-dir",
         type=Path,
         required=False,
-        help="For ERT run: Absolute directory name for model file, pre-experiment. Not "
-        "needed for command line run",
+        help="For ERT run: Absolute directory name for the configuration parameter"
+             " file within the FMU project",
     )
     if "attribute" in extra_arguments:
         parser.add_argument(

@@ -48,7 +48,7 @@ def main(arguments=None):
         config = read_yaml_file(
             run_folder / args.config_dir / args.config_file, run_folder
         )
-        if hasattr(args, "prefixlist"):
+        if hasattr(args, "prefix_list"):
             clear_result_objects(
                 output_path=config.pickle_file_output_path, prefix_list=args.prefix_list
             )

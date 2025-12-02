@@ -21,8 +21,6 @@ class RelativeInversion(ForwardModelStepPlugin):
                 "<CONFIG_DIR>",
                 "--config-file",
                 "<CONFIG_FILE>",
-                "--model-dir",
-                "<MODEL_DIR>",
                 "--verbose",
                 "<VERBOSE>",
             ],
