@@ -31,12 +31,12 @@ def main(arguments=None):
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["verbose", "no_attributes"])
     # Validate startup directory
-    run_folder = check_startup_dir(args.startdir)
+    run_folder = check_startup_dir(args.start_dir)
 
     with restore_dir(run_folder):
         # Read configuration file, including global configuration
         config = read_yaml_file(
-            run_folder / args.configdir / args.configfile, run_folder
+            run_folder / args.config_dir / args.config_file, run_folder
         )
 
         # Establish symlinks to the observed seismic data, make exception for
@@ -64,7 +64,7 @@ def main(arguments=None):
         else:
             attr_list = populate_seismic_attributes(
                 config=read_yaml_file(
-                    run_folder / args.configdir / config.attribute_definition_file,
+                    run_folder / args.config_dir / config.attribute_definition_file,
                     run_folder,
                     update_with_global=False,
                     parse_inputs=False,
@@ -98,7 +98,6 @@ def main(arguments=None):
             start_dir=run_folder,
             is_observed=True,
         )
-
 
 
 if __name__ == "__main__":

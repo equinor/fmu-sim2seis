@@ -36,12 +36,12 @@ def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["verbose"])
-    run_folder = check_startup_dir(args.startdir)
+    run_folder = check_startup_dir(args.start_dir)
 
     with restore_dir(run_folder):
         # Get configuration parameters
         config = read_yaml_file(
-            run_folder / args.configdir / args.configfile, run_folder
+            run_folder / args.config_dir / args.config_file, run_folder
         )
 
         # Read the horizons that are used in depth conversion and later for extraction

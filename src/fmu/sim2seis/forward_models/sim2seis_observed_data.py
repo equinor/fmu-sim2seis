@@ -6,8 +6,6 @@ from ert import (
     ForwardModelStepPlugin,
 )
 
-# from grid3d_maps.aggregate.grid3d_aggregate_map import DESCRIPTION
-
 
 class ObservedData(ForwardModelStepPlugin):
     def __init__(self) -> None:
@@ -15,11 +13,11 @@ class ObservedData(ForwardModelStepPlugin):
             name="OBSERVED_DATA",
             command=[
                 "sim2seis_observed_data",
-                "--startdir",
+                "--start-dir",
                 "<START_DIR>",
-                "--configdir",
+                "--config-dir",
                 "<CONFIG_DIR>",
-                "--configfile",
+                "--config-file",
                 "<CONFIG_FILE>",
             ],
         )
