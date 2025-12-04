@@ -13,24 +13,32 @@ def parse_arguments(
     parser = argparse.ArgumentParser(__file__)
     parser.add_argument(
         "-s",
-        "--startdir",
+        "--start-dir",
         type=Path,
         required=True,
         help="Start directory for running script (required)",
     )
     parser.add_argument(
         "-c",
-        "--configdir",
+        "--config-dir",
         type=Path,
         required=True,
         help="Path to config file (required)",
     )
     parser.add_argument(
         "-f",
-        "--configfile",
+        "--config-file",
         type=Path,
         required=True,
         help="Configuration yaml file name",
+    )
+    parser.add_argument(
+        "-m",
+        "--model-dir",
+        type=Path,
+        required=False,
+        help="For ERT run: Absolute directory name for the configuration parameter"
+             " file within the FMU project",
     )
     if "attribute" in extra_arguments:
         parser.add_argument(
@@ -54,7 +62,7 @@ def parse_arguments(
     if "no_attributes" in extra_arguments:
         parser.add_argument(
             "-n",
-            "--no_attributes",
+            "--no-attributes",
             type=bool,
             required=False,
             default=False,
@@ -63,7 +71,7 @@ def parse_arguments(
     if "cleanup" in extra_arguments:
         parser.add_argument(
             "-p",
-            "--prefixlist",
+            "--prefix-list",
             required=False,
             default=False,
             nargs="+",
@@ -80,8 +88,9 @@ def parse_arguments(
 def check_startup_dir(cwd: Path) -> Path:
     run_folder = cwd.absolute()
     if not str(run_folder).endswith("rms/model"):
-        warn(f"sim2seis workflow should be run from the rms/model folder.")
+        warn("sim2seis workflow should be run from the rms/model folder.")
     if not run_folder.exists() and run_folder.is_dir():
-        raise ValueError(f"Start directory does not exist or is not a directory: "
-                         f"{run_folder}")
+        raise ValueError(
+            f"Start directory does not exist or is not a directory: {run_folder}"
+        )
     return run_folder

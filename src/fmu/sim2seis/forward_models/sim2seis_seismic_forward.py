@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from ert import (
     ForwardModelStepDocumentation,
     ForwardModelStepJSON,
@@ -7,7 +9,7 @@ from ert import (
     ForwardModelStepValidationError,
 )
 
-# from grid3d_maps.aggregate.grid3d_aggregate_map import DESCRIPTION
+from fmu.sim2seis.utilities import read_yaml_file
 
 
 class SeismicForward(ForwardModelStepPlugin):
@@ -16,12 +18,14 @@ class SeismicForward(ForwardModelStepPlugin):
             name="SEISMIC_FORWARD",
             command=[
                 "sim2seis_seismic_forward",
-                "--startdir",
+                "--start-dir",
                 "<START_DIR>",
-                "--configdir",
+                "--config-dir",
                 "<CONFIG_DIR>",
-                "--configfile",
+                "--config-file",
                 "<CONFIG_FILE>",
+                "--model-dir",
+                "<MODEL_DIR>",
                 "--verbose",
                 "<VERBOSE>",
             ],
@@ -33,33 +37,16 @@ class SeismicForward(ForwardModelStepPlugin):
         return fm_step_json
 
     def validate_pre_experiment(self, fm_step_json: ForwardModelStepJSON) -> None:
-        import os
-        from pathlib import Path
-
-        from fmu.sim2seis.utilities import read_yaml_file
-
-        model_dir_env = os.environ.get("SIM2SEIS_MODEL_DIR")
-        if not model_dir_env:
-            raise ValueError(
-                'environment variable "SIM2SEIS_MODEL_DIR" must be set to '
-                "validate SIM2SEIS model pre-experiment"
-            )
-        model_dir = Path(model_dir_env)
-
-        runpath_config_dir = Path(fm_step_json["argList"][3])
-        config_dir = (
-            model_dir
-            / "../.."
-            / runpath_config_dir.parent.name
-            / runpath_config_dir.name
-        ).resolve()
-        config_file = fm_step_json["argList"][5]
+        # Parse YAML parameter file by pydantic pre-experiment to catch errors at an
+        # early stage
+        config_file = Path(fm_step_json["argList"][5])
+        model_dir = Path(fm_step_json["argList"][7])
+        start_dir = model_dir / "../../rms/model"
         try:
-            os.chdir(model_dir)
-            _ = read_yaml_file(config_dir / config_file, model_dir)
+            _ = read_yaml_file(model_dir / config_file, start_dir)
         except Exception as e:
             raise ForwardModelStepValidationError(
-                f"sim2seis observed data validation failed:\n {e}"
+                f"sim2seis seismic forward validation failed:\n {e}"
             )
 
     @staticmethod

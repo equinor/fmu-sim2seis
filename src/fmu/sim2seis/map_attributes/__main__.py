@@ -22,12 +22,12 @@ def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["attribute", "verbose"])
-    run_folder = check_startup_dir(args.startdir)
+    run_folder = check_startup_dir(args.start_dir)
 
     with restore_dir(run_folder):
         # Read configuration file
         config = read_yaml_file(
-            run_folder / args.configdir / args.configfile, run_folder
+            run_folder / args.config_dir / args.config_file, run_folder
         )
 
         # Determine if the attributes are from seismic amplitude or inverted
@@ -46,7 +46,7 @@ def main(arguments=None):
         # Generate attributes
         attr_list = populate_seismic_attributes(
             config=read_yaml_file(
-                run_folder / args.configdir / config.attribute_definition_file,
+                run_folder / args.config_dir / config.attribute_definition_file,
                 run_folder,
                 update_with_global=False,
                 parse_inputs=False,

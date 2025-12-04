@@ -7,14 +7,14 @@ added for this purpose. This can also be run from command line for interactive s
 
 Command line call:
 
-    sim2seis_cleanup --startdir <...> --configdir <...> --configfile <...>
-                     --prefixlist <...>
+    sim2seis_cleanup --start-dir <...> --config-dir <...> --config-file <...>
+                     --prefix-list <...>
 
-    --startdir: should be in rms/model level in an fmu directory structure
-    --configdir: relative path to the configuration file for sim2seis or observed_data
+    --start-dir: should be in rms/model level in an fmu directory structure
+    --config-dir: relative path to the configuration file for sim2seis or observed_data
                 (note below)
-    --configfile: yaml-file with configuration parameters
-    --prefixlist: (optional) list of prefixes for pickle files if only some of the
+    --config-file: yaml-file with configuration parameters
+    --prefix-list: (optional) list of prefixes for pickle files if only some of the
                   saved pickle
                   files are to be deleted. If it is not included, all pickle files are
                   removed
@@ -42,15 +42,15 @@ def main(arguments=None):
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["cleanup"])
     # args may contain only an empty string in "prefixlist". If so, remove attribute
-    run_folder = check_startup_dir(args.startdir)
+    run_folder = check_startup_dir(args.start_dir)
 
     with restore_dir(run_folder):
         config = read_yaml_file(
-            run_folder / args.configdir / args.configfile, run_folder
+            run_folder / args.config_dir / args.config_file, run_folder
         )
-        if hasattr(args, "prefixlist"):
+        if hasattr(args, "prefix_list"):
             clear_result_objects(
-                output_path=config.pickle_file_output_path, prefix_list=args.prefixlist
+                output_path=config.pickle_file_output_path, prefix_list=args.prefix_list
             )
         else:
             clear_result_objects(

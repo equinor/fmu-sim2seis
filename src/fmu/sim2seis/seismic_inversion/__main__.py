@@ -35,11 +35,11 @@ def main(arguments=None):
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["verbose"])
 
-    run_folder = check_startup_dir(args.startdir)
+    run_folder = check_startup_dir(args.start_dir)
 
     with restore_dir(run_folder):
         conf = read_yaml_file(
-            run_folder / args.configdir / args.configfile, run_folder
+            run_folder / args.config_dir / args.config_file, run_folder
         )
 
         # Retrieve the seismic time cubes from seismic forward modelling
