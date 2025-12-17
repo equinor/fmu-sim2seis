@@ -45,8 +45,8 @@ def test_seismic_attribute_value(sample_seismic_attribute):
     assert isinstance(values[0], xtgeo.RegularSurface)
 
 
-def test_seismic_attribute_with_window_length_calculates_base_surface():
-    """Test that base_surface is calculated when window_length is provided."""
+def test_seismic_attribute_with_window_length_calculates_bottom_surface():
+    """Test that bottom_surface is calculated when window_length is provided."""
     surface = Mock(spec=xtgeo.RegularSurface)
     intermediate = Mock(spec=xtgeo.RegularSurface)
     final = Mock(spec=xtgeo.RegularSurface)
@@ -67,37 +67,37 @@ def test_seismic_attribute_with_window_length_calculates_base_surface():
     # Verify: surface + top_shift + window_length
     surface.__add__.assert_called_once_with(5.0)
     intermediate.__add__.assert_called_once_with(25.0)
-    assert attr.base_surface is final
-    assert attr.base_surface_shift == 0.0  # Should be zeroed
+    assert attr.bottom_surface is final
+    assert attr.bottom_surface_shift == 0.0  # Should be zeroed
 
 
-def test_seismic_attribute_with_provided_base_surface():
-    """Test that provided base_surface is used and not recalculated."""
+def test_seismic_attribute_with_provided_bottom_surface():
+    """Test that provided bottom_surface is used and not recalculated."""
     top_surface = Mock(spec=xtgeo.RegularSurface)
-    base_surface = Mock(spec=xtgeo.RegularSurface)
+    bottom_surface = Mock(spec=xtgeo.RegularSurface)
     cube = Mock()
 
     attr = SeismicAttribute(
         surface=top_surface,
         calc_types=["mean"],
         from_cube=cube,
-        base_surface=base_surface,
-        base_surface_shift=10.0,
+        bottom_surface=bottom_surface,
+        bottom_surface_shift=10.0,
     )
 
-    # base_surface should not be modified
-    assert attr.base_surface is base_surface
-    assert attr.base_surface_shift == 10.0  # Should NOT be zeroed
+    # bottom_surface should not be modified
+    assert attr.bottom_surface is bottom_surface
+    assert attr.bottom_surface_shift == 10.0  # Should NOT be zeroed
     assert attr.window_length is None
 
 
 def test_seismic_attribute_value_applies_scale_factor():
     """Test that value property applies scale_factor correctly."""
     surface = Mock(spec=xtgeo.RegularSurface)
-    base_surface = Mock(spec=xtgeo.RegularSurface)
+    bottom_surface = Mock(spec=xtgeo.RegularSurface)
 
     surface.__add__ = Mock(return_value=surface)
-    base_surface.__add__ = Mock(return_value=base_surface)
+    bottom_surface.__add__ = Mock(return_value=bottom_surface)
 
     mock_result_surface = Mock(spec=xtgeo.RegularSurface)
 
@@ -113,10 +113,10 @@ def test_seismic_attribute_value_applies_scale_factor():
         surface=surface,
         calc_types=["rms"],
         from_cube=cube,
-        base_surface=base_surface,
+        bottom_surface=bottom_surface,
         scale_factor=2.5,
         top_surface_shift=3.0,
-        base_surface_shift=7.0,
+        bottom_surface_shift=7.0,
     )
 
     # Mock the multiplication
@@ -125,7 +125,7 @@ def test_seismic_attribute_value_applies_scale_factor():
     values = attr.value
 
     # Verify compute_attributes_in_window was called with shifted surfaces
-    cube_obj.compute_attributes_in_window.assert_called_once_with(surface, base_surface)
+    cube_obj.compute_attributes_in_window.assert_called_once_with(surface, bottom_surface)
 
     # Verify scale_factor was applied
     mock_result_surface.__mul__.assert_called_once_with(2.5)
@@ -135,10 +135,10 @@ def test_seismic_attribute_value_applies_scale_factor():
 def test_seismic_attribute_multiple_calc_types():
     """Test with multiple calculation types."""
     surface = Mock(spec=xtgeo.RegularSurface)
-    base_surface = Mock(spec=xtgeo.RegularSurface)
+    bottom_surface = Mock(spec=xtgeo.RegularSurface)
 
     surface.__add__ = Mock(return_value=surface)
-    base_surface.__add__ = Mock(return_value=base_surface)
+    bottom_surface.__add__ = Mock(return_value=bottom_surface)
 
     rms_result = Mock(spec=xtgeo.RegularSurface)
     mean_result = Mock(spec=xtgeo.RegularSurface)
@@ -157,7 +157,7 @@ def test_seismic_attribute_multiple_calc_types():
         surface=surface,
         calc_types=["rms", "mean"],
         from_cube=cube,
-        base_surface=base_surface,
+        bottom_surface=bottom_surface,
     )
 
     values = attr.value
@@ -166,19 +166,19 @@ def test_seismic_attribute_multiple_calc_types():
     assert values == ["rms_scaled", "mean_scaled"]
 
 
-def test_seismic_attribute_fails_without_base_or_window():
-    """Test that initialization fails without base_surface or window_length."""
+def test_seismic_attribute_fails_without_bottom_surface_or_window():
+    """Test that initialization fails without bottom_surface or window_length."""
     surface = Mock(spec=xtgeo.RegularSurface)
     cube = Mock()
 
     with pytest.raises(
-        ValueError, match="Must specify either 'base_surface' or 'window_length'!"
+        ValueError, match="Must specify either 'bottom_surface' or 'window_length'!"
     ):
         SeismicAttribute(
             surface=surface,
             calc_types=["rms"],
             from_cube=cube,
-            # Missing both base_surface and window_length
+            # Missing both bottom_surface and window_length
         )
 
 

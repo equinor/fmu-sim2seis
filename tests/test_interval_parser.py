@@ -66,7 +66,7 @@ def real_yaml_config(tmp_path):
                         "top_horizon": "topvolantis",
                         "bottom_horizon": "basevolantis",
                         "top_surface_shift": -5,
-                        "base_surface_shift": 10,
+                        "bottom_surface_shift": 10,
                         "rms": {
                             "top_horizon": "topvolantis",
                             "bottom_horizon": "basevolantis",
@@ -88,12 +88,12 @@ def real_yaml_config(tmp_path):
                         "top_horizon": "topvolantis",
                         "bottom_horizon": "basevolantis",
                         "top_surface_shift": -17,
-                        "base_surface_shift": -2,
+                        "bottom_surface_shift": -2,
                         "mean": {
                             "top_horizon": "topvolantis",
                             "bottom_horizon": "basevolantis",
                             "top_surface_shift": -10,
-                            "base_surface_shift": -5,
+                            "bottom_surface_shift": -5,
                         },
                         "min": {"scale_factor": 1.5},
                     }
@@ -173,7 +173,7 @@ def test_identical_interval_attributes_are_grouped(
     assert grouped_attr[0].scale_factor == 1.0
 
 
-def test_window_length_creates_virtual_base_surface(
+def test_window_length_creates_virtual_bottom_surface(
     recwarn,
     patch_directory_validation,
     create_chainable_surface,
@@ -235,7 +235,7 @@ def test_window_length_creates_virtual_base_surface(
     assert surface_from_file.call_args[0][0] == "/grids/topalpha--depth.gri"
     top_surface.__add__.assert_called_once_with(0.0)
     intermediate.__add__.assert_called_once_with(25.0)
-    assert result[0].base_surface is final
+    assert result[0].bottom_surface is final
 
 
 def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
@@ -383,7 +383,7 @@ def test_value_property_applies_shifts_and_scale(patch_directory_validation):
                         "top_horizon": "topgamma",
                         "bottom_horizon": "basegamma",
                         "top_surface_shift": -3.0,
-                        "base_surface_shift": 7.0,
+                        "bottom_surface_shift": 7.0,
                     }
                 },
             }
@@ -534,7 +534,7 @@ def test_multiple_cubes_same_prefix_duplicate_attributes(patch_directory_validat
     assert cubes_in_attrs == expected_cubes
 
 
-def test_window_interval_zeros_out_base_surface_shift(
+def test_window_interval_zeros_out_bottom_surface_shift(
     patch_surface_loader,
     patch_directory_validation,
     create_chainable_surface,
@@ -560,7 +560,7 @@ def test_window_interval_zeros_out_base_surface_shift(
                         "bottom_horizon": "baseiota",
                         "window_length": 12.0,
                         "top_surface_shift": 2.0,
-                        "base_surface_shift": 5.0,  # This should be zeroed
+                        "bottom_surface_shift": 5.0,  # This should be zeroed
                     }
                 },
             }
@@ -579,7 +579,7 @@ def test_window_interval_zeros_out_base_surface_shift(
     assert len(seismic_attr_list) == 1
     attr = seismic_attr_list[0]
     assert attr.window_length == 12.0
-    assert attr.base_surface_shift == 0.0
+    assert attr.bottom_surface_shift == 0.0
 
 
 def test_group_attributes_by_interval_all_same(patch_directory_validation):
@@ -593,7 +593,7 @@ def test_group_attributes_by_interval_all_same(patch_directory_validation):
         top_horizon="top",
         bottom_horizon="base",
         top_surface_shift=0.0,
-        base_surface_shift=0.0,
+        bottom_surface_shift=0.0,
         window_length=None,
     )
     result = _group_attributes_by_interval(
@@ -618,12 +618,12 @@ def test_group_attributes_by_interval_all_different(patch_directory_validation):
         top_horizon="top",
         bottom_horizon="base",
         top_surface_shift=0.0,
-        base_surface_shift=0.0,
+        bottom_surface_shift=0.0,
         window_length=None,
         # Overrides go at top level, not in attribute_overrides!
         rms={"scale_factor": 1.5},
         mean={"top_surface_shift": -5.0},
-        min={"base_surface_shift": 10.0},
+        min={"bottom_surface_shift": 10.0},
     )
     result = _group_attributes_by_interval(
         formation_settings=formation_settings,

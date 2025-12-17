@@ -68,7 +68,7 @@ class FormationSettings(BaseModel):
     bottom_horizon: str | None = None
 
     top_surface_shift: float = 0
-    base_surface_shift: float = 0
+    bottom_surface_shift: float = 0
     window_length: float | None = None
 
     attribute_overrides: dict[KnownAttributes, dict[str, Any]] = Field(
@@ -99,7 +99,7 @@ class FormationSettings(BaseModel):
             "top_horizon": self.top_horizon,
             "bottom_horizon": self.bottom_horizon,
             "top_surface_shift": self.top_surface_shift,
-            "base_surface_shift": self.base_surface_shift,
+            "bottom_surface_shift": self.bottom_surface_shift,
             "window_length": self.window_length,
             "scale_factor": global_scale_factor,
         }
@@ -132,18 +132,18 @@ class IntervalConfig(BaseModel):
     - bottom_horizon: Name of the lower boundary surface (ignored if window_length is
     set)
     - top_surface_shift: Vertical shift applied to the top surface
-    - base_surface_shift: Vertical shift applied to the base surface
+    - bottom_surface_shift: Vertical shift applied to the bottom surface
     - window_length: Optional fixed interval length from top surface
     - scale_factor: Scaling factor applied to the values
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     top_horizon: str | None = None
     bottom_horizon: str | None = None
 
     top_surface_shift: float
-    base_surface_shift: float
+    bottom_surface_shift: float
     window_length: float | None = None
     scale_factor: float
 
@@ -275,9 +275,9 @@ def _create_seismic_attribute(
         scale_factor=interval_config.scale_factor,
         from_cube=cube,
         window_length=interval_config.window_length,
-        base_surface=attr_bottom_surface,
+        bottom_surface=attr_bottom_surface,
         top_surface_shift=interval_config.top_surface_shift,
-        base_surface_shift=interval_config.base_surface_shift,
+        bottom_surface_shift=interval_config.bottom_surface_shift,
         info=cube_info,
     )
 

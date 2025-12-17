@@ -355,31 +355,30 @@ class SeismicAttribute:
     from_cube: SingleSeismic | DifferenceSeismic
     scale_factor: float = 1.0
     window_length: float | None = None
-    base_surface: xtgeo.RegularSurface | None = None
+    bottom_surface: xtgeo.RegularSurface | None = None
     top_surface_shift: float = 0.0  # Use signed values for shift
-    base_surface_shift: float = 0.0  # Use signed values for shift
+    bottom_surface_shift: float = 0.0  # Use signed values for shift
     info: CubeConfig | None = None
 
     def __post_init__(self):
         # Need to verify that either a base surface or a window length is defined
         # Adjust the top and base surface according to the shift values
-        if self.base_surface is None:
+        if self.bottom_surface is None:
             if self.window_length is None:
                 raise ValueError(
-                    "Must specify either 'base_surface' or 'window_length'!"
+                    "Must specify either 'bottom_surface' or 'window_length'!"
                 )
             # Calculate the base surface from the top surface and window length.
             # Take the top surface shift into consideration to get the window length
             # correct
             object.__setattr__(
                 self,
-                "base_surface",
+                "bottom_surface",
                 self.surface + self.top_surface_shift + self.window_length,
             )
             # It makes no sense to have a shift value for the base unless it is given
             # as a surface
-            object.__setattr__(self, "base_surface_shift", 0.0)
-            # self.base_surface_shift = 0.0
+            object.__setattr__(self, "bottom_surface_shift", 0.0)
 
         valid_attrs = get_args(KnownAttributes)
         unknown_attrs = [calc for calc in self.calc_types if calc not in valid_attrs]
@@ -392,6 +391,6 @@ class SeismicAttribute:
     def value(self) -> list[xtgeo.RegularSurface]:
         attributes = self.from_cube.cube.compute_attributes_in_window(
             self.surface + self.top_surface_shift,
-            self.base_surface + self.base_surface_shift,
+            self.bottom_surface + self.bottom_surface_shift,
         )
         return [attributes[str(calc)] * self.scale_factor for calc in self.calc_types]  # type: ignore
