@@ -111,7 +111,7 @@ def attribute_export(
                         [attr.from_cube.base_date, "base"],
                     ],
                     is_observation=is_observed,
-                    name=attr.surface.name,
+                    name=attr.top_surface.name,
                     tagname=tag_str,
                     vertical_domain=attr.from_cube.cube_name.domain,
                     rep_include=False,

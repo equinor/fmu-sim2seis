@@ -350,7 +350,7 @@ class DifferenceSeismic:
 
 @dataclass(frozen=True)
 class SeismicAttribute:
-    surface: xtgeo.RegularSurface
+    top_surface: xtgeo.RegularSurface
     calc_types: list[KnownAttributes]
     from_cube: SingleSeismic | DifferenceSeismic
     scale_factor: float = 1.0
@@ -374,7 +374,7 @@ class SeismicAttribute:
             object.__setattr__(
                 self,
                 "bottom_surface",
-                self.surface + self.top_surface_shift + self.window_length,
+                self.top_surface + self.top_surface_shift + self.window_length,
             )
             # It makes no sense to have a shift value for the base unless it is given
             # as a surface
@@ -390,7 +390,7 @@ class SeismicAttribute:
     @cached_property
     def value(self) -> list[xtgeo.RegularSurface]:
         attributes = self.from_cube.cube.compute_attributes_in_window(
-            self.surface + self.top_surface_shift,
+            self.top_surface + self.top_surface_shift,
             self.bottom_surface + self.bottom_surface_shift,
         )
         return [attributes[str(calc)] * self.scale_factor for calc in self.calc_types]  # type: ignore

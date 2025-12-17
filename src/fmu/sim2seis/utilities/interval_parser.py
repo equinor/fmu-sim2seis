@@ -269,7 +269,7 @@ def _create_seismic_attribute(
         )
 
     return SeismicAttribute(
-        surface=attr_top_surface,
+        top_surface=attr_top_surface,
         calc_types=attributes,
         scale_factor=interval_config.scale_factor,
         from_cube=cube,

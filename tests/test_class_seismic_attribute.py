@@ -20,7 +20,7 @@ def sample_surface():
 @pytest.fixture
 def sample_seismic_attribute(sample_surface, sample_single_seismic):
     return SeismicAttribute(
-        surface=sample_surface,
+        top_surface=sample_surface,
         calc_types=["mean"],
         from_cube=sample_single_seismic,
         window_length=2.0,
@@ -32,7 +32,7 @@ def test_seismic_attribute_init(
 ):
     assert isinstance(sample_seismic_attribute, SeismicAttribute)
     assert np.array_equal(
-        sample_seismic_attribute.surface.values, sample_surface.values
+        sample_seismic_attribute.top_surface.values, sample_surface.values
     )
     assert sample_seismic_attribute.from_cube == sample_single_seismic
     assert sample_seismic_attribute.calc_types == ["mean"]
@@ -57,7 +57,7 @@ def test_seismic_attribute_with_window_length_calculates_bottom_surface():
     cube = Mock()
 
     attr = SeismicAttribute(
-        surface=surface,
+        top_surface=surface,
         calc_types=["rms"],
         from_cube=cube,
         window_length=25.0,
@@ -78,7 +78,7 @@ def test_seismic_attribute_with_provided_bottom_surface():
     cube = Mock()
 
     attr = SeismicAttribute(
-        surface=top_surface,
+        top_surface=top_surface,
         calc_types=["mean"],
         from_cube=cube,
         bottom_surface=bottom_surface,
@@ -110,7 +110,7 @@ def test_seismic_attribute_value_applies_scale_factor():
     cube.cube = cube_obj
 
     attr = SeismicAttribute(
-        surface=surface,
+        top_surface=surface,
         calc_types=["rms"],
         from_cube=cube,
         bottom_surface=bottom_surface,
@@ -154,7 +154,7 @@ def test_seismic_attribute_multiple_calc_types():
     cube.cube = cube_obj
 
     attr = SeismicAttribute(
-        surface=surface,
+        top_surface=surface,
         calc_types=["rms", "mean"],
         from_cube=cube,
         bottom_surface=bottom_surface,
@@ -175,7 +175,7 @@ def test_seismic_attribute_fails_without_bottom_surface_or_window():
         ValueError, match="Must specify either 'bottom_surface' or 'window_length'!"
     ):
         SeismicAttribute(
-            surface=surface,
+            top_surface=surface,
             calc_types=["rms"],
             from_cube=cube,
             # Missing both bottom_surface and window_length
@@ -194,7 +194,7 @@ def test_seismic_attribute_window_length_zero_shift():
     cube = Mock()
 
     SeismicAttribute(
-        surface=surface,
+        top_surface=surface,
         calc_types=["mean"],
         from_cube=cube,
         window_length=10.0,
