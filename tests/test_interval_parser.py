@@ -48,19 +48,11 @@ def real_yaml_config(tmp_path):
             "gridhorizon_path": f"{grid_path}",
             "attributes": ["rms", "mean", "min"],
             "scale_factor": 1.0,
-            "workflow": "rms/sim2seis",
-            "access_ssdl": {"rep_include": False, "access_level": "asset"},
-            "export_subfolder": "prm",
             "surface_postfix": "--depth.gri",
         },
         "cubes": {
             "relai_depth": {
                 "cube_prefix": "seismic--relai_depth--",
-                "filename_tag_prefix": "relai_depth",
-                "seismic_path": "../../share/observations/seismic",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "volantis": {
                         "top_horizon": "topvolantis",
@@ -78,11 +70,6 @@ def real_yaml_config(tmp_path):
             },
             "amplitude_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "../../share/observations/seismic",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "volantis": {
                         "top_horizon": "topvolantis",
@@ -192,11 +179,6 @@ def test_window_length_creates_virtual_bottom_surface(
         "cubes": {
             "window_depth": {
                 "cube_prefix": "seismic--window_depth--",
-                "filename_tag_prefix": "window_depth",
-                "seismic_path": "/seismic",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "alpha": {
                         "bottom_horizon": "basealpha",
@@ -254,11 +236,6 @@ def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amp_depth--",
-                "filename_tag_prefix": "amp_depth",
-                "seismic_path": "/seismic",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "beta": {
                         "top_horizon": "topbeta",
@@ -373,11 +350,6 @@ def test_value_property_applies_shifts_and_scale(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "gamma": {
                         "top_horizon": "topgamma",
@@ -443,11 +415,6 @@ def test_missing_surface_raises_value_error(patch_directory_validation):
         "cubes": {
             "x_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "zeta": {
                         "top_horizon": "topzeta",
@@ -488,11 +455,6 @@ def test_multiple_cubes_same_prefix_duplicate_attributes(patch_directory_validat
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "eta": {
                         "top_horizon": "topeta",
@@ -549,11 +511,6 @@ def test_window_interval_zeros_out_bottom_surface_shift(
         "cubes": {
             "win_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "iota": {
                         "top_horizon": "topiota",
@@ -674,11 +631,6 @@ def test_multiple_formations_in_single_cube(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "alpha": {
                         "top_horizon": "topalpha",
@@ -728,11 +680,6 @@ def test_attribute_with_only_horizon_override(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "kappa": {
                         "top_horizon": "topkappa",
@@ -785,11 +732,6 @@ def test_surface_loaded_only_once_when_reused(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "nu": {
                         "top_horizon": "topnu",
@@ -847,11 +789,6 @@ def test_attribute_with_window_length_override(
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "filename_tag_prefix": "amplitude_depth",
-                "seismic_path": "/seis",
-                "vertical_domain": "depth",
-                "depth_reference": "msl",
-                "offset": "full",
                 "formations": {
                     "omicron": {
                         "top_horizon": "topomicron",

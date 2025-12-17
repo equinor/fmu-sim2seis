@@ -60,7 +60,6 @@ class RootConfig(BaseModel):
 
 
 class FormationSettings(BaseModel):
-    """Settings for a formation, including horizons, shifts, and attributes."""
 
     model_config = ConfigDict(frozen=True)
 
