@@ -76,8 +76,8 @@ sim2seis_observed_data = "fmu.sim2seis.observed_data:main"
 sim2seis_map_attributes = "fmu.sim2seis.map_attributes:main"
 sim2seis_cleanup = "fmu.sim2seis.cleanup:main"
 
- [project.entry-points.ert]
- sim2seis_jobs = "fmu.sim2seis.hook_implementations.jobs"
+[project.entry-points.ert]
+sim2seis_jobs = "fmu.sim2seis.hook_implementations.jobs"
 
 [tool.mypy]
 ignore_missing_imports = true
@@ -103,6 +103,7 @@ lint.select = [
     "RSE",
     "SIM",
     "W",
+    "RUF",
 ]
 line-length = 88
 

@@ -559,7 +559,7 @@ def test_group_attributes_by_interval_all_same(patch_directory_validation):
         cube_name="my_cube",
     )
     assert len(result) == 1
-    interval_key = list(result.keys())[0]
+    interval_key = next(iter(result.keys()))
     assert sorted(result[interval_key]) == ["mean", "min", "rms"]
 
 

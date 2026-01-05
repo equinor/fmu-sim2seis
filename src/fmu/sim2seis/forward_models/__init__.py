@@ -7,8 +7,8 @@ from .sim2seis_relative_inversion import RelativeInversion
 from .sim2seis_seismic_forward import SeismicForward
 
 __all__ = [
-    "MapAttributes",
-    "SeismicForward",
-    "RelativeInversion",
     "Cleanup",
+    "MapAttributes",
+    "RelativeInversion",
+    "SeismicForward",
 ]

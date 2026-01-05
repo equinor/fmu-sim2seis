@@ -38,7 +38,7 @@ def _startup(config: ObservedDataConfig):
 
 def make_symlinks_observed_seismic(conf: ObservedDataConfig, verbose: bool = False):
     """Make symlinks from share/observations to real seismic."""
-    cfg, vintages, datapath, sim2_seis_pred = _startup(conf)
+    _cfg, vintages, datapath, _sim2_seis_pred = _startup(conf)
     sep = "--"
     date = ""
     libgen.make_folders([conf.observed_data_path])
