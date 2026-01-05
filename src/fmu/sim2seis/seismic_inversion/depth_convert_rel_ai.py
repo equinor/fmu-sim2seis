@@ -11,12 +11,12 @@ def depth_convert_ai(
     difference_cubes: dict[SeismicName, DifferenceSeismic],
     velocity_model: DomainConversion,
     config: Sim2SeisConfig,
-) -> dict[(str, str), DifferenceSeismic]:
+) -> dict[SeismicName, DifferenceSeismic]:
     """
     Perform depth conversion using the velocity model established in seismic forward
     """
 
-    depth_cubes = {}
+    depth_cubes: dict[SeismicName, DifferenceSeismic] = {}
 
     for time_name, diff_obj in difference_cubes.items():
         depth_name = SeismicName(

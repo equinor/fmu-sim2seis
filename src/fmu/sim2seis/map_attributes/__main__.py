@@ -1,4 +1,3 @@
-# pylint: disable=missing-module-docstring
 import sys
 
 from fmu.pem.pem_utilities import restore_dir

@@ -1,11 +1,11 @@
 from pathlib import Path
 from pickle import dump, load
-
+from typing import Any
 
 def dump_result_objects(
     output_path: Path,
     file_name: Path,
-    output_obj: any,
+    output_obj: Any,
 ) -> None:
     try:
         output_path.mkdir(parents=True, exist_ok=True)
@@ -19,7 +19,7 @@ def dump_result_objects(
 def retrieve_result_objects(
     input_path: Path,
     file_name: Path,
-) -> any:
+) -> Any:
     try:
         full_path = input_path / file_name
         with full_path.open(mode="rb") as f_in:

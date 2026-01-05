@@ -150,7 +150,7 @@ def attribute_export(
 def _get_grid_info(
     config_file: Sim2SeisConfig,
     start_dir: Path,
-) -> (xtgeo.Grid, xtgeo.GridProperty, xtgeo.GridProperty):
+) -> tuple[xtgeo.Grid, xtgeo.GridProperty, xtgeo.GridProperty]:
     # Import grid, zones, regions
     with restore_dir(start_dir):
         grid = xtgeo.grid_from_file(
