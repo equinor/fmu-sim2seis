@@ -2,26 +2,55 @@
 Class definitions for sim2seis workflow
 """
 
+from __future__ import annotations
+
 import copy
 from dataclasses import dataclass
 from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     Literal,
-    Optional,
     Self,
-    Tuple,
     get_args,
 )
 
 import numpy as np
 import xtgeo
 
+if TYPE_CHECKING:
+    from .interval_parser import CubeConfig
+
+# Define literals
+ProcessDef = Literal["seismic", "syntseis"]
+AttributeDef = Literal["amplitude", "relai"]
+DomainDef = Literal["time", "depth"]
+StackDef = Literal["full", "near", "mid", "far"]
+
+KnownAttributes = Literal[
+    "max",
+    "min",
+    "rms",
+    "mean",
+    "var",
+    "maxpos",
+    "maxneg",
+    "maxabs",
+    "sumpos",
+    "sumneg",
+    "meanabs",
+    "meanpos",
+    "meanneg",
+    "upper",
+    "lower",
+]
+
 
 class SeismicDate:
     def __init__(self, value: str):
         self._single_date: datetime | None = None
-        self._diff_date: Tuple[datetime, datetime] | None = None
+        self._diff_date: tuple[datetime, datetime] | None = None
         self._set_dates(value)
 
     def _set_dates(self, value: str | Self):
@@ -81,13 +110,6 @@ class SeismicDate:
         if self._diff_date is not None:
             return self._diff_date[1].strftime("%Y%m%d")
         return None
-
-
-# Define literals
-ProcessDef = Literal["seismic", "syntseis"]
-AttributeDef = Literal["amplitude", "relai"]
-DomainDef = Literal["time", "depth"]
-StackDef = Literal["full", "near", "mid", "far"]
 
 
 class SeismicName(SeismicDate):
@@ -326,62 +348,49 @@ class DifferenceSeismic:
         return diff_obj.cube
 
 
-KnownAttributes = Literal[
-    "max",
-    "min",
-    "rms",
-    "mean",
-    "var",
-    "maxpos",
-    "maxneg",
-    "maxabs",
-    "sumpos",
-    "sumneg",
-    "meanabs",
-    "meanpos",
-    "meanneg",
-    "upper",
-    "lower",
-]
-
-
-@dataclass
+@dataclass(frozen=True)
 class SeismicAttribute:
-    surface: xtgeo.RegularSurface
-    calc_types: KnownAttributes | list[KnownAttributes]
+    top_surface: xtgeo.RegularSurface
+    calc_types: list[KnownAttributes]
     from_cube: SingleSeismic | DifferenceSeismic
-    domain: Literal["depth", "time"]
     scale_factor: float = 1.0
-    window_length: Optional[float] = None
-    base_surface: xtgeo.RegularSurface | None = None
+    window_length: float | None = None
+    bottom_surface: xtgeo.RegularSurface | None = None
     top_surface_shift: float = 0.0  # Use signed values for shift
-    base_surface_shift: float = 0.0  # Use signed values for shift
-    info: dict | None = None
+    bottom_surface_shift: float = 0.0  # Use signed values for shift
+    info: CubeConfig | None = None
 
     def __post_init__(self):
         # Need to verify that either a base surface or a window length is defined
         # Adjust the top and base surface according to the shift values
-        if self.base_surface is None:
-            assert self.window_length is not None
+        if self.bottom_surface is None:
+            if self.window_length is None:
+                raise ValueError(
+                    "Must specify either 'bottom_surface' or 'window_length'!"
+                )
             # Calculate the base surface from the top surface and window length.
             # Take the top surface shift into consideration to get the window length
             # correct
-            self.base_surface = (
-                self.surface + self.top_surface_shift + self.window_length
+            object.__setattr__(
+                self,
+                "bottom_surface",
+                self.top_surface + self.top_surface_shift + self.window_length,
             )
             # It makes no sense to have a shift value for the base unless it is given
             # as a surface
-            self.base_surface_shift = 0.0
-        if isinstance(self.calc_types, str):
-            assert self.calc_types in get_args(KnownAttributes)
-        else:
-            for calc in self.calc_types:
-                assert calc in get_args(KnownAttributes)
+            object.__setattr__(self, "bottom_surface_shift", 0.0)
 
-    @property
+        valid_attrs = get_args(KnownAttributes)
+        unknown_attrs = [calc for calc in self.calc_types if calc not in valid_attrs]
+        if unknown_attrs:
+            raise ValueError(
+                f"Unknown calc_type(s): {unknown_attrs}. Valid options: {valid_attrs}"
+            )
+
+    @cached_property
     def value(self) -> list[xtgeo.RegularSurface]:
         attributes = self.from_cube.cube.compute_attributes_in_window(
-            self.surface + self.top_surface_shift,
-            self.base_surface + self.base_surface_shift,
+            self.top_surface + self.top_surface_shift,
+            self.bottom_surface + self.bottom_surface_shift,
         )
         return [attributes[str(calc)] * self.scale_factor for calc in self.calc_types]  # type: ignore
