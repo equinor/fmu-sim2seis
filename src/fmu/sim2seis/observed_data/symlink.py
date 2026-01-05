@@ -70,7 +70,7 @@ def make_symlinks_observed_seismic(conf: ObservedDataConfig, verbose: bool = Fal
 # ToDo: is this still necessary?
 def main(config: ObservedDataConfig):
     # Create symlinks for history run and pass for prediction run.
-    if getenv("FLOWSIM_IS_PREDICTION", False):
+    if getenv("FLOWSIM_IS_PREDICTION").lower() == "true":
         print(f"SIM2SEIS_PRED is {True}, skip this task!")
     else:
         make_symlinks_observed_seismic(config)

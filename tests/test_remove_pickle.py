@@ -1,4 +1,5 @@
 import os
+import subprocess
 from pathlib import Path
 from shutil import copy2
 
@@ -45,8 +46,6 @@ def test_pickle_cleanup_observed_data(monkeypatch, data_dir):
 
 
 def test_pickle_cleanup_main_script(monkeypatch, data_dir):
-    import subprocess
-
     monkeypatch.chdir(data_dir / "rms/model")
     status = subprocess.run(
         [
@@ -59,6 +58,7 @@ def test_pickle_cleanup_main_script(monkeypatch, data_dir):
             "sim2seis_config.yml",
             "--prefix-list",
             "relai",
-        ]
+        ],
+        check=False,
     )
     assert status.returncode == 0

@@ -85,11 +85,10 @@ ignore_missing_imports = true
 disable = "missing-module-docstring"
 
 [tool.ruff]
-lint.ignore = [
-    "C901",
-    "F401"
-]
-lint.select = [
+line-length = 88
+
+[tool.ruff.lint]
+select = [
     "C",
     "E",
     "F",
@@ -102,8 +101,30 @@ lint.select = [
     "W",
     "RUF",
     "UP",
+    "FURB",
+    "PL",
 ]
-line-length = 88
+
+ignore = [
+  "PLW2901",  # redefined-loop-name
+  "PLR2004",  # magic-value-comparison
+  "PLR0915",  # too-many-statements
+  "PLR0912",  # too-many-branches
+  "PLR0911",  # too-many-return-statements
+  "PLC2701",  # import-private-name
+  "PLR6201",  # literal-membership
+  "PLR0914",  # too-many-locals
+  "PLR6301",  # no-self-use
+  "PLW1641",  # eq-without-hash
+  "PLR0904",  # too-many-public-methods
+  "PLR1702",  # too-many-nested-blocks
+  "PLW3201",  # bad-dunder-method-name
+  "C901",
+  "F401",
+]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+
+[tool.ruff.lint.pylint]
+max-args = 10

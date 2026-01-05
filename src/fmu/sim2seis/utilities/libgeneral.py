@@ -139,6 +139,7 @@ def make_symlink(
 def run_external_silent(commands: list[str], timeout: int | None = None) -> str:
     result = subprocess.run(
         commands,
+        check=False,
         capture_output=True,
         timeout=timeout,
     )
