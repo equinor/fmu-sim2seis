@@ -14,7 +14,6 @@ from fmu.sim2seis.utilities.interval_parser import (
 )
 
 
-
 @pytest.fixture
 def patch_directory_validation():
     """Patch Path.is_dir() to allow non-existent directories in tests"""

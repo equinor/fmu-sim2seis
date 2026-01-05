@@ -4,9 +4,9 @@ from pathlib import Path
 import pandas as pd
 import xtgeo.surface
 import yaml
+from fmu.pem.pem_utilities import restore_dir
 from numpy import isclose
 
-from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.map_attributes import main as map_attributes
 from fmu.sim2seis.observed_data import main as run_obs_data
 from fmu.sim2seis.seismic_fwd import main as run_seismic_forward

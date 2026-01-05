@@ -11,12 +11,16 @@ on:
 env:
   UV_SYSTEM_PYTHON: 1
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         lfs: true
 
@@ -48,7 +52,7 @@ jobs:
 
     - name: Upload artifact
       if: github.event_name == 'release'
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: Python dist
         path: dist/
