@@ -9,6 +9,7 @@ from .sim2seis_seismic_forward import SeismicForward
 __all__ = [
     "Cleanup",
     "MapAttributes",
+    "ObservedData",
     "RelativeInversion",
     "SeismicForward",
 ]

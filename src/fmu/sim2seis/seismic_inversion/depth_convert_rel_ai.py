@@ -3,8 +3,6 @@ relative ai"""
 
 import copy
 
-import xtgeo
-
 from fmu.sim2seis.utilities import DifferenceSeismic, SeismicName, Sim2SeisConfig
 from fmu.tools.domainconversion import DomainConversion
 

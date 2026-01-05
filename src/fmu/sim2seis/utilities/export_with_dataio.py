@@ -1,4 +1,3 @@
-from contextlib import suppress
 from os import getenv, symlink, unlink
 from pathlib import Path
 

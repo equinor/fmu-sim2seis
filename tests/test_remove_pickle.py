@@ -1,7 +1,5 @@
-import os
 import subprocess
 from pathlib import Path
-from shutil import copy2
 
 from fmu.sim2seis.utilities import clear_result_objects
 

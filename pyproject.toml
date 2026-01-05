@@ -120,7 +120,6 @@ ignore = [
   "PLR1702",  # too-many-nested-blocks
   "PLW3201",  # bad-dunder-method-name
   "C901",
-  "F401",
 ]
 
 [tool.ruff.lint.isort]
