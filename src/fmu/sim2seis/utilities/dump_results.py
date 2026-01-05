@@ -2,6 +2,7 @@ from pathlib import Path
 from pickle import dump, load
 from typing import Any
 
+
 def dump_result_objects(
     output_path: Path,
     file_name: Path,
