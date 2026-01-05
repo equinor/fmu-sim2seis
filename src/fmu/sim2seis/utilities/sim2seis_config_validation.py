@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Self, get_args
 
 import xtgeo
 from pydantic import (
@@ -13,7 +13,6 @@ from pydantic import (
 )
 from pydantic.json_schema import SkipJsonSchema
 from pydantic_core.core_schema import ValidationInfo
-from typing_extensions import Annotated, Self, get_args
 
 from fmu.pem.pem_utilities.pem_config_validation import FromGlobal
 
@@ -133,7 +132,7 @@ class DepthConvertConfig(BaseModel):
         default=Path("../../share/results/maps"),
         description="The standard folder for horizons both of time and depth domain",
     )
-    horizon_names: List[str] = Field(
+    horizon_names: list[str] = Field(
         description="Horizons should be of type RMS binary, but with extension "
         "`.gri` to avoid confusion with other `.bin` files. "
         "The naming standard is to have lower-case letters "

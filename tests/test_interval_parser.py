@@ -433,10 +433,13 @@ def test_missing_surface_raises_value_error(patch_directory_validation):
     def missing_loader(path: str):
         raise FileNotFoundError(path)
 
-    with patch(
-        "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
-        side_effect=missing_loader,
-    ), pytest.raises(ValueError, match="Surface file not found"):
+    with (
+        patch(
+            "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
+            side_effect=missing_loader,
+        ),
+        pytest.raises(ValueError, match="Surface file not found"),
+    ):
         populate_seismic_attributes(config, cubes, surfaces)
 
 

@@ -27,7 +27,7 @@ def test_obs_data(monkeypatch, data_dir):
     start_dir = data_dir / "rms/model"
     monkeypatch.chdir(start_dir)
     # Modify the config file: add `test_run = True`
-    with open(rel_path_config_file / obs_data_config_file_name, "r") as fin:
+    with open(rel_path_config_file / obs_data_config_file_name) as fin:
         conf_dict = yaml.safe_load(fin)
         conf_dict["test_run"] = True
     fout_name = Path(

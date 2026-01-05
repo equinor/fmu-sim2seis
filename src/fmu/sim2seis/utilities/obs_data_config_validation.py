@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List, Optional
 
 from pydantic import (
     BaseModel,
@@ -18,7 +17,7 @@ from .sim2seis_config_validation import WebvizMap
 class DepthSurface(BaseModel):
     """Class for depth surface configuration."""
 
-    horizon_names: List[str]
+    horizon_names: list[str]
     suffix_name: str
     depth_dir: DirectoryPath = Path("../../share/observations/maps")
 
@@ -44,7 +43,7 @@ class ObservedDataConfig(BaseModel):
     attribute_definition_file: Path
     test_run: bool = False
     depth_conversion: DepthConversion
-    global_params: Optional[FromGlobal] = None
+    global_params: FromGlobal | None = None
     observed_depth_surf: DepthSurface
     observed_time_data: TimeData = Field(default_factory=TimeData)
     pickle_file_output_path: DirectoryPath = Path(

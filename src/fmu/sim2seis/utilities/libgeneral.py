@@ -9,7 +9,6 @@ JRIV
 import shutil
 import subprocess
 from pathlib import Path
-from typing import List
 
 import fmu.config.utilities as utils
 
@@ -63,7 +62,7 @@ def cleanup_folders_dataio() -> None:
         print("Removed:", folder)
 
 
-def make_folders(list_of_input_paths: List[Path | str]) -> None:
+def make_folders(list_of_input_paths: list[Path | str]) -> None:
     """Make folders if they do not exist."""
 
     if not isinstance(list_of_input_paths, list):
@@ -137,7 +136,7 @@ def make_symlink(
         )
 
 
-def run_external_silent(commands: List[str], timeout: int | None = None) -> str:
+def run_external_silent(commands: list[str], timeout: int | None = None) -> str:
     result = subprocess.run(
         commands,
         capture_output=True,
