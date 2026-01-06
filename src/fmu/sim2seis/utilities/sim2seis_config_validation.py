@@ -98,10 +98,10 @@ class SeismicForward(BaseModel):
                 )
         if not self.pem_output_dir.is_dir():
             raise ValueError(
-                f"pem_output_dir: {self.seismic_output_dir!s} is not a directory"
+                f"pem_output_dir: {self.pem_output_dir!s} is not a directory"
             )
         if not self.twt_model.is_file():
-            raise ValueError(f"twt_model: {self.seismic_output_dir!s} is not a file")
+            raise ValueError(f"twt_model: {self.twt_model!s} is not a file")
 
         return self
 
