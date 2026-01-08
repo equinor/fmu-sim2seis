@@ -1,6 +1,4 @@
-# pylint: disable=missing-module-docstring
 import sys
-from pathlib import Path
 
 from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.utilities import (

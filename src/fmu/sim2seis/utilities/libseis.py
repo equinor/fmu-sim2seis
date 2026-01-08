@@ -6,10 +6,8 @@ NB! When editing this, always save the full project to make edits available!
 JRIV
 """
 
-from typing import List
 
-
-def get_listed_seis_dates(dates: List[str]) -> List[str]:
+def get_listed_seis_dates(dates: list[str]) -> list[str]:
     """Make dates as list of dates on form ["YYYYMMDD", ...]."""
 
     return [str(s_date).replace("-", "") for s_date in dates]

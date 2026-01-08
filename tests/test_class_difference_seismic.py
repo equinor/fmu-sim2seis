@@ -29,7 +29,7 @@ def test_difference_seismic_init(sample_difference_seismic, sample_single_seismi
     assert sample_difference_seismic.base == sample_single_seismic
     assert (
         sample_difference_seismic.monitor.cube_name == sample_single_seismic.cube_name
-    )  # noqa: E501
+    )
 
 
 def test_difference_seismic_dates(sample_difference_seismic):

@@ -125,7 +125,9 @@ def test_seismic_attribute_value_applies_scale_factor():
     values = attr.value
 
     # Verify compute_attributes_in_window was called with shifted surfaces
-    cube_obj.compute_attributes_in_window.assert_called_once_with(surface, bottom_surface)
+    cube_obj.compute_attributes_in_window.assert_called_once_with(
+        surface, bottom_surface
+    )
 
     # Verify scale_factor was applied
     mock_result_surface.__mul__.assert_called_once_with(2.5)

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Self, get_args
 
 import xtgeo
 from pydantic import (
@@ -13,7 +13,6 @@ from pydantic import (
 )
 from pydantic.json_schema import SkipJsonSchema
 from pydantic_core.core_schema import ValidationInfo
-from typing_extensions import Annotated, Self, get_args
 
 from fmu.pem.pem_utilities.pem_config_validation import FromGlobal
 
@@ -99,10 +98,10 @@ class SeismicForward(BaseModel):
                 )
         if not self.pem_output_dir.is_dir():
             raise ValueError(
-                f"pem_output_dir: {str(self.seismic_output_dir)} is not a directory"
+                f"pem_output_dir: {self.pem_output_dir!s} is not a directory"
             )
         if not self.twt_model.is_file():
-            raise ValueError(f"twt_model: {str(self.seismic_output_dir)} is not a file")
+            raise ValueError(f"twt_model: {self.twt_model!s} is not a file")
 
         return self
 
@@ -133,7 +132,7 @@ class DepthConvertConfig(BaseModel):
         default=Path("../../share/results/maps"),
         description="The standard folder for horizons both of time and depth domain",
     )
-    horizon_names: List[str] = Field(
+    horizon_names: list[str] = Field(
         description="Horizons should be of type RMS binary, but with extension "
         "`.gri` to avoid confusion with other `.bin` files. "
         "The naming standard is to have lower-case letters "
@@ -274,21 +273,21 @@ class WebvizMap(BaseModel):
     def grid_file_check(cls, v: str, values: ValidationInfo):
         full_name = values.data.get("grid_path").joinpath(v)
         if not full_name.is_file():
-            raise ValueError(f"webvisMap: {str(full_name)} is not a file")
+            raise ValueError(f"webvisMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("zone_file", mode="before")
     def zone_file_check(cls, v: str, values: ValidationInfo):
         full_name = values.data.get("grid_path").joinpath(v)
         if not full_name.is_file():
-            raise ValueError(f"webvisMap: {str(full_name)} is not a file")
+            raise ValueError(f"webvisMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("region_file", mode="before")
     def region_file_check(cls, v: str, values: ValidationInfo):
         full_name = values.data.get("grid_path").joinpath(v)
         if not full_name.is_file():
-            raise ValueError(f"webvisMap: {str(full_name)} is not a file")
+            raise ValueError(f"webvisMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("attribute_error", mode="before")
@@ -307,7 +306,7 @@ class WebvizMap(BaseModel):
     @model_validator(mode="after")
     def output_path_check(self) -> Self:
         if not self.output_path.is_dir():
-            raise ValueError(f"output_path: {str(self.output_path)} is not a directory")
+            raise ValueError(f"output_path: {self.output_path!s} is not a directory")
         return self
 
 

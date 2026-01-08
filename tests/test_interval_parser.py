@@ -14,7 +14,6 @@ from fmu.sim2seis.utilities.interval_parser import (
 )
 
 
-
 @pytest.fixture
 def patch_directory_validation():
     """Patch Path.is_dir() to allow non-existent directories in tests"""
@@ -434,10 +433,13 @@ def test_missing_surface_raises_value_error(patch_directory_validation):
     def missing_loader(path: str):
         raise FileNotFoundError(path)
 
-    with patch(
-        "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
-        side_effect=missing_loader,
-    ), pytest.raises(ValueError, match="Surface file not found"):
+    with (
+        patch(
+            "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
+            side_effect=missing_loader,
+        ),
+        pytest.raises(ValueError, match="Surface file not found"),
+    ):
         populate_seismic_attributes(config, cubes, surfaces)
 
 
@@ -560,7 +562,7 @@ def test_group_attributes_by_interval_all_same(patch_directory_validation):
         cube_name="my_cube",
     )
     assert len(result) == 1
-    interval_key = list(result.keys())[0]
+    interval_key = next(iter(result.keys()))
     assert sorted(result[interval_key]) == ["mean", "min", "rms"]
 
 

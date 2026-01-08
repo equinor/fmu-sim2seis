@@ -60,7 +60,6 @@ class RootConfig(BaseModel):
 
 
 class FormationSettings(BaseModel):
-
     model_config = ConfigDict(frozen=True)
 
     top_horizon: str | None = None

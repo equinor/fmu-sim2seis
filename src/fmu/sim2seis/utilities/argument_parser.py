@@ -1,5 +1,4 @@
 import argparse
-from email.policy import default
 from pathlib import Path
 from warnings import warn
 
@@ -38,7 +37,7 @@ def parse_arguments(
         type=Path,
         required=False,
         help="For ERT run: Absolute directory name for the configuration parameter"
-             " file within the FMU project",
+        " file within the FMU project",
     )
     if "attribute" in extra_arguments:
         parser.add_argument(

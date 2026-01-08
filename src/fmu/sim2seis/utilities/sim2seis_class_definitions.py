@@ -154,14 +154,13 @@ class SeismicName(SeismicDate):
         )
 
     def __iter__(self):
-        for prop in (
+        yield from (
             self._process,
             self._attribute,
             self._domain,
             self._stack,
             self.date,
-        ):
-            yield prop
+        )
 
     def __hash__(self):
         return hash(

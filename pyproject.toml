@@ -12,7 +12,7 @@ write_to = "src/fmu/sim2seis/version.py"
 name = "fmu-sim2seis"
 description = "sim2seis"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [
     { name = "Equinor", email = "fg_fmu-atlas@equinor.com" },
@@ -25,9 +25,6 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
     "Topic :: Utilities",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Natural Language :: English",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -76,8 +73,8 @@ sim2seis_observed_data = "fmu.sim2seis.observed_data:main"
 sim2seis_map_attributes = "fmu.sim2seis.map_attributes:main"
 sim2seis_cleanup = "fmu.sim2seis.cleanup:main"
 
- [project.entry-points.ert]
- sim2seis_jobs = "fmu.sim2seis.hook_implementations.jobs"
+[project.entry-points.ert]
+sim2seis_jobs = "fmu.sim2seis.hook_implementations.jobs"
 
 [tool.mypy]
 ignore_missing_imports = true
@@ -88,11 +85,10 @@ ignore_missing_imports = true
 disable = "missing-module-docstring"
 
 [tool.ruff]
-lint.ignore = [
-    "C901",
-    "F401"
-]
-lint.select = [
+line-length = 88
+
+[tool.ruff.lint]
+select = [
     "C",
     "E",
     "F",
@@ -103,8 +99,31 @@ lint.select = [
     "RSE",
     "SIM",
     "W",
+    "RUF",
+    "UP",
+    "FURB",
+    "PL",
 ]
-line-length = 88
+
+ignore = [
+  "PLW2901",  # redefined-loop-name
+  "PLR2004",  # magic-value-comparison
+  "PLR0915",  # too-many-statements
+  "PLR0912",  # too-many-branches
+  "PLR0911",  # too-many-return-statements
+  "PLC2701",  # import-private-name
+  "PLR6201",  # literal-membership
+  "PLR0914",  # too-many-locals
+  "PLR6301",  # no-self-use
+  "PLW1641",  # eq-without-hash
+  "PLR0904",  # too-many-public-methods
+  "PLR1702",  # too-many-nested-blocks
+  "PLW3201",  # bad-dunder-method-name
+  "C901",
+]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+
+[tool.ruff.lint.pylint]
+max-args = 10

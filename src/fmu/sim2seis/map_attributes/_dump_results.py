@@ -30,5 +30,3 @@ def _dump_map_results(
         file_name=Path(attr_prefix + "_depth_attributes.pkl"),
         output_obj=attributes,
     )
-
-    return
