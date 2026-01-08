@@ -18,6 +18,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -27,13 +30,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install package
         run: |
@@ -44,14 +47,14 @@ jobs:
           pytest tests/
 
       - name: Build a binary wheel and a source tarball
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' && matrix.python-version == '3.11'
         run: |
           uv pip install build
           export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_FMU_SIM2SEIS=$GITHUB_REF_NAME
           python -m build
 
       - name: Upload artifact
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' && matrix.python-version == '3.11'
         uses: actions/upload-artifact@v6
         with:
           name: Python dist
@@ -66,7 +69,7 @@ jobs:
 
       - name: 📚 Update GitHub pages
         # Update on merge to main
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'main' && matrix.python-version == '3.11'
         run: |
           # Move the built documentation out of working directory, in order to delete everything else afterwards
           cp -R ./documentation/docs/.vitepress/dist ../dist
@@ -101,7 +104,7 @@ jobs:
       id-token: write # required for Trusted Publishing to PyPI
 
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v7
         with:
           name: Python dist
           path: dist/
