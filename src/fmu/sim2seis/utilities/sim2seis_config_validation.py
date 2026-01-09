@@ -48,7 +48,7 @@ class SeismicForward(BaseModel):
         "identification",
     )
     segy_depth: SkipJsonSchema[Path] = Field(
-        default=Path("syntseis_temp_seismic_depth_stack.segy"),
+        default=Path("seismic_temp_seismic_depth_stack.segy"),
         description="Seismic forward model writes temporary segy files "
         "to disk. The name must correspond to the setting in "
         "the XML files for each partial or full stack that "
@@ -262,7 +262,9 @@ class WebvizMap(BaseModel):
         "but it can also be given as a surface with polygon information "
         "where each polygon has its own attribute error. Full path and "
         "name to the surface file must be given, and the file format "
-        "must be recognised by xtgeo",
+        "must be recognised by xtgeo. NB! This only applies to observed data. " \
+        "Modelled data uses the default values which signifies NaN values.",
+        default=-999.0,
     )
     output_path: SkipJsonSchema[DirectoryPath] = Field(
         default=Path(r"../../share/results/tables"),
@@ -365,22 +367,22 @@ class SeismicInversionConfig(BaseModel):
         default="relai", description="Attribute type for seismic inverted cubes"
     )
     d_syn_0: FilePath = Field(
-        default=Path("../../sim2seis/output/seismic_forward/syntseis--d_syn0.sgy"),
+        default=Path("../../sim2seis/output/seismic_forward/seismic--d_syn0.sgy"),
         description="Default name for synthetic seismic data for the first vintage"
         "based on the relative inversion results and the wavelet",
     )
     d_syn_1: FilePath = Field(
-        default=Path("../../sim2seis/output/seismic_forward/syntseis--d_syn1.sgy"),
+        default=Path("../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy"),
         description="Default name for synthetic seismic data for the second vintage"
         "based on the relative inversion results and the wavelet",
     )
     rel_ai_0: FilePath = Field(
-        default=Path("../../sim2seis/output/seismic_forward/syntseis--relai_0.sgy"),
+        default=Path("../../sim2seis/output/seismic_forward/seismic--relai_0.sgy"),
         description="Default name for relative acoustic impedance for the first "
         "vintage",
     )
     rel_ai_1: FilePath = Field(
-        default=Path("../../sim2seis/output/seismic_forward/syntseis--relai_1.sgy"),
+        default=Path("../../sim2seis/output/seismic_forward/seismic--relai_1.sgy"),
         description="Default name for relative acoustic impedance for the second "
         "vintage",
     )
