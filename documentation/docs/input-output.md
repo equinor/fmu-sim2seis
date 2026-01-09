@@ -51,7 +51,7 @@ This page gives an overview of relevant input and output files, for the differen
 
 | Description | Directory | File |
 | ------------- | ----------- | ---- |
-| Output seismic cubes | `./share/results/cubes` | `syntseis—amplitude_<stack>_<time/depth>--<date/date pair>.segy` |
+| Output seismic cubes | `./share/results/cubes` | `seismic—amplitude_<stack>_<time/depth>--<date/date pair>.segy` |
 | Depth attribute maps | `./share/results/maps` | `<horizon>--amplitude_<attribute>_<stack>_depth--<date pair>.gri` |
 | Saved class objects from the modules in `fmu-sim2seis` | `./share/results/pickle_files` | `seis_4d_*.pkl` |
 
@@ -65,13 +65,13 @@ This page gives an overview of relevant input and output files, for the differen
 | Attribute interval definition file | `../sim2seis/model` | `sim2seis_config.yml` |
 | Global config | `./sim2seis/model` | `modelled_data_intervals_drogon.yml` |
 | Velocity model for depth conversion | `./share/results/pickle_files` | `seis_4d_velocity_model.pkl` |
-| Input seismic time cubes | `./share/results/cubes` | `syntseis—amplitude_<stack>_time--<date>.segy` |
+| Input seismic time cubes | `./share/results/cubes` | `seismic—amplitude_<stack>_time--<date>.segy` |
 
 ### Output
 
 | Description | Directory | File |
 | ------------- | ----------- | ---- |
-| Output seismic cubes | `./share/results/cubes` | `syntseis—relai_<stack>_depth--<date>.segy` |
+| Output seismic cubes | `./share/results/cubes` | `seismic—relai_<stack>_depth--<date>.segy` |
 | Depth attribute maps | `./share/results/maps` | `<horizon>--relai_<attribute>_<stack>_depth--<date pair>.gri` |
 | Saved class objects from the modules in fmu-sim2seis | `./share/results/pickle_files` | `relai_<time/depth>.pkl` |
 

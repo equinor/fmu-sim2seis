@@ -153,9 +153,6 @@ def test_compare_without_date():
     # Test with matching string without date
     assert seis_name_obj.compare_without_date("seismic--relai_full_depth")
 
-    # Test with string that has no date
-    assert not seis_name_obj.compare_without_date("syntseis--relai_full_depth")
-
     # Test with matching string with trailing dashes
     assert seis_name_obj.compare_without_date("seismic--relai_full_depth--")
 

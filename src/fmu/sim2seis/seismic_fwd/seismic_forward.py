@@ -51,7 +51,7 @@ def exe_seismic_forward(
             s_depth_src = config_file.seismic_fwd.seismic_output_dir.joinpath(
                 config_file.seismic_fwd.segy_depth
             )
-            depth_name_str = f"syntseis--amplitude_{stack}_depth--{date}.segy"
+            depth_name_str = f"seismic--amplitude_{stack}_depth--{date}.segy"
             new_depth_name = SeismicName.parse_name(depth_name_str)
             s_depth_file = config_file.seismic_fwd.seismic_output_dir.joinpath(
                 depth_name_str
@@ -71,7 +71,7 @@ def exe_seismic_forward(
                 tmax=config_file.depth_conversion.max_time,
                 tmin=config_file.depth_conversion.min_time,
             )
-            time_name_str = f"syntseis--amplitude_{stack}_time--{date}.segy"
+            time_name_str = f"seismic--amplitude_{stack}_time--{date}.segy"
             new_time_name = SeismicName.parse_name(time_name_str)
             time_cubes[new_time_name] = SingleSeismic(
                 from_dir=config_file.seismic_fwd.seismic_output_dir,

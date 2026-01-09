@@ -19,7 +19,9 @@ def cube_export(
     config_file: Sim2SeisConfig,
     export_cubes: dict[SeismicName, DifferenceSeismic | SingleSeismic],
     start_dir: Path,
+    override_folder: str = "",
     is_observed: bool = False,
+    is_preprocessed: bool = False,
 ) -> None:
     global_variables = config_file.global_params.global_config
     """Output depth cube via fmu.dataio"""
@@ -51,6 +53,8 @@ def cube_export(
                 content_metadata={"attribute": key.attribute},
                 timedata=time_data,
                 is_observation=is_observed,
+                preprocessed=is_preprocessed,
+                forcefolder=override_folder,
                 name=key.process,
                 tagname=tag_str,
                 vertical_domain=key.domain,
@@ -64,6 +68,7 @@ def attribute_export(
     export_attributes: list[SeismicAttribute],
     start_dir: Path,
     is_observed: bool = False,
+    is_preprocessed: bool = False,
 ) -> None:
     global_variables = config_file.global_params.global_config
     """Output attribute map via fmu.dataio"""
@@ -110,6 +115,7 @@ def attribute_export(
                         [attr.from_cube.base_date, "base"],
                     ],
                     is_observation=is_observed,
+                    preprocessed=is_preprocessed,
                     name=attr.top_surface.name,
                     tagname=tag_str,
                     vertical_domain=attr.from_cube.cube_name.domain,
@@ -137,13 +143,15 @@ def attribute_export(
                             pass
                     symlink(src=meta_data, dst=Path(webviz_filename))
                     # attr_df.to_csv(webviz_filename, index=False)
+                    # Modelled data will not have observation error
+                    columns = ["OBS", "OBS_ERROR"] if is_observed else ["OBS"]
                     attr_df.to_csv(
                         ert_filename,
                         index=False,
                         header=False,
                         sep=" ",
                         float_format="%.6f",
-                        columns=["OBS", "OBS_ERROR"],
+                        columns=columns,
                     )
 
 

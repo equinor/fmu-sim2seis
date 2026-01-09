@@ -91,13 +91,13 @@ def test_sim2seis_ert(testdata, monkeypatch, data_dir):
 
     # Check values in some of the resulting data files against truth values
     test_files = [
-        Path("../../share/results/cubes/syntseis--amplitude_full_depth--20200701.segy"),
+        Path("../../share/results/cubes/seismic--amplitude_full_depth--20200701.segy"),
         Path(
-            "../../share/results/cubes/syntseis--amplitude_full_depth--20180701_20180101.segy"
+            "../../share/results/cubes/seismic--amplitude_full_depth--20180701_20180101.segy"
         ),
         Path("../../share/results/pickle_files/seismic_fwd_diff_time.pkl"),
         Path(
-            "../../share/results/cubes/syntseis--relai_full_depth--20180701_20180101.segy"
+            "../../share/results/cubes/seismic--relai_full_depth--20180701_20180101.segy"
         ),
         Path("../../share/results/pickle_files/relai_diff_depth.pkl"),
         Path("../../share/results/pickle_files/relai_diff_time.pkl"),

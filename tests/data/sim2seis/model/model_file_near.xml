@@ -95,7 +95,7 @@
 
    # Specification of output data
    <output-parameters>
-     <prefix>../../share/results/cubes/syntseis_temp</prefix>
+     <prefix>../../share/results/cubes/seismic_temp</prefix>
      <seismic-time-segy>no</seismic-time-segy>
      <seismic-depth-segy>no</seismic-depth-segy>
      <seismic-stack>
@@ -105,7 +105,7 @@
      <elastic-parameters-depth-segy>yes</elastic-parameters-depth-segy>
      <elastic-parameters-time-segy>no</elastic-parameters-time-segy>
    </output-parameters>
-   <timeshift-twt>../../share/results/cubes/syntseis_base_twt.storm</timeshift-twt>
+   <timeshift-twt>../../share/results/cubes/seismic_base_twt.storm</timeshift-twt>
    <project-settings>
       # number of threads/cpu. Set to 1 when running in batch
       <max-threads>1</max-threads>

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from .interval_parser import CubeConfig
 
 # Define literals
-ProcessDef = Literal["seismic", "syntseis"]
+ProcessDef = Literal["seismic"]
 AttributeDef = Literal["amplitude", "relai"]
 DomainDef = Literal["time", "depth"]
 StackDef = Literal["full", "near", "mid", "far"]
