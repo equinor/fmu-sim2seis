@@ -61,7 +61,7 @@ class SeismicForward(BaseModel):
         "the intermediate files from seismic forward modelling",
     )
     stack_model_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../sim2seis/model/"),
+        default=Path("../../sim2seis/model"),
         description="Folder for the XML model files listed in 'stack_models'",
     )
     stack_models: dict[StackDef, Path] = Field(
@@ -264,10 +264,10 @@ class WebvizMap(BaseModel):
         "name to the surface file must be given, and the file format "
         "must be recognised by xtgeo. NB! This only applies to observed data. " \
         "Modelled data uses the default values which signifies NaN values.",
-        default=-999.0,
+        default=0.0,
     )
     output_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path(r"../../share/results/tables"),
+        default=Path("../../share/results/tables"),
         description="Ascii files for WebViz or ERT are written to this directory",
     )
 
@@ -447,11 +447,11 @@ class Sim2SeisConfig(BaseModel):
         default_factory=InversionMapConfig
     )
     pickle_file_output_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path(r"../../share/results/pickle_files"),
+        default=Path("../../share/results/pickle_files"),
         description="Directory for storing all module results in pickle format",
     )
     rel_path_global_config: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path(r"../../fmuconfig/output"),
+        default=Path("../../fmuconfig/output"),
         description="Relative path name for the directory where the global "
         "parameter file is stored",
     )

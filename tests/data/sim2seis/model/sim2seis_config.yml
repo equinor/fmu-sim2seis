@@ -30,8 +30,8 @@ seismic_fwd:
 #  pem_output_dir: ../../sim2seis/output/pem
 #  seismic_output_dir: ../../share/results/cubes
 #  twt_model: ../../sim2seis/model/model_file_twt.xml
-#  segy_depth: syntseis_temp_seismic_depth_stack.segy
-#  segy_time: syntseis_temp_seismic_timeshift_stack.segy  # <= not used anymore
+#  segy_depth: seismic_temp_seismic_depth_stack.segy
+#  segy_time: seismic_temp_seismic_timeshift_stack.segy  # <= not used anymore
 #  pickle_file_prefix: seis_4d
 #endregion snip_seis_fwd
 
@@ -92,10 +92,10 @@ webviz_map:
 #  attribute: &inversion_attribute relai
 #  path: &rel_ai_path ../../share/results/cubes
 #  domain: [time]
-#  d_syn_0: ../../sim2seis/output/seismic_forward/syntseis--d_syn0.sgy
-#  rel_ai_0: ../../sim2seis/output/seismic_forward/syntseis--relai_0.sgy
-#  d_syn_1: ../../sim2seis/output/seismic_forward/syntseis--d_syn1.sgy
-#  rel_ai_1: ../../sim2seis/output/seismic_forward/syntseis--relai_1.sgy
+#  d_syn_0: ../../sim2seis/output/seismic_forward/seismic--d_syn0.sgy
+#  rel_ai_0: ../../sim2seis/output/seismic_forward/seismic--relai_0.sgy
+#  d_syn_1: ../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy
+#  rel_ai_1: ../../sim2seis/output/seismic_forward/seismic--relai_1.sgy
 #  remove_unused_files: True
 #  inversion_params:
 #      lateral_smoothing_4d: 0.05
