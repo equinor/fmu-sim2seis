@@ -49,18 +49,18 @@ def test_obs_data(monkeypatch, data_dir):
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path(
-            "../../share/observations/maps/topvolantis--amplitude_rms_depth--20200701_20180101.gri"
+            "../../share/preprocessed/maps/topvolantis--amplitude_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/observations/maps/topvolantis--relai_min_depth--20200701_20180101.gri"
+            "../../share/preprocessed/maps/topvolantis--relai_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/observations/tables/topvolantis--amplitude_mean_depth--20200701_20180101.csv"
+            "../../share/preprocessed/tables/topvolantis--amplitude_mean_depth--20200701_20180101.csv"
         ),
         Path(
-            "../../share/observations/tables/topvolantis--relai_rms_depth--20200701_20180101.csv"
+            "../../share/preprocessed/tables/topvolantis--relai_rms_depth--20200701_20180101.csv"
         ),
-        Path("../../share/observations/pickle_files/observed_data_time_cubes.pkl"),
+        Path("../../share/preprocessed/pickle_files/observed_data_time_cubes.pkl"),
     ]
     expected_values = [
         737.739982963365,
@@ -104,9 +104,9 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
 
     # Check values in some of the resulting data files against truth values
     test_files = [
-        Path("../../share/results/cubes/syntseis--amplitude_full_depth--20200701.segy"),
+        Path("../../share/results/cubes/seismic--amplitude_full_depth--20200701.segy"),
         Path(
-            "../../share/results/cubes/syntseis--amplitude_full_depth--20180701_20180101.segy"
+            "../../share/results/cubes/seismic--amplitude_full_depth--20180701_20180101.segy"
         ),
         Path("../../share/results/pickle_files/seismic_fwd_diff_time.pkl"),
     ]
@@ -145,7 +145,7 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path(
-            "../../share/results/cubes/syntseis--relai_full_depth--20180701_20180101.segy"
+            "../../share/results/cubes/seismic--relai_full_depth--20180701_20180101.segy"
         ),
         Path("../../share/results/pickle_files/relai_diff_depth.pkl"),
         Path("../../share/results/pickle_files/relai_diff_time.pkl"),
