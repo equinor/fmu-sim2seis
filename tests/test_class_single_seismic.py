@@ -47,7 +47,7 @@ def test_single_seismic_from_dir(sample_single_seismic):
 
 def test_single_seismic_cube_name(sample_single_seismic):
     new_cube_name = SeismicName(
-        process="syntseis",
+        process="seismic",
         attribute="amplitude",
         domain="time",
         date="20200202",
