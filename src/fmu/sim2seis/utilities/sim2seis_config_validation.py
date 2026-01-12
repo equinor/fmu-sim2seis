@@ -38,7 +38,7 @@ class SeismicForward(BaseModel):
         default=Path("../../sim2seis/output/pem"),
         description="Folder for results from `sim2seis`. All folder "
         "references in the FMU structure are relative to "
-        "./rms/model, where '.' is the top folder in each "
+        "./sim2seis/model, where '.' is the top folder in each "
         "realization",
     )
     pickle_file_prefix: SkipJsonSchema[str] = Field(

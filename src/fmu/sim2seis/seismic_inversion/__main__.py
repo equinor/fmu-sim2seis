@@ -34,12 +34,10 @@ def main(arguments=None):
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["verbose"])
 
-    run_folder = check_startup_dir(args.start_dir)
+    run_folder = check_startup_dir(args.config_dir)
 
     with restore_dir(run_folder):
-        conf = read_yaml_file(
-            run_folder / args.config_dir / args.config_file, run_folder
-        )
+        conf = read_yaml_file(run_folder / args.config_file, run_folder)
 
         # Retrieve the seismic time cubes from seismic forward modelling
         seismic_time_cubes = retrieve_seismic_forward_results(config=conf)
@@ -48,7 +46,7 @@ def main(arguments=None):
         rel_ai_time_dict = run_relative_inversion_si4ti(
             time_cubes=seismic_time_cubes,
             config=conf,
-            start_dir=run_folder,
+            config_dir=run_folder,
         )
 
         # Depth conversion, as the inversion is run in time domain
@@ -73,7 +71,7 @@ def main(arguments=None):
         cube_export(
             config_file=conf,
             export_cubes=rel_ai_depth_dict,
-            start_dir=run_folder,
+            config_dir=run_folder,
             is_observed=False,
         )
 

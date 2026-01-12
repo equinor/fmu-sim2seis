@@ -20,13 +20,11 @@ def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["attribute", "verbose"])
-    run_folder = check_startup_dir(args.start_dir)
+    run_folder = check_startup_dir(args.config_dir)
 
     with restore_dir(run_folder):
         # Read configuration file
-        config = read_yaml_file(
-            run_folder / args.config_dir / args.config_file, run_folder
-        )
+        config = read_yaml_file(run_folder / args.config_file, run_folder)
 
         # Determine if the attributes are from seismic amplitude or inverted
         # seismic data to read the correct set of input cubes
@@ -65,7 +63,7 @@ def main(arguments=None):
         attribute_export(
             config_file=config,
             export_attributes=attr_list,
-            start_dir=run_folder,
+            config_dir=run_folder,
             is_observed=False,
         )
 

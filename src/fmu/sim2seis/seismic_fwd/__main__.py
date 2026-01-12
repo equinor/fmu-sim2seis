@@ -35,13 +35,11 @@ def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["verbose"])
-    run_folder = check_startup_dir(args.start_dir)
+    run_folder = check_startup_dir(args.config_dir)
 
     with restore_dir(run_folder):
         # Get configuration parameters
-        config = read_yaml_file(
-            run_folder / args.config_dir / args.config_file, run_folder
-        )
+        config = read_yaml_file(run_folder / args.config_file, run_folder)
 
         # Read the horizons that are used in depth conversion and later for extraction
         # of attributes
@@ -82,7 +80,7 @@ def main(arguments=None):
         cube_export(
             config_file=config,
             export_cubes=diff_depth,
-            start_dir=run_folder,
+            config_dir=run_folder,
             is_observed=False,
         )
 
@@ -90,7 +88,7 @@ def main(arguments=None):
         cube_export(
             config_file=config,
             export_cubes=time_cubes,
-            start_dir=run_folder,
+            config_dir=run_folder,
             is_observed=False,
         )
 

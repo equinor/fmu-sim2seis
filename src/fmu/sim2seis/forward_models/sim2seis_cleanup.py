@@ -15,8 +15,6 @@ class Cleanup(ForwardModelStepPlugin):
             name="CLEANUP",
             command=[
                 "sim2seis_cleanup",
-                "--start-dir",
-                "<START_DIR>",
                 "--config-dir",
                 "<CONFIG_DIR>",
                 "--config-file",
@@ -44,7 +42,7 @@ class Cleanup(ForwardModelStepPlugin):
             description="",
             examples=(
                 "code-block:: console\n\n"
-                "FORWARD_MODEL CLEANUP(<START_DIR>=.../rms/model, "
+                "FORWARD_MODEL CLEANUP("
                 "<CONFIG_DIR>=../../sim2seis/model, "
                 "<CONFIG_FILE>=sim2seis_config.yml,"
                 "<PREFIX_LIST>=relai_)"

@@ -7,10 +7,11 @@ files can be quite large, they should be deleted when no longer required. This *
 executed via the command line:
 
 ```shell
-> sim2seis_cleanup -s <start_dir> -c <config_dir> -f <config_file>
+> sim2seis_cleanup -c <config_dir> -f <config_file>
 ```
 
 To see all options:
+
 ```shell
 > sim2seis_cleanup --help
 ```
@@ -19,7 +20,7 @@ To add this in an `ert` run, the following line must be added at the end of the 
 
 ```ert
 -- Define your variables:
-FORWARD_MODEL CLEANUP(<START_DIR>=<JOB_STARTDIR>, <CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>)
+FORWARD_MODEL CLEANUP(<CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>)
 ```
 
  All required parameters for an `ert` run are defined in [ert configuration](./ert-configuration.md).

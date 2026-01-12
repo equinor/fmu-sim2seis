@@ -10,7 +10,7 @@ from .sim2seis_config_validation import Sim2SeisConfig
 
 def read_yaml_file(
     file_name: Path,
-    start_dir: Path,
+    config_dir: Path,
     update_with_global: bool = True,
     parse_inputs: bool = True,
 ) -> Sim2SeisConfig | ObservedDataConfig | dict:
@@ -41,7 +41,7 @@ def read_yaml_file(
         # Read necessary part of global configurations and parameters
         if update_with_global:
             conf.update_with_global(
-                get_global_params_and_dates(start_dir, conf.rel_path_global_config)
+                get_global_params_and_dates(config_dir, conf.rel_path_global_config)
             )
 
     return conf

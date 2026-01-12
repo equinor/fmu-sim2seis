@@ -81,8 +81,8 @@ def get_sum_value(file_name: Path) -> float:
 
 
 def test_sim2seis_ert(testdata, monkeypatch, data_dir):
-    monkeypatch.chdir(data_dir / "rms/model")
-    start_path = data_dir / "rms/model"
+    monkeypatch.chdir(data_dir / "sim2seis/model")
+    start_path = data_dir / "sim2seis/model"
     subprocess.run(
         ["ert", "test_run", "../../ert/model/run_sim2seis.ert"],
         env={**os.environ, "SIM2SEIS_MODEL_DIR": str(start_path)},
