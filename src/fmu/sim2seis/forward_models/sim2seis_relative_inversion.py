@@ -15,8 +15,6 @@ class RelativeInversion(ForwardModelStepPlugin):
             name="RELATIVE_INVERSION",
             command=[
                 "sim2seis_relative_ai",
-                "--start-dir",
-                "<START_DIR>",
                 "--config-dir",
                 "<CONFIG_DIR>",
                 "--config-file",
@@ -43,7 +41,7 @@ class RelativeInversion(ForwardModelStepPlugin):
             description="",
             examples=(
                 "code-block:: console\n\n"
-                "FORWARD_MODEL MAP_ATTRIBUTES(<START_DIR>=.../rms/model, "
+                "FORWARD_MODEL RELATIVE_INVERSION("
                 "<CONFIG_DIR>=../../sim2seis/model, "
                 "<CONFIG_FILE>=sim2seis_config.yml, "
                 "<VERBOSE>=true/false)"

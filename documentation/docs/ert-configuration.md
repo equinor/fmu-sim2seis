@@ -4,7 +4,7 @@ You can include `sim2seis` in your ERT setup by including the following snippet:
 
 ```ert
 -- Define your variables:
-DEFINE <JOB_STARTDIR> <RUNPATH>/rms/model
+DEFINE <JOB_STARTDIR> <RUNPATH>/sim2seis/model
 DEFINE <RELPATH_CONFIG_FILES> <RUNPATH>/sim2seis/model
 DEFINE <PEM_CONFIG_FILE_NAME> pem_config.yml
 DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_config.yml

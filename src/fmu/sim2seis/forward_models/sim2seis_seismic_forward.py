@@ -18,8 +18,6 @@ class SeismicForward(ForwardModelStepPlugin):
             name="SEISMIC_FORWARD",
             command=[
                 "sim2seis_seismic_forward",
-                "--start-dir",
-                "<START_DIR>",
                 "--config-dir",
                 "<CONFIG_DIR>",
                 "--config-file",
@@ -39,11 +37,11 @@ class SeismicForward(ForwardModelStepPlugin):
     def validate_pre_experiment(self, fm_step_json: ForwardModelStepJSON) -> None:
         # Parse YAML parameter file by pydantic pre-experiment to catch errors at an
         # early stage
-        config_file = Path(fm_step_json["argList"][5])
-        model_dir = Path(fm_step_json["argList"][7])
-        start_dir = model_dir / "../../rms/model"
+        config_file = Path(fm_step_json["argList"][3])
+        model_dir = Path(fm_step_json["argList"][5])
+        config_dir = model_dir / "../../sim2seis/model"
         try:
-            _ = read_yaml_file(model_dir / config_file, start_dir)
+            _ = read_yaml_file(model_dir / config_file, config_dir)
         except Exception as e:
             raise ForwardModelStepValidationError(
                 f"sim2seis seismic forward validation failed:\n {e}"
@@ -58,7 +56,7 @@ class SeismicForward(ForwardModelStepPlugin):
             description="",
             examples=(
                 "code-block:: console\n\n"
-                "FORWARD_MODEL MAP_ATTRIBUTES(<START_DIR>=.../rms/model, "
+                "FORWARD_MODEL SEISMIC_FORWARD("
                 "<CONFIG_DIR>=../../sim2seis/model, "
                 "<CONFIG_FILE>=sim2seis_config.yml,"
                 "<VERBOSE>=true/false)"

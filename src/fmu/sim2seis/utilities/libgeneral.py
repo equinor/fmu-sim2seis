@@ -50,11 +50,11 @@ def cleanup_folders_dataio() -> None:
     current = Path(".")
     current_abs = current.absolute()
 
-    if current_abs.name == "model" and current_abs.parent.name == "rms":
-        print("Seems that you run from rms/model folder --- good!")
+    if current_abs.name == "model" and current_abs.parent.name == "sim2seis":
+        print("Seems that you run from sim2seis/model folder --- good!")
     else:
         raise RuntimeError(
-            f"You do not run this from the rms/model folder but from {current_abs}!"
+            f"You don't run this from the sim2seis/model folder but from {current_abs}!"
         )
 
     for folder in dataio_folders:

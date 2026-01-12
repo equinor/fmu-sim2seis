@@ -27,7 +27,7 @@ from fmu.sim2seis.utilities import (
 
 
 def run_relative_inversion_si4ti(
-    start_dir: Path,
+    config_dir: Path,
     time_cubes: dict[SeismicName, DifferenceSeismic],
     config: Sim2SeisConfig,
 ) -> dict[SeismicName, DifferenceSeismic]:
@@ -38,10 +38,10 @@ def run_relative_inversion_si4ti(
         run_path = Path(os.getenv("_ERT_RUNPATH"))
         rel_dir = Path(".")
     except TypeError:
-        # in case this is run from command line, _ERT_RUNPATH is not set, and start_dir
-        # is at ./rms/model, relative to the top of the fmu directory structure. To get
-        # the requirements of fmu-dataio right, we need to move up two levels
-        run_path = Path(start_dir)
+        # in case this is run from command line, _ERT_RUNPATH is not set, and config_dir
+        # is at ./sim2seis/model, relative to the top of the fmu directory structure.
+        # To follow the requirements of fmu-dataio right, we need to move up two levels
+        run_path = Path(config_dir)
         rel_dir = Path("../..")
 
     diff_rel_ai_dict = {}

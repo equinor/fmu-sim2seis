@@ -18,7 +18,7 @@ from .sim2seis_config_validation import Sim2SeisConfig
 def cube_export(
     config_file: Sim2SeisConfig,
     export_cubes: dict[SeismicName, DifferenceSeismic | SingleSeismic],
-    start_dir: Path,
+    config_dir: Path,
     override_folder: str = "",
     is_observed: bool = False,
     is_preprocessed: bool = False,
@@ -31,10 +31,10 @@ def cube_export(
         run_path = Path(getenv("_ERT_RUNPATH"))
         rel_dir = Path(".")
     except TypeError:
-        # in case this is run from command line, _ERT_RUNPATH is not set, and start_dir
-        # is at ./rms/model, relative to the top of the fmu directory structure. To get
-        # the requirements of fmu-dataio right, we need to move up two levels
-        run_path = Path(start_dir)
+        # in case this is run from command line, _ERT_RUNPATH is not set, and config_dir
+        # is at ./sim2seis/model, relative to the top of the fmu directory structure.
+        # To follow the requirements of fmu-dataio right, we need to move up two levels
+        run_path = Path(config_dir)
         rel_dir = Path("../..")
 
     with restore_dir(run_path / rel_dir):
@@ -66,7 +66,7 @@ def cube_export(
 def attribute_export(
     config_file: Sim2SeisConfig,
     export_attributes: list[SeismicAttribute],
-    start_dir: Path,
+    config_dir: Path,
     is_observed: bool = False,
     is_preprocessed: bool = False,
 ) -> None:
@@ -75,12 +75,12 @@ def attribute_export(
     try:
         run_path = Path(getenv("_ERT_RUNPATH"))
     except TypeError:
-        run_path = start_dir
+        run_path = config_dir
 
     # prepare for ert/webviz export
     simgrid, zone_def, region_def = _get_grid_info(
         config_file=config_file,
-        start_dir=start_dir,
+        config_dir=config_dir,
     )
     # Must determine the absolute output path before changing directory
     output_path = config_file.webviz_map.output_path.resolve()
@@ -157,10 +157,10 @@ def attribute_export(
 
 def _get_grid_info(
     config_file: Sim2SeisConfig,
-    start_dir: Path,
+    config_dir: Path,
 ) -> tuple[xtgeo.Grid, xtgeo.GridProperty, xtgeo.GridProperty]:
     # Import grid, zones, regions
-    with restore_dir(start_dir):
+    with restore_dir(config_dir):
         grid = xtgeo.grid_from_file(
             config_file.webviz_map.grid_path.joinpath(config_file.webviz_map.grid_file)
         )
