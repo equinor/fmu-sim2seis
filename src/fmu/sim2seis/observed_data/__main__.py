@@ -39,7 +39,13 @@ def main(arguments=None):
         # Establish symlinks to the observed seismic data, make exception for
         # tests runs, where a test dataset is copied instead
         if not (config.test_run or args.no_attributes):
-            make_symlinks_observed_seismic(config)
+            make_symlinks_observed_seismic(
+                vintages=config.global_params["global"]["seismic"]["real_4d"],
+                input_datapath=config.global_params["global"]["seismic"][
+                    "real_4d_cropped_path"
+                ],
+                output_datapath=config.observed_data_path,
+            )
 
         # Create depth surfaces
         depth_surf = get_depth_surfaces(config)

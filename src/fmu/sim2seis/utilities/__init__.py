@@ -7,8 +7,16 @@ from .dump_results import (
 from .export_with_dataio import attribute_export, cube_export
 from .get_yaml_file import read_yaml_file
 from .interval_parser import populate_seismic_attributes
+from .link_and_folder_utils import (
+    make_folders,
+    make_symlink,
+)
 from .obs_data_config_validation import ObservedDataConfig
-from .seis_diff_dates import get_pred_or_hist_seis_diff_dates
+from .seis_dates import (
+    get_listed_seis_dates,
+    get_listed_seis_diff_dates,
+    get_pred_or_hist_seis_diff_dates,
+)
 from .sim2seis_class_definitions import (
     AttributeDef,
     DifferenceSeismic,
@@ -39,7 +47,11 @@ __all__ = [
     "clear_result_objects",
     "cube_export",
     "dump_result_objects",
+    "get_listed_seis_dates",
+    "get_listed_seis_diff_dates",
     "get_pred_or_hist_seis_diff_dates",
+    "make_folders",
+    "make_symlink",
     "parse_arguments",
     "populate_seismic_attributes",
     "read_yaml_file",
