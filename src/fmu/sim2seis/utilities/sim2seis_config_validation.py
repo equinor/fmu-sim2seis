@@ -262,7 +262,7 @@ class WebvizMap(BaseModel):
         "but it can also be given as a surface with polygon information "
         "where each polygon has its own attribute error. Full path and "
         "name to the surface file must be given, and the file format "
-        "must be recognised by xtgeo. NB! This only applies to observed data. " \
+        "must be recognised by xtgeo. NB! This only applies to observed data. "
         "Modelled data uses the default values which signifies NaN values.",
         default=0.0,
     )
@@ -295,8 +295,8 @@ class WebvizMap(BaseModel):
     @field_validator("attribute_error", mode="before")
     def attribute_error_check(cls, v: float | Path):
         if isinstance(v, float):
-            assert v > 0.0
-            assert v < 1.0
+            assert v >= 0.0
+            assert v <= 1.0
             return v
         assert v.is_file()
         try:

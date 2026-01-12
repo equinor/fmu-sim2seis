@@ -41,7 +41,7 @@ def main(arguments=None):
 
         # Establish symlinks to the observed seismic data, make exception for
         # tests runs, where a test dataset is copied instead
-        if not args.no_attributes:
+        if not (config.test_run or args.no_attributes):
             make_symlinks_observed_seismic(config)
 
         # Create depth surfaces

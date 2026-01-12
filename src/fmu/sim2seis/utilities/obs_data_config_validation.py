@@ -17,6 +17,7 @@ from .sim2seis_config_validation import WebvizMap
 
 class DepthSurface(BaseModel):
     """Class for depth surface configuration."""
+
     horizon_names: list[str]
     suffix_name: str
     depth_dir: DirectoryPath = Path("../../share/preprocessed/maps")
@@ -24,6 +25,7 @@ class DepthSurface(BaseModel):
 
 class TimeData(BaseModel):
     """Class for time surfaces and time cubes"""
+
     time_cube_dir: DirectoryPath = Path("../../share/preprocessed/cubes")
     time_cube_prefix: str = "seismic--"
     time_suffix: str = "--time.gri"
@@ -32,6 +34,7 @@ class TimeData(BaseModel):
 
 class DepthConversion(BaseModel):
     """Class for depth conversion of observed seismic cubes"""
+
     min_depth: int = Field(ge=0)
     max_depth: int = Field(gt=0)
     z_inc: int = Field(gt=0)
@@ -39,16 +42,17 @@ class DepthConversion(BaseModel):
 
 class ObservedDataConfig(BaseModel):
     attribute_definition_file: Path
+    test_run: bool = False
     depth_conversion: DepthConversion
     global_params: FromGlobal | None = None
     observed_depth_surf: DepthSurface
     observed_time_data: TimeData = Field(default_factory=TimeData)
     pickle_file_output_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path( "../../share/preprocessed/pickle_files"),
+        default=Path("../../share/preprocessed/pickle_files"),
     )
     pickle_file_prefix: SkipJsonSchema[str] = Field(
         default="observed_data",
-        )
+    )
     rel_path_global_config: DirectoryPath = Path("../../fmuconfig/output")
     observed_data_path: DirectoryPath = Path("../../share/preprocessed/cubes")
     webviz_map: WebvizMap
