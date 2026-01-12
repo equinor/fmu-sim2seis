@@ -820,12 +820,15 @@ def test_attribute_with_window_length_override(
         ): cube
     }
 
-    with patch(
-        "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
-        side_effect=lambda path: surfaces.get(
-            path.split("/")[-1], Mock(spec=xtgeo.RegularSurface)
+    with (
+        patch(
+            "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
+            side_effect=lambda path: surfaces.get(
+                path.split("/")[-1], Mock(spec=xtgeo.RegularSurface)
+            ),
         ),
-    ), pytest.warns(UserWarning):
+        pytest.warns(UserWarning),
+    ):
         attrs = populate_seismic_attributes(config, cubes, surfaces)
 
     assert len(attrs) == 2
