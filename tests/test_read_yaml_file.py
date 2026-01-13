@@ -4,7 +4,7 @@ from fmu.sim2seis.utilities import read_yaml_file
 
 
 def test_read_yaml_config(monkeypatch, data_dir):
-    config_dir = data_dir / r"sim2seis/model"
+    config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
     rel_path_conf = Path("../../sim2seis/model")
     config_file = Path("sim2seis_config.yml")
@@ -25,7 +25,7 @@ def test_read_yaml_config(monkeypatch, data_dir):
 
 
 def test_read_obs_data_yaml_file(monkeypatch, data_dir):
-    config_dir = data_dir / r"sim2seis/model"
+    config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
     rel_path_conf = Path("../../sim2seis/model")
     config_file = Path("obs_data_config.yml")
