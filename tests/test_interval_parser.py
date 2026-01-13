@@ -533,7 +533,8 @@ def test_window_interval_zeros_out_bottom_surface_shift(
         ): Mock(spec=SingleSeismic)
     }
 
-    seismic_attr_list = populate_seismic_attributes(config, cubes, surfaces)
+    with pytest.warns(UserWarning):
+        seismic_attr_list = populate_seismic_attributes(config, cubes, surfaces)
 
     assert len(seismic_attr_list) == 1
     attr = seismic_attr_list[0]
@@ -819,11 +820,14 @@ def test_attribute_with_window_length_override(
         ): cube
     }
 
-    with patch(
-        "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
-        side_effect=lambda path: surfaces.get(
-            path.split("/")[-1], Mock(spec=xtgeo.RegularSurface)
+    with (
+        patch(
+            "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
+            side_effect=lambda path: surfaces.get(
+                path.split("/")[-1], Mock(spec=xtgeo.RegularSurface)
+            ),
         ),
+        pytest.warns(UserWarning),
     ):
         attrs = populate_seismic_attributes(config, cubes, surfaces)
 

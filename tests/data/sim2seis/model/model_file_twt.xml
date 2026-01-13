@@ -95,7 +95,7 @@
 
    # Specification of output data
    <output-parameters>
-     <prefix>../../share/results/cubes/syntseis_base</prefix>
+     <prefix>../../share/results/cubes/seismic_base</prefix>
      <twt>yes</twt>    # two-way traveltime as function of depth  in storm grid format
      <seismic-time-segy>no</seismic-time-segy>
      <seismic-depth-segy>no</seismic-depth-segy>

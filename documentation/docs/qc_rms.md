@@ -89,7 +89,7 @@ pem_ai.to_roxar(projectname=PRJ, gridname=pem_grid_name, propertyname=pem_grid_p
 
 # Cube import
 os.chdir(project_dir + os.path.sep + rel_dir_mod_cubes)
-mod_amp_cube = "syntseis--amplitude_full_depth--20180701_20180101.segy"
+mod_amp_cube = "seismic--amplitude_full_depth--20180701_20180101.segy"
 cube_amp = xtgeo.cube.cube_from_file(mod_amp_cube)
 cube_amp.to_roxar(project=PRJ, name=mod_amp_cube[:-4], domain="depth")
 

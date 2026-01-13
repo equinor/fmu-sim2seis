@@ -94,7 +94,7 @@
 
    # Specification of output data
    <output-parameters>
-     <prefix>../../share/results/cubes/syntseis_temp</prefix>
+     <prefix>../../share/results/cubes/seismic_temp</prefix>
      <seismic-time-segy>no</seismic-time-segy>  # gathers
      <seismic-depth-segy>no</seismic-depth-segy> # gathers
      <twt>no</twt>
@@ -107,7 +107,7 @@
      <elastic-parameters-time-segy>no</elastic-parameters-time-segy>
    </output-parameters>
    # This will import twt from base survey, and use this as twt also for monitor
-   <timeshift-twt>../../share/results/cubes/syntseis_base_twt.storm</timeshift-twt>
+   <timeshift-twt>../../share/results/cubes/seismic_base_twt.storm</timeshift-twt>
 
    <project-settings>
       # number of threads/cpu. Set to 1 when running in batch

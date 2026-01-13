@@ -6,6 +6,7 @@ from pydantic import (
     Field,
     field_validator,
 )
+from pydantic.json_schema import SkipJsonSchema
 
 from fmu.pem.pem_utilities.pem_config_validation import (
     FromGlobal,
@@ -19,16 +20,16 @@ class DepthSurface(BaseModel):
 
     horizon_names: list[str]
     suffix_name: str
-    depth_dir: DirectoryPath = Path("../../share/observations/maps")
+    depth_dir: DirectoryPath = Path("../../share/preprocessed/maps")
 
 
 class TimeData(BaseModel):
     """Class for time surfaces and time cubes"""
 
-    time_cube_dir: DirectoryPath = Path("../../share/observations/cubes")
+    time_cube_dir: DirectoryPath = Path("../../share/preprocessed/cubes")
     time_cube_prefix: str = "seismic--"
     time_suffix: str = "--time.gri"
-    horizon_dir: DirectoryPath = Path("../../share/observations/maps")
+    horizon_dir: DirectoryPath = Path("../../share/preprocessed/maps")
 
 
 class DepthConversion(BaseModel):
@@ -46,12 +47,14 @@ class ObservedDataConfig(BaseModel):
     global_params: FromGlobal | None = None
     observed_depth_surf: DepthSurface
     observed_time_data: TimeData = Field(default_factory=TimeData)
-    pickle_file_output_path: DirectoryPath = Path(
-        "../../share/observations/pickle_files"
+    pickle_file_output_path: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/preprocessed/pickle_files"),
     )
-    pickle_file_prefix: str = "observed_data"
+    pickle_file_prefix: SkipJsonSchema[str] = Field(
+        default="observed_data",
+    )
     rel_path_global_config: DirectoryPath = Path("../../fmuconfig/output")
-    observed_data_path: DirectoryPath = Path("../../share/observations/cubes")
+    observed_data_path: DirectoryPath = Path("../../share/preprocessed/cubes")
     webviz_map: WebvizMap
 
     @field_validator("pickle_file_output_path", mode="before")

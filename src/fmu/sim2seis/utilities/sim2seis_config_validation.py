@@ -48,7 +48,7 @@ class SeismicForward(BaseModel):
         "identification",
     )
     segy_depth: SkipJsonSchema[Path] = Field(
-        default=Path("syntseis_temp_seismic_depth_stack.segy"),
+        default=Path("seismic_temp_seismic_depth_stack.segy"),
         description="Seismic forward model writes temporary segy files "
         "to disk. The name must correspond to the setting in "
         "the XML files for each partial or full stack that "
@@ -61,7 +61,7 @@ class SeismicForward(BaseModel):
         "the intermediate files from seismic forward modelling",
     )
     stack_model_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../sim2seis/model/"),
+        default=Path("../../sim2seis/model"),
         description="Folder for the XML model files listed in 'stack_models'",
     )
     stack_models: dict[StackDef, Path] = Field(
@@ -262,10 +262,12 @@ class WebvizMap(BaseModel):
         "but it can also be given as a surface with polygon information "
         "where each polygon has its own attribute error. Full path and "
         "name to the surface file must be given, and the file format "
-        "must be recognised by xtgeo",
+        "must be recognised by xtgeo. NB! This only applies to observed data. "
+        "Modelled data uses the default values which signifies NaN values.",
+        default=0.0,
     )
     output_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path(r"../../share/results/tables"),
+        default=Path("../../share/results/tables"),
         description="Ascii files for WebViz or ERT are written to this directory",
     )
 
@@ -293,8 +295,8 @@ class WebvizMap(BaseModel):
     @field_validator("attribute_error", mode="before")
     def attribute_error_check(cls, v: float | Path):
         if isinstance(v, float):
-            assert v > 0.0
-            assert v < 1.0
+            assert v >= 0.0
+            assert v <= 1.0
             return v
         assert v.is_file()
         try:
@@ -365,22 +367,22 @@ class SeismicInversionConfig(BaseModel):
         default="relai", description="Attribute type for seismic inverted cubes"
     )
     d_syn_0: FilePath = Field(
-        default=Path("../../sim2seis/output/seismic_forward/syntseis--d_syn0.sgy"),
+        default=Path("../../sim2seis/output/seismic_forward/seismic--d_syn0.sgy"),
         description="Default name for synthetic seismic data for the first vintage"
         "based on the relative inversion results and the wavelet",
     )
     d_syn_1: FilePath = Field(
-        default=Path("../../sim2seis/output/seismic_forward/syntseis--d_syn1.sgy"),
+        default=Path("../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy"),
         description="Default name for synthetic seismic data for the second vintage"
         "based on the relative inversion results and the wavelet",
     )
     rel_ai_0: FilePath = Field(
-        default=Path("../../sim2seis/output/seismic_forward/syntseis--relai_0.sgy"),
+        default=Path("../../sim2seis/output/seismic_forward/seismic--relai_0.sgy"),
         description="Default name for relative acoustic impedance for the first "
         "vintage",
     )
     rel_ai_1: FilePath = Field(
-        default=Path("../../sim2seis/output/seismic_forward/syntseis--relai_1.sgy"),
+        default=Path("../../sim2seis/output/seismic_forward/seismic--relai_1.sgy"),
         description="Default name for relative acoustic impedance for the second "
         "vintage",
     )
@@ -445,11 +447,11 @@ class Sim2SeisConfig(BaseModel):
         default_factory=InversionMapConfig
     )
     pickle_file_output_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path(r"../../share/results/pickle_files"),
+        default=Path("../../share/results/pickle_files"),
         description="Directory for storing all module results in pickle format",
     )
     rel_path_global_config: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path(r"../../fmuconfig/output"),
+        default=Path("../../fmuconfig/output"),
         description="Relative path name for the directory where the global "
         "parameter file is stored",
     )

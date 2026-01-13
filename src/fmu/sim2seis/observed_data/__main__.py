@@ -29,7 +29,8 @@ def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments, extra_arguments=["verbose", "no_attributes"])
-    # Validate startup directory
+    # Validate startup directory, assumed to be two steps down in the fmu directory
+    # structure
     run_folder = check_startup_dir(args.start_dir)
 
     with restore_dir(run_folder):
@@ -40,7 +41,7 @@ def main(arguments=None):
 
         # Establish symlinks to the observed seismic data, make exception for
         # tests runs, where a test dataset is copied instead
-        if not config.test_run:
+        if not (config.test_run or args.no_attributes):
             make_symlinks_observed_seismic(config)
 
         # Create depth surfaces
@@ -76,9 +77,10 @@ def main(arguments=None):
                 export_attributes=attr_list,
                 start_dir=run_folder,
                 is_observed=True,
+                is_preprocessed=True,
             )
 
-        # Dump results
+        # Dump results - empty attribute list will skip attribute export
         _dump_observed_results(
             config=config,
             time_surfaces=time_surfaces,
@@ -96,6 +98,10 @@ def main(arguments=None):
             export_cubes=depth_cubes,
             start_dir=run_folder,
             is_observed=True,
+            # If there is per-realisation depth uncertainty, we
+            # must set the 'preprocessed' attribute for fmu-dataio
+            # This takes precedence over is_observation
+            is_preprocessed=not args.no_attributes,
         )
 
 
