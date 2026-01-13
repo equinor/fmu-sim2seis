@@ -19,10 +19,7 @@ import{_ as i,c as a,o as _,ae as n}from"./chunks/framework.xmna4E1W.js";const o
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">## For the main class: relative path to the config file</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#______________________________________________________________________________________________________________________#</span></span>
 <span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">attribute_definition_file</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">observed_data_intervals_drogon.yml</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># pickle_file_output_path: ../../share/observations/pickle_files</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># pickle_file_prefix: observed_data</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># rel_path_global_config: ../../fmuconfig/output</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># observed_data_path: ../../share/observations/cubes</span></span>
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">## Section for depth maps - inputs only</span></span>
@@ -31,7 +28,6 @@ import{_ as i,c as a,o as _,ae as n}from"./chunks/framework.xmna4E1W.js";const o
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # paths and standard naming. Depth maps are read from horizon folder INPUT</span></span>
 <span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  suffix_name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">depth</span></span>
 <span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  horizon_names</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">MSL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">TopVolantis</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">BaseVolantis</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">BaseVelmodel</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # depth_dir: ../../share/observations/maps</span></span>
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">## Section for depth conversion</span></span>
@@ -49,17 +45,15 @@ import{_ as i,c as a,o as _,ae as n}from"./chunks/framework.xmna4E1W.js";const o
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  zone_file: simgrid--zone.roff</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  region_file: simgrid--region.roff</span></span>
 <span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  attribute_error</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.07</span></span>
+<span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  output_path</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">../../ert/input/preprocessed/seismic</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  grid_path: ../../sim2seis/input/pem</span></span>
-<span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  output_path</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">../../share/observations/tables</span></span>
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">## Section for time data</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#______________________________________________________________________________________________________________________#</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#observed_time_data:</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # time_cube_dir: ../../share/observations/cubes</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # time_cube_prefix: seismic--</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # time_suffix: --time.gri</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # horizon_dir: ../../share/observations/maps</span></span>
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">## End of config file</span></span>

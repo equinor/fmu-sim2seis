@@ -4,10 +4,10 @@ import{_ as i,c as e,o as a,ae as n}from"./chunks/framework.xmna4E1W.js";const d
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  attribute: &amp;inversion_attribute relai</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  path: &amp;rel_ai_path ../../share/results/cubes</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  domain: [time]</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  d_syn_0: ../../sim2seis/output/seismic_forward/syntseis--d_syn0.sgy</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  rel_ai_0: ../../sim2seis/output/seismic_forward/syntseis--relai_0.sgy</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  d_syn_1: ../../sim2seis/output/seismic_forward/syntseis--d_syn1.sgy</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  rel_ai_1: ../../sim2seis/output/seismic_forward/syntseis--relai_1.sgy</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  d_syn_0: ../../sim2seis/output/seismic_forward/seismic--d_syn0.sgy</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  rel_ai_0: ../../sim2seis/output/seismic_forward/seismic--relai_0.sgy</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  d_syn_1: ../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  rel_ai_1: ../../sim2seis/output/seismic_forward/seismic--relai_1.sgy</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  remove_unused_files: True</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  inversion_params:</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#      lateral_smoothing_4d: 0.05</span></span>
