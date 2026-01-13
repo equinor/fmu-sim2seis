@@ -13,7 +13,6 @@ from fmu.sim2seis.seismic_fwd import main as run_seismic_forward
 from fmu.sim2seis.seismic_inversion import main as run_seismic_inversion
 from fmu.sim2seis.utilities import DifferenceSeismic, SeismicAttribute, SingleSeismic
 
-rel_path_config_file = Path(r"../../sim2seis/model")
 obs_data_config_file_name = Path("obs_data_config.yml")
 sim2seis_config_file_name = Path("sim2seis_config.yml")
 
@@ -24,23 +23,21 @@ r_tol = 0.001
 
 
 def test_obs_data(monkeypatch, data_dir):
-    start_dir = data_dir / "rms/model"
-    monkeypatch.chdir(start_dir)
+    config_dir = data_dir / "sim2seis" / "model"
+    monkeypatch.chdir(config_dir)
     # Modify the config file: add `test_run = True`
-    with open(rel_path_config_file / obs_data_config_file_name) as fin:
+    with open(obs_data_config_file_name) as fin:
         conf_dict = yaml.safe_load(fin)
         conf_dict["test_run"] = True
     fout_name = Path(
         obs_data_config_file_name.stem + "_test" + obs_data_config_file_name.suffix
     )
-    with open(rel_path_config_file / fout_name, "w") as fout:
+    with open(fout_name, "w") as fout:
         yaml.safe_dump(conf_dict, fout)
     run_obs_data(
         [
-            "--start-dir",
-            str(start_dir),
             "--config-dir",
-            str(rel_path_config_file),
+            str(config_dir),
             "--config-file",
             str(fout_name),
         ]
@@ -87,14 +84,12 @@ def test_sim2seis(monkeypatch, data_dir):
 
 
 def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
-    start_dir = data_dir / "rms/model"
-    monkeypatch.chdir(start_dir)
+    config_dir = data_dir / "sim2seis" / "model"
+    monkeypatch.chdir(config_dir)
     run_seismic_forward(
         [
-            "--start-dir",
-            str(start_dir),
             "--config-dir",
-            str(rel_path_config_file),
+            str(config_dir),
             "--config-file",
             str(sim2seis_config_file_name),
             "--verbose",
@@ -127,14 +122,12 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
 
 
 def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
-    start_dir = data_dir / "rms/model"
-    monkeypatch.chdir(start_dir)
+    config_dir = data_dir / "sim2seis" / "model"
+    monkeypatch.chdir(config_dir)
     run_seismic_inversion(
         [
-            "--start-dir",
-            str(start_dir),
             "--config-dir",
-            str(rel_path_config_file),
+            str(config_dir),
             "--config-file",
             str(sim2seis_config_file_name),
             "--verbose",
@@ -167,16 +160,14 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
 
 
 def run_test_sim2seis_map(monkeypatch, data_dir):
-    start_dir = data_dir / "rms/model"
-    monkeypatch.chdir(start_dir)
+    config_dir = data_dir / "sim2seis" / "model"
+    monkeypatch.chdir(config_dir)
     for attribute in ["amplitude", "relai"]:
-        with restore_dir(start_dir):
+        with restore_dir(config_dir):
             map_attributes(
                 [
-                    "--start-dir",
-                    str(start_dir),
                     "--config-dir",
-                    str(rel_path_config_file),
+                    str(config_dir),
                     "--config-file",
                     str(sim2seis_config_file_name),
                     "--attribute",

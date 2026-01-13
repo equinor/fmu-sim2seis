@@ -19,24 +19,25 @@ def testdata() -> Path:
 
 @pytest.fixture(scope="session", autouse=True, name="data_dir")
 def setup_sim2seis_test_data(testdata, tmp_path_factory):
-    start_dir = tmp_path_factory.mktemp("data")
+    config_dir = tmp_path_factory.mktemp("data")
     # Copy data directory tree
-    copytree(testdata, start_dir, dirs_exist_ok=True)
+    copytree(testdata, config_dir, dirs_exist_ok=True)
 
-    # List all directories that must be created, relative to start_dir
+    # List all directories that must be created, relative to config_dir
     dirs_to_make = [
         "./ert/input/preprocessed/seismic",
-        "./rms/model",
+        "./sim2seis/model",
         "./share/preprocessed/cubes",
         "./share/preprocessed/maps",
         "./share/preprocessed/tables",
+        "./share/observations/tables",
         "./share/results/cubes",
         "./share/results/pickle_files",
         "./share/results/tables",
         "./sim2seis/output/pem",
     ]
     for make_dir in dirs_to_make:
-        start_dir.joinpath(make_dir).mkdir(parents=True, exist_ok=True)
+        config_dir.joinpath(make_dir).mkdir(parents=True, exist_ok=True)
 
     special_files = [
         "./share/preprocessed/cubes/test_data/seismic--amplitude_time--20180701_20180101.segy",
@@ -47,8 +48,10 @@ def setup_sim2seis_test_data(testdata, tmp_path_factory):
         "./share/preprocessed/cubes/test_data/seismic--relai_time--20200701_20180101.segy",
     ]
     for filename in special_files:
-        copy2(Path(testdata) / filename, start_dir / filename.replace("test_data/", ""))
-    return start_dir
+        copy2(
+            Path(testdata) / filename, config_dir / filename.replace("test_data/", "")
+        )
+    return config_dir
 
 
 @pytest.fixture

@@ -11,18 +11,11 @@ def parse_arguments(
     """
     parser = argparse.ArgumentParser(__file__)
     parser.add_argument(
-        "-s",
-        "--start-dir",
-        type=Path,
-        required=True,
-        help="Start directory for running script (required)",
-    )
-    parser.add_argument(
         "-c",
         "--config-dir",
         type=Path,
         required=True,
-        help="Path to config file (required)",
+        help="Path to config directory (required), should end with 'sim2seis/model'",
     )
     parser.add_argument(
         "-f",
@@ -86,9 +79,9 @@ def parse_arguments(
 
 def check_startup_dir(cwd: Path) -> Path:
     run_folder = cwd.absolute()
-    if not str(run_folder).endswith("rms/model"):
-        warn("sim2seis workflow should be run from the rms/model folder.")
-    if not run_folder.exists() and run_folder.is_dir():
+    if not str(run_folder).endswith("sim2seis/model"):
+        warn("sim2seis workflow should be run from the sim2seis/model folder.")
+    if not (run_folder.exists() and run_folder.is_dir()):
         raise ValueError(
             f"Start directory does not exist or is not a directory: {run_folder}"
         )

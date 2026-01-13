@@ -4,13 +4,13 @@ from fmu.sim2seis.utilities import read_yaml_file
 
 
 def test_read_yaml_config(monkeypatch, data_dir):
-    start_dir = data_dir / r"rms/model"
-    monkeypatch.chdir(start_dir)
+    config_dir = data_dir / "sim2seis" / "model"
+    monkeypatch.chdir(config_dir)
     rel_path_conf = Path("../../sim2seis/model")
     config_file = Path("sim2seis_config.yml")
     conf = read_yaml_file(
         file_name=rel_path_conf / config_file,
-        start_dir=start_dir,
+        config_dir=config_dir,
         update_with_global=True,
         parse_inputs=True,
     )
@@ -25,13 +25,13 @@ def test_read_yaml_config(monkeypatch, data_dir):
 
 
 def test_read_obs_data_yaml_file(monkeypatch, data_dir):
-    start_dir = data_dir / r"rms/model"
-    monkeypatch.chdir(start_dir)
+    config_dir = data_dir / "sim2seis" / "model"
+    monkeypatch.chdir(config_dir)
     rel_path_conf = Path("../../sim2seis/model")
     config_file = Path("obs_data_config.yml")
     conf = read_yaml_file(
         file_name=rel_path_conf / config_file,
-        start_dir=start_dir,
+        config_dir=config_dir,
         update_with_global=True,
         parse_inputs=True,
     )

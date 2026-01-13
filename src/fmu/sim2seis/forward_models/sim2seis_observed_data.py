@@ -13,8 +13,6 @@ class ObservedData(ForwardModelStepPlugin):
             name="OBSERVED_DATA",
             command=[
                 "sim2seis_observed_data",
-                "--start-dir",
-                "<START_DIR>",
                 "--config-dir",
                 "<CONFIG_DIR>",
                 "--config-file",
@@ -39,7 +37,7 @@ class ObservedData(ForwardModelStepPlugin):
             description="",
             examples=(
                 "code-block:: console\n\n"
-                "FORWARD_MODEL OBSERVED_DATA(<START_DIR>=.../rms/model, "
+                "FORWARD_MODEL OBSERVED_DATA("
                 "<CONFIG_DIR>=../../sim2seis/model, "
                 "<CONFIG_FILE>=obs_data.yml)"
             ),
