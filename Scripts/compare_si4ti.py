@@ -4,7 +4,7 @@ import time
 import xtgeo
 from si4ti import compute_impedance
 
-from fmu.sim2seis.utilities import libgeneral as libgen
+from fmu.sim2seis.utilities import link_and_folder_utils as libgen
 
 
 def run_by_si4ti():

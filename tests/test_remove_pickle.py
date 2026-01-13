@@ -44,7 +44,7 @@ def test_pickle_cleanup_observed_data(monkeypatch, data_dir):
 
 
 def test_pickle_cleanup_main_script(monkeypatch, data_dir):
-    monkeypatch.chdir(data_dir / "sim2seis/model")
+    monkeypatch.chdir(data_dir / "sim2seis" / "model")
     status = subprocess.run(
         [
             "sim2seis_cleanup",

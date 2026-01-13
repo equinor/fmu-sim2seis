@@ -23,7 +23,7 @@ r_tol = 0.001
 
 
 def test_obs_data(monkeypatch, data_dir):
-    config_dir = data_dir / "sim2seis/model"
+    config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
     # Modify the config file: add `test_run = True`
     with open(obs_data_config_file_name) as fin:
@@ -84,7 +84,7 @@ def test_sim2seis(monkeypatch, data_dir):
 
 
 def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
-    config_dir = data_dir / "sim2seis/model"
+    config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
     run_seismic_forward(
         [
@@ -122,7 +122,7 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
 
 
 def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
-    config_dir = data_dir / "sim2seis/model"
+    config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
     run_seismic_inversion(
         [
@@ -160,7 +160,7 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
 
 
 def run_test_sim2seis_map(monkeypatch, data_dir):
-    config_dir = data_dir / "sim2seis/model"
+    config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
     for attribute in ["amplitude", "relai"]:
         with restore_dir(config_dir):
