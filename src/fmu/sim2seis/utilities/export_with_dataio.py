@@ -19,9 +19,9 @@ def cube_export(
     config_file: Sim2SeisConfig,
     export_cubes: dict[SeismicName, DifferenceSeismic | SingleSeismic],
     config_dir: Path,
-    override_folder: str = "",
     is_observed: bool = False,
     is_preprocessed: bool = False,
+    override_folder: str = "",
 ) -> None:
     global_variables = config_file.global_params.global_config
     """Output depth cube via fmu.dataio"""
