@@ -67,10 +67,10 @@ def main(arguments=None):
         else:
             attr_list = populate_seismic_attributes(
                 config=read_yaml_file(
-                    run_folder / args.config_dir / config.attribute_definition_file,
-                    run_folder,
-                    update_with_global=False,
-                    parse_inputs=False,
+                    sim2seis_config_dir=args.config_dir,
+                    sim2seis_config_file=args.config_file,
+                    global_cofig_dir=args.global_dir,
+                    global_config_file=args.global_file,
                 ),
                 cubes=depth_cubes,
                 surfaces=depth_surf,

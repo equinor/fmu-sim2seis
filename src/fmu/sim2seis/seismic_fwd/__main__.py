@@ -35,7 +35,12 @@ def main(arguments=None):
 
     with restore_dir(run_folder):
         # Get configuration parameters
-        config = read_yaml_file(run_folder / args.config_file, run_folder)
+        config = read_yaml_file(
+            sim2seis_config_dir=args.config_dir,
+            sim2seis_config_file=args.config_file,
+            global_cofig_dir=args.global_dir,
+            global_config_file=args.global_file,
+        )
 
         # Read the horizons that are used in depth conversion and later for extraction
         # of attributes
