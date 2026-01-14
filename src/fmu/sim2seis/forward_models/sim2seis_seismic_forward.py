@@ -22,6 +22,10 @@ class SeismicForward(ForwardModelStepPlugin):
                 "<CONFIG_DIR>",
                 "--config-file",
                 "<CONFIG_FILE>",
+                "--global-dir",
+                "<GLOBAL_DIR>",
+                "--global-file",
+                "<GLOBAL_FILE>",
                 "--model-dir",
                 "<MODEL_DIR>",
                 "--verbose",
@@ -39,9 +43,16 @@ class SeismicForward(ForwardModelStepPlugin):
         # early stage
         config_file = Path(fm_step_json["argList"][3])
         model_dir = Path(fm_step_json["argList"][5])
-        config_dir = model_dir / "../../sim2seis/model"
+        config_dir = model_dir / Path(fm_step_json["argList"][1])
+        global_dir = model_dir / Path(fm_step_json["argList"][5])
+        global_file = Path(fm_step_json["argList"][7])
         try:
-            _ = read_yaml_file(model_dir / config_file, config_dir)
+            _ = read_yaml_file(
+            sim2seis_config_dir=config_dir,
+            sim2seis_config_file=config_file,
+            global_cofig_dir=global_dir,
+            global_config_file=global_file,
+        )
         except Exception as e:
             raise ForwardModelStepValidationError(
                 f"sim2seis seismic forward validation failed:\n {e}"
@@ -58,7 +69,10 @@ class SeismicForward(ForwardModelStepPlugin):
                 "code-block:: console\n\n"
                 "FORWARD_MODEL SEISMIC_FORWARD("
                 "<CONFIG_DIR>=../../sim2seis/model, "
-                "<CONFIG_FILE>=sim2seis_config.yml,"
+                "<CONFIG_FILE>=sim2seis_config.yml, "
+                "<GLOBAL_DIR>=../../fmuconfig/output, "
+                "<GLOBAL_FILE>=global_variables.yml, "
+                "<MODEL_DIR>=/my_fmu_structure/sim2seis/model, "
                 "<VERBOSE>=true/false)"
             ),
         )
