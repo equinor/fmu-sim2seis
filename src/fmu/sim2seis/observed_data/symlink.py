@@ -2,7 +2,6 @@
 TRAL/RNYB/JRIV/HFLE
 """
 
-from os import getenv
 from pathlib import Path
 
 from fmu.sim2seis.utilities import (

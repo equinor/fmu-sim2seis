@@ -6,10 +6,6 @@ Model files are found here: /sim2seis/model/seismic_forward.
 In the present setup, the monitor is timeshifted to match the base survey.
 Output is single cubes for each date, under sim2seis/output/seismic_forward.
 
-Note: Read env variable to test for hist vs pred mode. If undefined it will assume
-history run. The variable can be (and is usually) set in ERT (setenv
-FLOWSIM_IS_PREDICTION pred).
-
 EZA/RNYB/JRIV
 Adapted to fmu-sim2seis by HFLE
 """
