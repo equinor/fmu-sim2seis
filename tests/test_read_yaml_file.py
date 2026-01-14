@@ -9,8 +9,8 @@ def test_read_yaml_config(monkeypatch, data_dir):
     rel_path_conf = Path("../../sim2seis/model")
     config_file = Path("sim2seis_config.yml")
     conf = read_yaml_file(
-        file_name=rel_path_conf / config_file,
-        config_dir=config_dir,
+        sim2seis_config_file=rel_path_conf / config_file,
+        sim2seis_config_dir=config_dir,
         update_with_global=True,
         parse_inputs=True,
     )
@@ -30,8 +30,8 @@ def test_read_obs_data_yaml_file(monkeypatch, data_dir):
     rel_path_conf = Path("../../sim2seis/model")
     config_file = Path("obs_data_config.yml")
     conf = read_yaml_file(
-        file_name=rel_path_conf / config_file,
-        config_dir=config_dir,
+        sim2seis_config_file=rel_path_conf / config_file,
+        sim2seis_config_dir=config_dir,
         update_with_global=True,
         parse_inputs=True,
     )

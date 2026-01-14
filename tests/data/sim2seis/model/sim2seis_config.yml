@@ -10,7 +10,6 @@
 
 ## For the main class
 #______________________________________________________________________________________________________________________#
-flowsim_is_prediction: False
 attribute_definition_file: modelled_data_intervals_drogon.yml
 #rel_path_global_config: ../../fmuconfig/output
 #pickle_file_output_path: ../../share/results/pickle_files
