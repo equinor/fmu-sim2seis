@@ -12,11 +12,6 @@ from .link_and_folder_utils import (
     make_symlink,
 )
 from .obs_data_config_validation import ObservedDataConfig
-from .seis_dates import (
-    get_listed_seis_dates,
-    get_listed_seis_diff_dates,
-    get_pred_or_hist_seis_diff_dates,
-)
 from .sim2seis_class_definitions import (
     AttributeDef,
     DifferenceSeismic,
@@ -47,9 +42,6 @@ __all__ = [
     "clear_result_objects",
     "cube_export",
     "dump_result_objects",
-    "get_listed_seis_dates",
-    "get_listed_seis_diff_dates",
-    "get_pred_or_hist_seis_diff_dates",
     "make_folders",
     "make_symlink",
     "parse_arguments",
