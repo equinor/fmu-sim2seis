@@ -85,7 +85,6 @@ def test_sim2seis_ert(testdata, monkeypatch, data_dir):
     start_path = data_dir / "sim2seis" / "model"
     subprocess.run(
         ["ert", "test_run", "../../ert/model/run_sim2seis.ert"],
-        env={**os.environ, "SIM2SEIS_MODEL_DIR": str(start_path)},
         check=False,
     )
 

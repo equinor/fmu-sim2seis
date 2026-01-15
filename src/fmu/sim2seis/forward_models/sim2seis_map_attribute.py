@@ -23,10 +23,8 @@ class MapAttributes(ForwardModelStepPlugin):
                 "<GLOBAL_DIR>",
                 "--global-file",
                 "<GLOBAL_FILE>",
-                "--model-dir",
-                "<MODEL_DIR>",
-                "--verbose",
-                "<VERBOSE>",
+                "--attribute",
+                "<ATTRIBUTE>",
             ],
         )
 
@@ -53,6 +51,7 @@ class MapAttributes(ForwardModelStepPlugin):
                 "<GLOBAL_DIR>=../../fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
                 "<MODEL_DIR>=/my_fmu_structure/sim2seis/model, "
+                "<ATTRIBUTE>=amplitude/relai, "
                 "<VERBOSE>=true/false)"
             ),
         )

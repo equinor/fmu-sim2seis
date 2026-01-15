@@ -2,8 +2,6 @@
 DEFINE <USER> $USER
 
 NUM_REALIZATIONS 1
-RUNPATH <CONFIG_PATH>/../..
-
 
 -- SIM2SEIS and PEM settings
 DEFINE <JOB_CONFIG_DIR> <CONFIG_PATH>/../../sim2seis/model

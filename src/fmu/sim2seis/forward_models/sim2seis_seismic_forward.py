@@ -9,6 +9,7 @@ from ert import (
     ForwardModelStepValidationError,
 )
 
+from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.utilities import read_yaml_file
 
 
@@ -41,18 +42,21 @@ class SeismicForward(ForwardModelStepPlugin):
     def validate_pre_experiment(self, fm_step_json: ForwardModelStepJSON) -> None:
         # Parse YAML parameter file by pydantic pre-experiment to catch errors at an
         # early stage
+
         config_file = Path(fm_step_json["argList"][3])
-        model_dir = Path(fm_step_json["argList"][5])
-        config_dir = model_dir / Path(fm_step_json["argList"][1])
+        model_dir = Path(fm_step_json["argList"][9])
+        config_dir = model_dir
         global_dir = model_dir / Path(fm_step_json["argList"][5])
         global_file = Path(fm_step_json["argList"][7])
+
         try:
-            _ = read_yaml_file(
-            sim2seis_config_dir=config_dir,
-            sim2seis_config_file=config_file,
-            global_cofig_dir=global_dir,
-            global_config_file=global_file,
-        )
+            with restore_dir(config_dir):
+                _ = read_yaml_file(
+                sim2seis_config_dir=config_dir,
+                sim2seis_config_file=config_file,
+                global_cofig_dir=global_dir,
+                global_config_file=global_file,
+            )
         except Exception as e:
             raise ForwardModelStepValidationError(
                 f"sim2seis seismic forward validation failed:\n {e}"
