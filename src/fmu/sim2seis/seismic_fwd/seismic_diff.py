@@ -12,7 +12,7 @@ from fmu.sim2seis.utilities import (
 
 
 def calculate_seismic_diff(
-    dates: Sim2SeisConfig,
+    dates: tuple[list[str]],
     cubes: dict[SeismicName, SingleSeismic],
 ) -> dict[SeismicName, DifferenceSeismic]:
     diff_cubes = {}
