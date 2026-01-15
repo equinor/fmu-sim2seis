@@ -40,6 +40,10 @@ def test_obs_data(monkeypatch, data_dir):
             str(config_dir),
             "--config-file",
             str(fout_name),
+            "--global-dir",
+            "../../fmuconfig/output",
+            "--global-file",
+            "global_variables.yml",
         ]
     )
 
@@ -92,6 +96,10 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
             str(config_dir),
             "--config-file",
             str(sim2seis_config_file_name),
+            "--global-dir",
+            "../../fmuconfig/output",
+            "--global-file",
+            "global_variables.yml",
             "--verbose",
             False,
         ]
@@ -130,6 +138,10 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
             str(config_dir),
             "--config-file",
             str(sim2seis_config_file_name),
+            "--global-dir",
+            "../../fmuconfig/output",
+            "--global-file",
+            "global_variables.yml",
             "--verbose",
             False,
         ]
@@ -170,6 +182,10 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
                     str(config_dir),
                     "--config-file",
                     str(sim2seis_config_file_name),
+                    "--global-dir",
+                    "../../fmuconfig/output",
+                    "--global-file",
+                    "global_variables.yml",
                     "--attribute",
                     attribute,
                 ]

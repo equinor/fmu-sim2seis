@@ -37,7 +37,7 @@ def main(arguments=None):
         config = read_yaml_file(
             sim2seis_config_dir=args.config_dir,
             sim2seis_config_file=args.config_file,
-            global_cofig_dir=args.global_dir,
+            global_config_dir=args.global_dir,
             global_config_file=args.global_file,
         )
 
@@ -63,7 +63,7 @@ def main(arguments=None):
         diff_depth = calculate_seismic_diff(
             dates=config.global_params.diff_dates,
             cubes=depth_cubes,
-            )
+        )
         diff_time = calculate_seismic_diff(
             dates=config.global_params.diff_dates,
             cubes=time_cubes,

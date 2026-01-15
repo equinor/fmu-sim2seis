@@ -5,18 +5,17 @@ TRAL/RNYB/JRIV/HFLE
 from pathlib import Path
 
 from fmu.sim2seis.utilities import (
-    ObservedDataConfig,
     make_folders,
     make_symlink,
 )
 
 
 def make_symlinks_observed_seismic(
-        conf: ObservedDataConfig,
-        vintages: dict,
-        input_datapath: Path,
-        output_datapath: Path,
-        verbose: bool = False) -> None:
+    vintages: dict,
+    input_datapath: Path,
+    output_datapath: Path,
+    verbose: bool = False,
+) -> None:
     """Make symlinks from share/observations to real seismic
 
     Parameters

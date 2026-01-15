@@ -12,7 +12,7 @@ def read_yaml_file(
     sim2seis_config_file: Path,
     sim2seis_config_dir: Path,
     global_config_file: Path | None = None,
-    global_cofig_dir: Path | None = None,
+    global_config_dir: Path | None = None,
     parse_inputs: bool = True,
 ) -> Sim2SeisConfig | ObservedDataConfig | dict:
     """Read the YAML file and return the configuration.
@@ -25,7 +25,7 @@ def read_yaml_file(
         directory of configuration file
     global_config_file : Path
         global configuration file in yaml format
-    global_cofig_dir : Path
+    global_config_dir : Path
         directory of global configuration file
     parse_inputs : bool, optional
         if this is set to false, file is read, but there is no parsing of
@@ -72,9 +72,9 @@ def read_yaml_file(
         # Read necessary part of global configurations and parameters
         conf.update_with_global(
             get_global_params_and_dates(
-                global_config_dir=sim2seis_config_dir / global_cofig_dir,
+                global_config_dir=sim2seis_config_dir / global_config_dir,
                 global_conf_file=global_config_file,
-                )
+            )
         )
 
     return conf

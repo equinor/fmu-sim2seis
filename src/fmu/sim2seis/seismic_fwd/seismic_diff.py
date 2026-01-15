@@ -6,7 +6,6 @@ config file
 from fmu.sim2seis.utilities import (
     DifferenceSeismic,
     SeismicName,
-    Sim2SeisConfig,
     SingleSeismic,
 )
 

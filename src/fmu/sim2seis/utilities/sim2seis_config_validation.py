@@ -263,7 +263,7 @@ class WebvizMap(BaseModel):
         "where each polygon has its own attribute error. Full path and "
         "name to the surface file must be given, and the file format "
         "must be recognised by xtgeo. NB! This only applies to observed data. "
-        "Modelled data uses the default values which signifies NaN values.",
+        "Modelled data are written without error.",
         default=0.0,
     )
     output_path: SkipJsonSchema[DirectoryPath] = Field(

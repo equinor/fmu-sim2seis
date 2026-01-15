@@ -1,4 +1,3 @@
-import os
 import pickle
 import subprocess
 from pathlib import Path
@@ -82,7 +81,6 @@ def get_sum_value(file_name: Path) -> float:
 
 def test_sim2seis_ert(testdata, monkeypatch, data_dir):
     monkeypatch.chdir(data_dir / "sim2seis" / "model")
-    start_path = data_dir / "sim2seis" / "model"
     subprocess.run(
         ["ert", "test_run", "../../ert/model/run_sim2seis.ert"],
         check=False,

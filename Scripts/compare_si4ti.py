@@ -1,10 +1,9 @@
 import os
+import subprocess
 import time
 
 import xtgeo
 from si4ti import compute_impedance
-
-from fmu.sim2seis.utilities import link_and_folder_utils as libgen
 
 
 def run_by_si4ti():
@@ -12,8 +11,8 @@ def run_by_si4ti():
     os.chdir(r"/scratch/fmu/hfle/fmu_sim2seis_pem/realization-0/iter-0/sim2seis/output/seismic_forward")
 
     start = time.time()
-    cube1 = xtgeo.cube_from_file("syntseis--amplitude_far_depth--19960701.segy")
-    cube2 = xtgeo.cube_from_file("syntseis--amplitude_far_depth--20110701.segy")
+    cube1 = xtgeo.cube_from_file("seismic--amplitude_far_depth--19960701.segy")
+    cube2 = xtgeo.cube_from_file("seismic--amplitude_far_depth--20110701.segy")
 
     _, _ = compute_impedance(
         input_cubes=[cube1, cube2],
@@ -29,7 +28,7 @@ def run_by_impedance():
     )
     # run simpli
     start = time.time()
-    _ = libgen.run_external_silent(
+    _ = subprocess.run(
         [
             "/private/hfle/PycharmProjects/fmu-sim2seis/tests/data/sim2seis/bin/impedance",
             "-L 0.05",  # Lateral smoothing 4d
@@ -44,9 +43,10 @@ def run_by_impedance():
             "tmp_dsyn1",
             "tmp_dsyn2",
             "--",  # inputs
-            "syntseis--amplitude_far_depth--19960701.segy",
-            "syntseis--amplitude_far_depth--20110701.segy",
+            "seismic--amplitude_far_depth--19960701.segy",
+            "seismic--amplitude_far_depth--20110701.segy",
         ],
+        check=True,
     )
     end = time.time()
     elapsed = end - start

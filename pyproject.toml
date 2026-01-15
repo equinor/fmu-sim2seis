@@ -129,3 +129,7 @@ combine-as-imports = true
 
 [tool.ruff.lint.pylint]
 max-args = 10
+
+[tool.ruff.format]
+skip-magic-trailing-comma = false
+

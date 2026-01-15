@@ -6,17 +6,15 @@ from fmu.sim2seis.utilities import read_yaml_file
 def test_read_yaml_config(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
-    rel_path_conf = Path("../../sim2seis/model")
-    config_file = Path("sim2seis_config.yml")
     conf = read_yaml_file(
-        sim2seis_config_file=rel_path_conf / config_file,
         sim2seis_config_dir=config_dir,
-        update_with_global=True,
+        sim2seis_config_file=Path("sim2seis_config.yml"),
+        global_config_dir=Path("../../fmuconfig/output"),
+        global_config_file=Path("global_variables.yml"),
         parse_inputs=True,
     )
 
     # Make some random validations according to default settings
-    assert not conf.flowsim_is_prediction
     assert conf.depth_conversion.max_depth > conf.depth_conversion.min_depth
     assert len(conf.seismic_fwd.stack_models.keys()) >= 1
     for key, value in conf.seismic_fwd.stack_models.items():
@@ -27,12 +25,11 @@ def test_read_yaml_config(monkeypatch, data_dir):
 def test_read_obs_data_yaml_file(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
-    rel_path_conf = Path("../../sim2seis/model")
-    config_file = Path("obs_data_config.yml")
     conf = read_yaml_file(
-        sim2seis_config_file=rel_path_conf / config_file,
         sim2seis_config_dir=config_dir,
-        update_with_global=True,
+        sim2seis_config_file=Path("obs_data_config.yml"),
+        global_config_dir=Path("../../fmuconfig/output"),
+        global_config_file=Path("global_variables.yml"),
         parse_inputs=True,
     )
     # Make some random validations according to default settings

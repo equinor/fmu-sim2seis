@@ -52,11 +52,11 @@ class SeismicForward(ForwardModelStepPlugin):
         try:
             with restore_dir(config_dir):
                 _ = read_yaml_file(
-                sim2seis_config_dir=config_dir,
-                sim2seis_config_file=config_file,
-                global_cofig_dir=global_dir,
-                global_config_file=global_file,
-            )
+                    sim2seis_config_dir=config_dir,
+                    sim2seis_config_file=config_file,
+                    global_config_dir=global_dir,
+                    global_config_file=global_file,
+                )
         except Exception as e:
             raise ForwardModelStepValidationError(
                 f"sim2seis seismic forward validation failed:\n {e}"

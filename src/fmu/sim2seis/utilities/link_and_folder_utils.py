@@ -1,9 +1,6 @@
 """
-Various general common routines.
+Based on script by JRIV
 
-NB! When editing this, always save the full project to make edits available!
-
-JRIV
 """
 
 import subprocess
