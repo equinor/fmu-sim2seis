@@ -16,7 +16,6 @@ from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.utilities import (
     check_startup_dir,
     cube_export,
-    get_pred_or_hist_seis_diff_dates,
     parse_arguments,
     read_yaml_file,
 )
@@ -61,9 +60,14 @@ def main(arguments=None):
 
         # Get the dates to estimate 4D differences for and do
         # calculations for time and depth cubes
-        dates = get_pred_or_hist_seis_diff_dates(config)
-        diff_depth = calculate_seismic_diff(dates=dates, cubes=depth_cubes)
-        diff_time = calculate_seismic_diff(dates=dates, cubes=time_cubes)
+        diff_depth = calculate_seismic_diff(
+            dates=config.global_params.diff_dates,
+            cubes=depth_cubes,
+            )
+        diff_time = calculate_seismic_diff(
+            dates=config.global_params.diff_dates,
+            cubes=time_cubes,
+        )
 
         # Export class objects for QC
         _dump_results(

@@ -9,7 +9,6 @@ from fmu.sim2seis.utilities import (
     SeismicName,
     Sim2SeisConfig,
     SingleSeismic,
-    get_listed_seis_dates,
 )
 from fmu.tools import DomainConversion
 
@@ -27,7 +26,11 @@ def exe_seismic_forward(
     depth_cubes = {}
     time_cubes = {}
 
-    for date in get_listed_seis_dates(config_file.global_params.seis_dates):
+    formatted_seis_dates = [
+        str(s_date).replace("-", "") for s_date in config_file.global_params.seis_dates
+    ]
+
+    for date in formatted_seis_dates:
         # Copy the right vintage PEM output file to generic pem.grdecl
         copy2(
             src=config_file.seismic_fwd.pem_output_dir

@@ -33,7 +33,12 @@ def main(arguments=None):
     run_folder = check_startup_dir(args.config_dir)
 
     with restore_dir(run_folder):
-        conf = read_yaml_file(run_folder / args.config_file, run_folder)
+        conf = read_yaml_file(
+            sim2seis_config_dir=args.config_dir,
+            sim2seis_config_file=args.config_file,
+            global_cofig_dir=args.global_dir,
+            global_config_file=args.global_file,
+        )
 
         # Retrieve the seismic time cubes from seismic forward modelling
         seismic_time_cubes = retrieve_seismic_forward_results(config=conf)

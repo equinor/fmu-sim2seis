@@ -47,9 +47,8 @@ def main(arguments=None):
         # Generate attributes
         attr_list = populate_seismic_attributes(
             config=read_yaml_file(
-                run_folder / args.config_dir / config.attribute_definition_file,
-                run_folder,
-                update_with_global=False,
+                sim2seis_config_dir=run_folder,
+                sim2seis_config_file=config.attribute_definition_file,
                 parse_inputs=False,
             ),
             cubes=depth_cubes,
