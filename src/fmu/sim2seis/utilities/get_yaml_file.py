@@ -11,8 +11,8 @@ from .sim2seis_config_validation import Sim2SeisConfig
 def read_yaml_file(
     sim2seis_config_file: Path,
     sim2seis_config_dir: Path,
-    global_config_file: Path,
-    global_cofig_dir: Path,
+    global_config_file: Path | None = None,
+    global_cofig_dir: Path | None = None,
     parse_inputs: bool = True,
 ) -> Sim2SeisConfig | ObservedDataConfig | dict:
     """Read the YAML file and return the configuration.
@@ -54,6 +54,11 @@ def read_yaml_file(
         # add information about the config file name
         data["config_file_name"] = sim2seis_config_file
 
+        # If there is not information about global configuration, we can't
+        # parse the information, just return a dict from the yaml file
+        if not global_config_file:
+            assert not parse_inputs
+
         if not parse_inputs:
             return data
 
@@ -67,8 +72,8 @@ def read_yaml_file(
         # Read necessary part of global configurations and parameters
         conf.update_with_global(
             get_global_params_and_dates(
-                global_config_dir=sim2seis_config_dir,
-                global_conf_file=conf.rel_path_global_config,
+                global_config_dir=sim2seis_config_dir / global_cofig_dir,
+                global_conf_file=global_config_file,
                 )
         )
 
