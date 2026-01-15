@@ -26,7 +26,6 @@ def setup_sim2seis_test_data(testdata, tmp_path_factory):
     # List all directories that must be created, relative to config_dir
     dirs_to_make = [
         "./ert/input/preprocessed/seismic",
-        "./sim2seis/model",
         "./share/preprocessed/cubes",
         "./share/preprocessed/maps",
         "./share/preprocessed/tables",
