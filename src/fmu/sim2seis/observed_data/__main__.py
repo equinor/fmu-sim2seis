@@ -34,12 +34,23 @@ def main(arguments=None):
 
     with restore_dir(run_folder):
         # Read configuration file, including global configuration
-        config = read_yaml_file(run_folder / args.config_file, run_folder)
+        config = read_yaml_file(
+            sim2seis_config_dir=args.config_dir,
+            sim2seis_config_file=args.config_file,
+            global_config_dir=args.global_dir,
+            global_config_file=args.global_file,
+        )
 
         # Establish symlinks to the observed seismic data, make exception for
         # tests runs, where a test dataset is copied instead
         if not (config.test_run or args.no_attributes):
-            make_symlinks_observed_seismic(config)
+            make_symlinks_observed_seismic(
+                vintages=config.global_params["global"]["seismic"]["real_4d"],
+                input_datapath=config.global_params["global"]["seismic"][
+                    "real_4d_cropped_path"
+                ],
+                output_datapath=config.observed_data_path,
+            )
 
         # Create depth surfaces
         depth_surf = get_depth_surfaces(config)
@@ -61,9 +72,8 @@ def main(arguments=None):
         else:
             attr_list = populate_seismic_attributes(
                 config=read_yaml_file(
-                    run_folder / args.config_dir / config.attribute_definition_file,
-                    run_folder,
-                    update_with_global=False,
+                    sim2seis_config_dir=run_folder,
+                    sim2seis_config_file=config.attribute_definition_file,
                     parse_inputs=False,
                 ),
                 cubes=depth_cubes,

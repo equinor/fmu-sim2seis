@@ -25,6 +25,20 @@ def parse_arguments(
         help="Configuration yaml file name",
     )
     parser.add_argument(
+        "-g",
+        "--global-dir",
+        type=Path,
+        required=True,
+        help="Relative path to global config file (required)",
+    )
+    parser.add_argument(
+        "-o",
+        "--global-file",
+        type=Path,
+        required=True,
+        help="Global configuration yaml file name (required)",
+    )
+    parser.add_argument(
         "-m",
         "--model-dir",
         type=Path,

@@ -1,65 +1,10 @@
 """
-Various general common routines.
+Based on script by JRIV
 
-NB! When editing this, always save the full project to make edits available!
-
-JRIV
 """
 
-import shutil
 import subprocess
 from pathlib import Path
-
-import fmu.config.utilities as utils
-
-WARN_METADATA = True  # False will silence Warnings messages
-
-
-def global_config(path_to_global_var_yml_file: Path | str) -> dict:
-    """Get the correct global config dictionary; inludes also some checks.
-
-    The paths to the global config files are here hardcoded.
-
-    Args:
-        path_to_global_var_yml_file: e.g. ../../fmu_config/global_variables.yml
-
-    Returns:
-        The global_config, as a dict
-    """
-
-    cfg = utils.yaml_load(str(path_to_global_var_yml_file))
-
-    for required_key in ["global", "masterdata", "access", "model"]:
-        if required_key not in cfg and WARN_METADATA:
-            print(
-                "Warning! The global config is missing {required_key}! "
-                "The fmu.dataio will export data, but without metadata."
-            )
-
-    return cfg
-
-
-def cleanup_folders_dataio() -> None:
-    """Make the necessary folders and cleanup for dataio output."""
-    dataio_folders = [
-        "../../share/results",
-        "../../share/preprocessed",
-        "../../share/observations",
-    ]
-
-    current = Path(".")
-    current_abs = current.absolute()
-
-    if current_abs.name == "model" and current_abs.parent.name == "sim2seis":
-        print("Seems that you run from sim2seis/model folder --- good!")
-    else:
-        raise RuntimeError(
-            f"You don't run this from the sim2seis/model folder but from {current_abs}!"
-        )
-
-    for folder in dataio_folders:
-        shutil.rmtree(folder, ignore_errors=True)
-        print("Removed:", folder)
 
 
 def make_folders(list_of_input_paths: list[Path | str]) -> None:
@@ -134,15 +79,3 @@ def make_symlink(
             f"symlinked {source_type} [{source}] to "
             f"[{link_name.name}]"
         )
-
-
-def run_external_silent(commands: list[str], timeout: int | None = None) -> str:
-    result = subprocess.run(
-        commands,
-        check=False,
-        capture_output=True,
-        timeout=timeout,
-    )
-    if result.returncode != 0:
-        raise RuntimeError(f"Command failed with error: {result.stderr}")
-    return str(result.stdout)

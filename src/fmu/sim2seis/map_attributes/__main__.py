@@ -24,7 +24,12 @@ def main(arguments=None):
 
     with restore_dir(run_folder):
         # Read configuration file
-        config = read_yaml_file(run_folder / args.config_file, run_folder)
+        config = read_yaml_file(
+            sim2seis_config_dir=args.config_dir,
+            sim2seis_config_file=args.config_file,
+            global_config_dir=args.global_dir,
+            global_config_file=args.global_file,
+        )
 
         # Determine if the attributes are from seismic amplitude or inverted
         # seismic data to read the correct set of input cubes
@@ -42,9 +47,8 @@ def main(arguments=None):
         # Generate attributes
         attr_list = populate_seismic_attributes(
             config=read_yaml_file(
-                run_folder / args.config_dir / config.attribute_definition_file,
-                run_folder,
-                update_with_global=False,
+                sim2seis_config_dir=run_folder,
+                sim2seis_config_file=config.attribute_definition_file,
                 parse_inputs=False,
             ),
             cubes=depth_cubes,

@@ -42,7 +42,12 @@ def main(arguments=None):
     run_folder = check_startup_dir(args.config_dir)
 
     with restore_dir(run_folder):
-        config = read_yaml_file(run_folder / args.config_file, run_folder)
+        config = read_yaml_file(
+            sim2seis_config_dir=args.config_dir,
+            sim2seis_config_file=args.config_file,
+            global_config_dir=args.global_dir,
+            global_config_file=args.global_file,
+        )
         if hasattr(args, "prefix_list"):
             clear_result_objects(
                 output_path=config.pickle_file_output_path, prefix_list=args.prefix_list

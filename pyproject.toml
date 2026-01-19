@@ -39,7 +39,7 @@ dependencies = [
     "fmu-tools >= 1.16.0",
     "fmu-config",
     "fmu-dataio",
-    "fmu-pem",
+    "fmu-pem >= 0.0.3",
     "pydantic",
     "ert",
     "seismic-forward",
@@ -129,3 +129,7 @@ combine-as-imports = true
 
 [tool.ruff.lint.pylint]
 max-args = 10
+
+[tool.ruff.format]
+skip-magic-trailing-comma = false
+

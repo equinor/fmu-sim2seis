@@ -263,7 +263,7 @@ class WebvizMap(BaseModel):
         "where each polygon has its own attribute error. Full path and "
         "name to the surface file must be given, and the file format "
         "must be recognised by xtgeo. NB! This only applies to observed data. "
-        "Modelled data uses the default values which signifies NaN values.",
+        "Modelled data are written without error.",
         default=0.0,
     )
     output_path: SkipJsonSchema[DirectoryPath] = Field(
@@ -419,12 +419,6 @@ class Sim2SeisConfig(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True, title="Sim2Seis Configuration"
     )
-    flowsim_is_prediction: bool = Field(
-        description="The simulation run is either a history matching or a "
-        "prediction. Setting this parameter will decide which "
-        "global parameter file will be added to the `sim2seis` "
-        "parameters"
-    )
     config_file_name: SkipJsonSchema[Path] = Field(
         description="Full file name is added to the config structure",
         default=Path(r"../../sim2seis/model/sim2seis_config.yml"),
@@ -483,11 +477,3 @@ class Sim2SeisConfig(BaseModel):
     def update_with_global(self, global_params: dict):
         self.global_params = FromGlobal(**global_params)
         return self
-
-    @property
-    def global_config_file(self) -> FilePath:
-        """Dynamically determine the global_config_file based on
-        flowsim_is_prediction."""
-        if self.flowsim_is_prediction:
-            return FilePath("../../fmuconfig/output/global_variables_pred.yml")
-        return FilePath("../../fmuconfig/output/global_variables.yml")

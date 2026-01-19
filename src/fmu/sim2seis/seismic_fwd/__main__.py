@@ -6,10 +6,6 @@ Model files are found here: /sim2seis/model/seismic_forward.
 In the present setup, the monitor is timeshifted to match the base survey.
 Output is single cubes for each date, under sim2seis/output/seismic_forward.
 
-Note: Read env variable to test for hist vs pred mode. If undefined it will assume
-history run. The variable can be (and is usually) set in ERT (setenv
-FLOWSIM_IS_PREDICTION pred).
-
 EZA/RNYB/JRIV
 Adapted to fmu-sim2seis by HFLE
 """
@@ -20,7 +16,6 @@ from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.utilities import (
     check_startup_dir,
     cube_export,
-    get_pred_or_hist_seis_diff_dates,
     parse_arguments,
     read_yaml_file,
 )
@@ -39,7 +34,12 @@ def main(arguments=None):
 
     with restore_dir(run_folder):
         # Get configuration parameters
-        config = read_yaml_file(run_folder / args.config_file, run_folder)
+        config = read_yaml_file(
+            sim2seis_config_dir=args.config_dir,
+            sim2seis_config_file=args.config_file,
+            global_config_dir=args.global_dir,
+            global_config_file=args.global_file,
+        )
 
         # Read the horizons that are used in depth conversion and later for extraction
         # of attributes
@@ -60,9 +60,14 @@ def main(arguments=None):
 
         # Get the dates to estimate 4D differences for and do
         # calculations for time and depth cubes
-        dates = get_pred_or_hist_seis_diff_dates(config)
-        diff_depth = calculate_seismic_diff(dates=dates, cubes=depth_cubes)
-        diff_time = calculate_seismic_diff(dates=dates, cubes=time_cubes)
+        diff_depth = calculate_seismic_diff(
+            dates=config.global_params.diff_dates,
+            cubes=depth_cubes,
+        )
+        diff_time = calculate_seismic_diff(
+            dates=config.global_params.diff_dates,
+            cubes=time_cubes,
+        )
 
         # Export class objects for QC
         _dump_results(

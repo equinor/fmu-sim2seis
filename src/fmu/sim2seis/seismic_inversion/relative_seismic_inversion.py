@@ -4,10 +4,6 @@ The inversion parameters specified in the script need field specific tuning.
 
 The output is 4Drelai (in time) for each diffdate.
 
-Note: Read env variable FLOWSIM_IS_PREDICTION to test for hist vs pred mode
-If undefined it will assume history run and use HIST_DATES.
-The variable can be set in ERT (setenv FLOWSIM_IS_PREDICTION True).
-
 JRIV/EZA/RNYB/HFLE
 """
 

@@ -19,10 +19,15 @@ class Cleanup(ForwardModelStepPlugin):
                 "<CONFIG_DIR>",
                 "--config-file",
                 "<CONFIG_FILE>",
+                "--global-dir",
+                "<GLOBAL_DIR>",
+                "--global-file",
+                "<GLOBAL_FILE>",
+                "--verbose",
+                "<VERBOSE>",
                 "--prefix-list",
                 "<PREFIX_LIST>",
             ],
-            default_mapping={"<PREFIX_LIST>": ""},
         )
 
     def validate_pre_realization_run(
@@ -44,7 +49,9 @@ class Cleanup(ForwardModelStepPlugin):
                 "code-block:: console\n\n"
                 "FORWARD_MODEL CLEANUP("
                 "<CONFIG_DIR>=../../sim2seis/model, "
-                "<CONFIG_FILE>=sim2seis_config.yml,"
-                "<PREFIX_LIST>=relai_)"
+                "<CONFIG_FILE>=sim2seis_config.yml, "
+                "<GLOBAL_DIR>=../../fmuconfig/output, "
+                "<GLOBAL_FILE>=global_variables.yml, "
+                "<VERBOSE>=true/false)"
             ),
         )
