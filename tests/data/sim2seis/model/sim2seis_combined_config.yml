@@ -1,0 +1,152 @@
+########################################################################################################################
+#
+# Configuration file for sim2seis runs
+#
+# Lines that are commented out are parameters that users very seldom need to change, they will use validated
+# default values. However, they can be changed at need, but please verify that the values entered are valid
+# before running any of the parts in the sim2seis workflow
+#
+########################################################################################################################
+
+########################################################################################################################
+#
+# Configuration file for observation data in connection with a sim2seis runs
+#
+# Lines that are commented out are parameters that users very seldom have to change, they will use validated
+# default values. However, they can be changed at need, but please verify that the values entered are valid
+# before running any of the parts in the sim2seis workflow
+#
+########################################################################################################################
+
+
+## For the main class: relative path to the config file
+#______________________________________________________________________________________________________________________#
+# attribute_definition_file: observed_data_intervals_drogon.yml
+# rel_path_global_config: ../../fmuconfig/output
+flowsim_is_prediction: False
+
+## Section for depth maps - inputs only
+#______________________________________________________________________________________________________________________#
+observed_depth_surf:
+  # paths and standard naming. Depth maps are read from horizon folder INPUT
+  suffix_name: depth
+  horizon_names: [MSL, TopVolantis, BaseVolantis, BaseVelmodel]
+
+
+
+
+## Section for time data
+#______________________________________________________________________________________________________________________#
+#observed_time_data:
+  # time_cube_prefix: seismic--
+  # time_suffix: --time.gri
+
+
+## End of config file
+#______________________________________________________________________________________________________________________#
+
+
+## For the main class
+#______________________________________________________________________________________________________________________#
+attribute_definition_file: modelled_data_intervals_drogon.yml
+#rel_path_global_config: ../../fmuconfig/output
+#pickle_file_output_path: ../../share/results/pickle_files
+
+#region seis_fwd
+## Section for seismic forward 4D
+#______________________________________________________________________________________________________________________#
+seismic_fwd:
+  # Comment out lines with full/near/far models if you don't want those stacks modelled
+  # At least one line must be present
+  stack_models:
+    full: model_file.xml
+#    near: model_file_near.xml
+#    far: model_file_far.xml
+#  stack_model_path: ../../sim2seis/model
+#  attribute: &seismic_attribute amplitude
+#  pem_output_dir: ../../sim2seis/output/pem
+#  seismic_output_dir: ../../share/results/cubes
+#  twt_model: ../../sim2seis/model/model_file_twt.xml
+#  segy_depth: seismic_temp_seismic_depth_stack.segy
+#  segy_time: seismic_temp_seismic_timeshift_stack.segy  # <= not used anymore
+#  pickle_file_prefix: seis_4d
+#endregion seis_fwd
+
+#region depth_conversion
+## Section for depth conversion
+#______________________________________________________________________________________________________________________#
+depth_conversion:
+  horizon_names: [MSL, TopVolantis, BaseVolantis, BaseVelmodel]
+  min_depth: 1500.0
+  max_depth: 2000.0
+  z_inc: 4.0
+  min_time: 1500.0
+  max_time: 2000.0
+  t_inc: 4.0
+#  time_cube_dir: ../../share/results/cubes
+#  depth_cube_dir: ../../share/results/cubes
+#  horizon_dir: ../../share/results/maps
+#  depth_suffix: --depth.gri
+#  time_suffix: --time.gri
+#endregion depth_conversion
+
+
+#region attr_map
+# # Section for ert and webviz export
+#______________________________________________________________________________________________________________________#
+webviz_map:
+  # grid_file: simgrid.roff
+  # zone_file: simgrid--zone.roff
+  # region_file: simgrid--region.roff
+  attribute_error: 0.07
+  # grid_path: ../../sim2seis/input/pem
+  # output_path_modelled_data: ../../ert/input/observations/seismic
+  # output_path_observed_data: ../../ert/input/preprocessed/seismic
+  
+
+## Section for seismic forward amplitude maps
+#______________________________________________________________________________________________________________________#
+# amplitude_map:
+#  attribute: *seismic_attribute
+#  pickle_file_prefix: amplitude_maps
+
+
+## Section for seismic inversion relai maps
+#______________________________________________________________________________________________________________________#
+# inversion_map:
+#  attribute: *inversion_attribute
+#  pickle_file_prefix: relai_maps
+#endregion attr_map
+
+## Section for difference of seismic cubes
+#______________________________________________________________________________________________________________________#
+# seismic_diff:
+#  pickle_file_prefix: seis_4d_diff
+
+#region seismic_inversion
+## Section for relative seismic inversion
+#______________________________________________________________________________________________________________________#
+# seismic_inversion:
+#  attribute: &inversion_attribute relai
+#  path: &rel_ai_path ../../share/results/cubes
+#  domain: [time]
+#  d_syn_0: ../../sim2seis/output/seismic_forward/seismic--d_syn0.sgy
+#  rel_ai_0: ../../sim2seis/output/seismic_forward/seismic--relai_0.sgy
+#  d_syn_1: ../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy
+#  rel_ai_1: ../../sim2seis/output/seismic_forward/seismic--relai_1.sgy
+#  remove_unused_files: True
+#  inversion_params:
+#      lateral_smoothing_4d: 0.05
+#      damping_3d: 0.001
+#      damping_4d: 0.001
+#      lateral_smoothing_3d:  0.01
+#      max_iter: 100
+#      segments: 1
+#  pickle_file_prefix: relai_diff
+#endregion seismic_inversion
+
+########################################################################################################################
+#
+# End of Configuration file for sim2seis runs
+#
+########################################################################################################################

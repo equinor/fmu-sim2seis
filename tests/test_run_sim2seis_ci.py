@@ -14,7 +14,7 @@ from fmu.sim2seis.seismic_inversion import main as run_seismic_inversion
 from fmu.sim2seis.utilities import DifferenceSeismic, SeismicAttribute, SingleSeismic
 
 obs_data_config_file_name = Path("obs_data_config.yml")
-sim2seis_config_file_name = Path("sim2seis_config.yml")
+sim2seis_config_file_name = Path("sim2seis_combined_config.yml")
 
 # If there is a need to re-calibrate the test, set CALIBRATE to True
 CALIBRATE = False
@@ -30,7 +30,7 @@ def test_obs_data(monkeypatch, data_dir):
         conf_dict = yaml.safe_load(fin)
         conf_dict["test_run"] = True
     fout_name = Path(
-        obs_data_config_file_name.stem + "_test" + obs_data_config_file_name.suffix
+        sim2seis_config_file_name.stem + "_test" + sim2seis_config_file_name.suffix
     )
     with open(fout_name, "w") as fout:
         yaml.safe_dump(conf_dict, fout)

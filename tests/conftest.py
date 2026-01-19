@@ -29,7 +29,6 @@ def setup_sim2seis_test_data(testdata, tmp_path_factory):
         "./share/preprocessed/cubes",
         "./share/preprocessed/maps",
         "./share/preprocessed/tables",
-        "./share/observations/tables",
         "./share/results/cubes",
         "./share/results/pickle_files",
         "./share/results/tables",

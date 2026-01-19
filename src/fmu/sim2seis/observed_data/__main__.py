@@ -61,7 +61,7 @@ def main(arguments=None):
         # Run depth conversion
         depth_cubes = depth_convert_observed_data(
             time_cubes=time_cubes,
-            config=config,
+            depth_conversion=config.depth_conversion,
             depth_surfaces=depth_surf,
             time_surfaces=time_surfaces,
         )

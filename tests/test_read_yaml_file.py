@@ -35,3 +35,18 @@ def test_read_obs_data_yaml_file(monkeypatch, data_dir):
     # Make some random validations according to default settings
     assert conf.depth_conversion.min_depth < conf.depth_conversion.max_depth
     assert conf.webviz_map.attribute_error == 0.07
+
+
+def test_read_comb_data_yaml_file(monkeypatch, data_dir):
+    config_dir = data_dir / "sim2seis" / "model"
+    monkeypatch.chdir(config_dir)
+    config_file = Path("sim2seis_combined_config.yml")
+    conf = read_yaml_file(
+        file_name=config_file,
+        config_dir=config_dir,
+        update_with_global=True,
+        parse_inputs=True,
+    )
+    # Make some random validations according to default settings
+    assert conf.depth_conversion.min_depth < conf.depth_conversion.max_depth
+    assert conf.webviz_map.attribute_error == 0.07

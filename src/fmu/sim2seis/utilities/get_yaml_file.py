@@ -62,12 +62,13 @@ def read_yaml_file(
         if not parse_inputs:
             return data
 
-        if "observed_depth_surf" in data:
-            conf = ObservedDataConfig(**data)
-        elif "seismic_fwd" in data:
-            conf = Sim2SeisConfig(**data)
-        else:
-            raise ValueError("Configuration not recognized")
+        # if "observed_depth_surf" in data:
+        #     conf = ObservedDataConfig(**data)
+        # elif "seismic_fwd" in data:
+        #     conf = Sim2SeisConfig(**data)
+        # else:
+        #     raise ValueError("Configuration not recognized")
+        conf = Sim2SeisConfig(**data)
 
         # Read necessary part of global configurations and parameters
         conf.update_with_global(

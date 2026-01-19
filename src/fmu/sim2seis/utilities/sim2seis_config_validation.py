@@ -266,8 +266,12 @@ class WebvizMap(BaseModel):
         "Modelled data are written without error.",
         default=0.0,
     )
-    output_path: SkipJsonSchema[DirectoryPath] = Field(
+    output_path_modelled_data: SkipJsonSchema[DirectoryPath] = Field(
         default=Path("../../share/results/tables"),
+        description="Ascii files for WebViz or ERT are written to this directory",
+    )
+    output_path_observed_data: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../ert/input/preprocessed/seismic"),
         description="Ascii files for WebViz or ERT are written to this directory",
     )
 
@@ -307,8 +311,12 @@ class WebvizMap(BaseModel):
 
     @model_validator(mode="after")
     def output_path_check(self) -> Self:
-        if not self.output_path.is_dir():
-            raise ValueError(f"output_path: {self.output_path!s} is not a directory")
+        if not self.output_path_modelled_data.is_dir():
+            raise ValueError(f"output_path: {self.output_path_modelled_data!s} is not a"
+                             " directory")
+        if not self.output_path_observed_data.is_dir():
+            raise ValueError(f"output_path: {self.output_path_observed_data!s} is not a"
+                             " directory")
         return self
 
 

@@ -1,20 +1,18 @@
-"""Extract necessary time and depth surfaces, and perform depth conversion of
-relative ai"""
-
 import xtgeo
 
 from fmu.sim2seis.utilities import (
     DifferenceSeismic,
-    ObservedDataConfig,
     SeismicName,
     SingleSeismic,
 )
+from fmu.sim2seis.utilities.sim2seis_config_validation import DepthConvertConfig
 from fmu.tools.domainconversion import DomainConversion
 
 
 def depth_convert_observed_data(
     time_cubes: dict[SeismicName, DifferenceSeismic | SingleSeismic],
-    config: ObservedDataConfig,
+    # config: ObservedDataConfig,
+    depth_conversion: DepthConvertConfig,
     depth_surfaces: dict[str, xtgeo.RegularSurface],
     time_surfaces: dict[str, xtgeo.RegularSurface],
 ) -> dict[SeismicName, DifferenceSeismic | SingleSeismic]:
@@ -64,16 +62,16 @@ def depth_convert_observed_data(
             depth_cubes[depth_name] = observed_seismic_cube
             depth_cubes[depth_name].base.cube = velocity_model.depth_convert_cube(
                 incube=observed_seismic_cube.base.cube,
-                zinc=config.depth_conversion.z_inc,
-                zmin=config.depth_conversion.min_depth,
-                zmax=config.depth_conversion.max_depth,
+                zinc=depth_conversion.z_inc,
+                zmin=depth_conversion.min_depth,
+                zmax=depth_conversion.max_depth,
             )
             depth_cubes[depth_name].base.cube_name = depth_base_name
             depth_cubes[depth_name].monitor.cube = velocity_model.depth_convert_cube(
                 incube=observed_seismic_cube.monitor.cube,
-                zinc=config.depth_conversion.z_inc,
-                zmin=config.depth_conversion.min_depth,
-                zmax=config.depth_conversion.max_depth,
+                zinc=depth_conversion.z_inc,
+                zmin=depth_conversion.min_depth,
+                zmax=depth_conversion.max_depth,
             )
             depth_cubes[depth_name].monitor.cube_name = depth_monitor_name
         elif isinstance(observed_seismic_cube, SingleSeismic):
@@ -81,9 +79,9 @@ def depth_convert_observed_data(
             depth_cubes[depth_name].cube_name = depth_name
             depth_cubes[depth_name].cube = velocity_model.depth_convert_cube(
                 incube=observed_seismic_cube.cube,
-                zinc=config.depth_conversion.z_inc,
-                zmin=config.depth_conversion.min_depth,
-                zmax=config.depth_conversion.max_depth,
+                zinc=depth_conversion.z_inc,
+                zmin=depth_conversion.min_depth,
+                zmax=depth_conversion.max_depth,
             )
         else:
             raise ValueError(
