@@ -27,6 +27,59 @@ from .sim2seis_class_definitions import (
 # interface.
 
 
+class Sim2SeisPaths(BaseModel):
+    pem_output_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../sim2seis/output/pem"),
+        description="Folder for results from `fmu-pem`. All folder "
+        "references in the FMU structure are relative to "
+        "./sim2seis/model, where '.' is the top folder in each "
+        "realization",
+    )
+    modelled_seismic_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/results/cubes"),
+        description="The standard folder for resulting cubes is controlled "
+        "through the use of fmu-dataio. This folder refers to "
+        "the intermediate files from seismic forward modelling",
+    )
+    preprocessed_seismic_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/preprocessed/cubes"),
+        description="The standard folder for resulting cubes is controlled "
+        "through the use of fmu-dataio. This folder refers to "
+        "the intermediate files from seismic forward modelling",
+    )
+    modelled_horizon_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/results/maps"),
+        description="The standard folder for horizons both of time and depth domain, "
+        "as well as attribute maps",
+    )
+    observed_horizon_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/preprocessed/maps"),
+        description="The standard folder for horizons both of time and depth domain",
+    )
+    grid_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../sim2seis/input/pem"),
+        description="This directory is the standard place for grid definition files",
+    )
+    pickle_file_output_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/results/pickle_files"),
+        description="Directory for storing all module results in pickle format",
+    )
+    output_path_modelled_data: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/results/tables"),
+        description="Ascii files for WebViz or ERT are written to this directory",
+    )
+
+
+class PickleFilePrefix(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    observed_data: str = "observed_data"
+    seismic_forward: str = "seismic_fwd"
+    seismic_diff: str = "seismic_fwd_diff"
+    relai_maps: str = "relai_maps"
+    amplitude_maps: str = "amplitude_maps"
+    relai_diff: str = "relai_diff"
+
+
 class SeismicForward(BaseModel):
     model_config = ConfigDict(title="Seismic forward modelling")
     attribute: SkipJsonSchema[AttributeDef] = Field(
@@ -34,35 +87,12 @@ class SeismicForward(BaseModel):
         description="Default value for results of a seismic forward model "
         "is 'amplitude'",
     )
-    pem_output_dir: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../sim2seis/output/pem"),
-        description="Folder for results from `sim2seis`. All folder "
-        "references in the FMU structure are relative to "
-        "./sim2seis/model, where '.' is the top folder in each "
-        "realization",
-    )
-    pickle_file_prefix: SkipJsonSchema[str] = Field(
-        default="seismic_fwd",
-        description="Pickle files are intermediate save formats in "
-        "`sim2seis`. Each task has its own prefix for "
-        "identification",
-    )
     segy_depth: SkipJsonSchema[Path] = Field(
         default=Path("seismic_temp_seismic_depth_stack.segy"),
         description="Seismic forward model writes temporary segy files "
         "to disk. The name must correspond to the setting in "
         "the XML files for each partial or full stack that "
         "is generated. Check the 'stack models' files",
-    )
-    seismic_output_dir: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../share/results/cubes"),
-        description="The standard folder for resulting cubes is controlled "
-        "through the use of fmu-dataio. This folder refers to "
-        "the intermediate files from seismic forward modelling",
-    )
-    stack_model_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../sim2seis/model"),
-        description="Folder for the XML model files listed in 'stack_models'",
     )
     stack_models: dict[StackDef, Path] = Field(
         description="Path to XML files describing modelling of different seismic stacks"
@@ -87,50 +117,38 @@ class SeismicForward(BaseModel):
             raise ValueError(f"Invalid attribute: {v}")
         return v
 
-    @model_validator(mode="after")
-    def check_seismic_fwd(self) -> Self:
-        for key, value in self.stack_models.items():
-            self.stack_models[key] = self.stack_model_path / value
-            if not self.stack_models[key].is_file():
-                raise ValueError(
-                    f"stack model file {value.name} is not present in "
-                    f"directory {self.stack_model_path.name}"
-                )
-        if not self.pem_output_dir.is_dir():
-            raise ValueError(
-                f"pem_output_dir: {self.pem_output_dir!s} is not a directory"
-            )
-        if not self.twt_model.is_file():
-            raise ValueError(f"twt_model: {self.twt_model!s} is not a file")
 
+@model_validator(mode="after")
+def check_seismic_fwd(self, info: ValidationInfo) -> Self:
+    paths = info.context.get("paths") if info and info.context else None
+    if not paths:
         return self
 
+    base = paths.modelled_seismic_dir
+    resolved = {}
+    for key, value in self.stack_models.items():
+        path = base / value
+        if not path.is_file():
+            raise ValueError(
+                f"stack model file {value.name} is not present in directory {base}"
+            )
+        resolved[key] = path
+    self.stack_models = resolved
 
-class SeismicDiff(BaseModel):
-    pickle_file_prefix: str = Field(
-        default="seismic_fwd_diff",
-        description="Pickle files are intermediate save formats in "
-        "`sim2seis`. Each task has its own prefix for "
-        "identification",
-    )
+    if not paths.pem_output_dir.is_dir():
+        raise ValueError(f"pem_output_dir is not a directory: {paths.pem_output_dir}")
+    if not self.twt_model.is_file():
+        raise ValueError(f"twt_model: {self.twt_model!s} is not a file")
+    return self
 
 
 class DepthConvertConfig(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True, title="Depth Conversion")
-    depth_cube_dir: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../share/results/cubes"),
-        description="The standard folder for resulting cubes is controlled "
-        "through the use of fmu-dataio",
-    )
     depth_suffix: SkipJsonSchema[str] = Field(
         default="--depth.gri",
         description="Horizon names used in time to depth conversion "
         "have extension `.gri`, of type RMS binary, with "
         "name ending on `--depth`",
-    )
-    horizon_dir: DirectoryPath = Field(
-        default=Path("../../share/results/maps"),
-        description="The standard folder for horizons both of time and depth domain",
     )
     horizon_names: list[str] = Field(
         description="Horizons should be of type RMS binary, but with extension "
@@ -162,11 +180,6 @@ class DepthConvertConfig(BaseModel):
         title="Time increment",
         description="For the time converted cubes. Unit in `milliseconds`",
     )
-    time_cube_dir: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../share/results/cubes"),
-        description="The standard folder for resulting cubes is controlled "
-        "through the use of fmu-dataio",
-    )
     time_suffix: SkipJsonSchema[str] = Field(
         default="--time.gri",
         description="Horizon names used in time to depth conversion "
@@ -175,7 +188,7 @@ class DepthConvertConfig(BaseModel):
     )
 
     @model_validator(mode="after")
-    def check_depth_and_time(self) -> Self:
+    def check_depth_and_time(self, info: ValidationInfo) -> Self:
         max_depth = self.max_depth
         min_depth = self.min_depth
         z_inc = self.z_inc
@@ -197,14 +210,7 @@ class DepthConvertConfig(BaseModel):
                 raise ValueError("max_time must be greater than min_time")
             if (max_time - min_time) % t_inc != 0:
                 raise ValueError("max_time minus min_time must be divisible by t_inc")
-        if not self.time_cube_dir.is_dir():
-            raise ValueError(
-                f"time_cube_dir must be a directory, is {self.time_cube_dir}"
-            )
-        if not self.depth_cube_dir.is_dir():
-            raise ValueError(
-                f"depth_cube_dir must be a directory, is {self.depth_cube_dir}"
-            )
+
         return self
 
 
@@ -214,13 +220,6 @@ class InversionMapConfig(BaseModel):
         description="In inversion based attributed, 'relai' is the default prefix. "
         "Changing it to other values may cause downstream problems",
     )
-    pickle_file_prefix: str = Field(
-        default="relai_maps",
-        json_schema_extra={"readOnly": True},
-        description="Pickle files are intermediate save formats in "
-        "`sim2seis`. Each task has its own prefix for "
-        "identification",
-    )
 
 
 class AmplitudeMapConfig(BaseModel):
@@ -229,19 +228,9 @@ class AmplitudeMapConfig(BaseModel):
         description="Default value for results of a seismic forward model "
         "is 'amplitude'",
     )
-    pickle_file_prefix: str = Field(
-        default="amplitude_maps",
-        description="Pickle files are intermediate save formats in "
-        "`sim2seis`. Each task has its own prefix for "
-        "identification",
-    )
 
 
 class WebvizMap(BaseModel):
-    grid_path: DirectoryPath = Field(
-        default=Path("../../sim2seis/input/pem"),
-        description="This directory is the standard place for grid definition files",
-    )
     grid_file: Path = Field(
         default=Path("simgrid.roff"),
         description="The file name for grid definition file, 'roff' format is normally "
@@ -266,34 +255,38 @@ class WebvizMap(BaseModel):
         "Modelled data are written without error.",
         default=0.0,
     )
-    output_path_modelled_data: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../share/results/tables"),
-        description="Ascii files for WebViz or ERT are written to this directory",
-    )
-    output_path_observed_data: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../ert/input/preprocessed/seismic"),
-        description="Ascii files for WebViz or ERT are written to this directory",
-    )
 
     @field_validator("grid_file", mode="before")
-    def grid_file_check(cls, v: str, values: ValidationInfo):
-        full_name = values.data.get("grid_path").joinpath(v)
+    def grid_file_check(cls, v: str, info: ValidationInfo):
+        paths = info.context.get("paths") if info and info.context else None
+        if not paths:
+            return Path(v)  # Skip validation if no context
+
+        full_name = paths.grid_dir / v
         if not full_name.is_file():
-            raise ValueError(f"webvisMap: {full_name!s} is not a file")
+            raise ValueError(f"webvizMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("zone_file", mode="before")
-    def zone_file_check(cls, v: str, values: ValidationInfo):
-        full_name = values.data.get("grid_path").joinpath(v)
+    def zone_file_check(cls, v: str, info: ValidationInfo):
+        paths = info.context.get("paths") if info and info.context else None
+        if not paths:
+            return Path(v)
+
+        full_name = paths.grid_dir / v
         if not full_name.is_file():
-            raise ValueError(f"webvisMap: {full_name!s} is not a file")
+            raise ValueError(f"webvizMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("region_file", mode="before")
-    def region_file_check(cls, v: str, values: ValidationInfo):
-        full_name = values.data.get("grid_path").joinpath(v)
+    def region_file_check(cls, v: str, info: ValidationInfo):
+        paths = info.context.get("paths") if info and info.context else None
+        if not paths:
+            return Path(v)
+
+        full_name = paths.grid_dir / v
         if not full_name.is_file():
-            raise ValueError(f"webvisMap: {full_name!s} is not a file")
+            raise ValueError(f"webvizMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("attribute_error", mode="before")
@@ -308,16 +301,6 @@ class WebvizMap(BaseModel):
         except ValueError:
             raise ValueError(f"attribute error surface file not recognised: {v}")
         return v
-
-    @model_validator(mode="after")
-    def output_path_check(self) -> Self:
-        if not self.output_path_modelled_data.is_dir():
-            raise ValueError(f"output_path: {self.output_path_modelled_data!s} is not a"
-                             " directory")
-        if not self.output_path_observed_data.is_dir():
-            raise ValueError(f"output_path: {self.output_path_observed_data!s} is not a"
-                             " directory")
-        return self
 
 
 class InversionParameters(BaseModel):
@@ -371,52 +354,32 @@ class InversionParameters(BaseModel):
 
 
 class SeismicInversionConfig(BaseModel):
-    attribute: AttributeDef = Field(
+    attribute: SkipJsonSchema[AttributeDef] = Field(
         default="relai", description="Attribute type for seismic inverted cubes"
     )
-    d_syn_0: FilePath = Field(
+    d_syn_0: SkipJsonSchema[FilePath] = Field(
         default=Path("../../sim2seis/output/seismic_forward/seismic--d_syn0.sgy"),
         description="Default name for synthetic seismic data for the first vintage"
         "based on the relative inversion results and the wavelet",
     )
-    d_syn_1: FilePath = Field(
+    d_syn_1: SkipJsonSchema[FilePath] = Field(
         default=Path("../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy"),
         description="Default name for synthetic seismic data for the second vintage"
         "based on the relative inversion results and the wavelet",
     )
-    rel_ai_0: FilePath = Field(
+    rel_ai_0: SkipJsonSchema[FilePath] = Field(
         default=Path("../../sim2seis/output/seismic_forward/seismic--relai_0.sgy"),
         description="Default name for relative acoustic impedance for the first "
         "vintage",
     )
-    rel_ai_1: FilePath = Field(
+    rel_ai_1: SkipJsonSchema[FilePath] = Field(
         default=Path("../../sim2seis/output/seismic_forward/seismic--relai_1.sgy"),
         description="Default name for relative acoustic impedance for the second "
         "vintage",
     )
-    domain: DomainDef = Field(
+    domain: SkipJsonSchema[DomainDef] = Field(
         default="time",
         description="Relative seismic inversion should only be run in time domain",
-    )
-    path: DirectoryPath = Field(
-        default=Path("../../share/results/cubes"),
-        description="Default directory for intermediate results",
-    )
-    pickle_file_prefix: str = Field(
-        default="relai_diff",
-        description="Pickle files are intermediate save formats in "
-        "`sim2seis`. Each task has its own prefix for "
-        "identification",
-    )
-    remove_unused_files: bool = Field(
-        default=True,
-        description="Control removal of intermediate files",
-    )
-    inversion_binary: FilePath = Field(
-        default=Path("../../sim2seis/bin/impedance"),
-        description="Directory where the binary file for relative seismic impedance "
-        "is stored. This parameter will likely be removed in a coming "
-        "release",
     )
     inversion_parameters: InversionParameters = Field(
         default_factory=InversionParameters
@@ -427,9 +390,14 @@ class Sim2SeisConfig(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True, title="Sim2Seis Configuration"
     )
-    config_file_name: SkipJsonSchema[Path] = Field(
-        description="Full file name is added to the config structure",
-        default=Path(r"../../sim2seis/model/sim2seis_config.yml"),
+    paths: Sim2SeisPaths
+    pickle_file_prefix: SkipJsonSchema[PickleFilePrefix] = Field(
+        default=PickleFilePrefix()
+    )
+    test_run: SkipJsonSchema[bool] = Field(
+        default=False,
+        description="Set 'test_run' to True when running tests "
+        "on observed data processing",
     )
     seismic_fwd: SeismicForward
     amplitude_map: SkipJsonSchema[AmplitudeMapConfig] = Field(
@@ -448,28 +416,14 @@ class Sim2SeisConfig(BaseModel):
     inversion_map: SkipJsonSchema[InversionMapConfig] = Field(
         default_factory=InversionMapConfig
     )
-    pickle_file_output_path: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../share/results/pickle_files"),
-        description="Directory for storing all module results in pickle format",
-    )
-    rel_path_global_config: SkipJsonSchema[DirectoryPath] = Field(
-        default=Path("../../fmuconfig/output"),
-        description="Relative path name for the directory where the global "
-        "parameter file is stored",
-    )
-    seismic_diff: SkipJsonSchema[SeismicDiff] = Field(
-        default_factory=SeismicDiff,
-        description="Settings for calculating differences between vintages "
-        "of forward model and relative seismic impedance",
-    )
     seismic_inversion: SkipJsonSchema[SeismicInversionConfig] = Field(
         default_factory=SeismicInversionConfig,
-        # json_schema_extra={"json_schema": SkipJsonSchema}
     )
     webviz_map: SkipJsonSchema[WebvizMap]
 
     @model_validator(mode="after")
-    def check_sim2seis_config(self):
+    def check_sim2seis_config(self, info: ValidationInfo) -> Self:
+        # Check attribute_definition_file exists relative to config file
         if not self.attribute_definition_file.is_file():
             if self.config_file_name.parent.joinpath(
                 self.attribute_definition_file
@@ -479,6 +433,7 @@ class Sim2SeisConfig(BaseModel):
                 raise ValueError(
                     f"{self.attribute_definition_file} is not recognised as a file"
                 )
+
         return self
 
     # Add global parameters used in the PEM

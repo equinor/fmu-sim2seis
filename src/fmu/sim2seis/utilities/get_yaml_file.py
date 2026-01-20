@@ -4,8 +4,7 @@ import yaml
 
 from fmu.pem.pem_utilities import get_global_params_and_dates
 
-from .obs_data_config_validation import ObservedDataConfig
-from .sim2seis_config_validation import Sim2SeisConfig
+from .sim2seis_config_validation import Sim2SeisConfig, Sim2SeisPaths
 
 
 def read_yaml_file(
@@ -14,7 +13,7 @@ def read_yaml_file(
     global_config_file: Path | None = None,
     global_config_dir: Path | None = None,
     parse_inputs: bool = True,
-) -> Sim2SeisConfig | ObservedDataConfig | dict:
+) -> Sim2SeisConfig | dict:
     """Read the YAML file and return the configuration.
 
     Parameters
@@ -43,14 +42,7 @@ def read_yaml_file(
     """
 
     with open(sim2seis_config_dir / sim2seis_config_file) as f:
-
-        def join(loader, node):
-            seq = loader.construct_sequence(node)
-            return "".join([str(i) for i in seq])
-
-        # register the tag handler
-        yaml.add_constructor("!join", join)
-        data = yaml.load(f, Loader=yaml.Loader)
+        data = yaml.safe_load(f)
         # add information about the config file name
         data["config_file_name"] = sim2seis_config_file
 
@@ -62,13 +54,12 @@ def read_yaml_file(
         if not parse_inputs:
             return data
 
-        # if "observed_depth_surf" in data:
-        #     conf = ObservedDataConfig(**data)
-        # elif "seismic_fwd" in data:
-        #     conf = Sim2SeisConfig(**data)
-        # else:
-        #     raise ValueError("Configuration not recognized")
-        conf = Sim2SeisConfig(**data)
+        # Build paths by merging YAML overrides with defaults
+        paths_data = data.get("paths", {})
+        paths_obj = Sim2SeisPaths.model_validate(paths_data)
+        data["paths"] = paths_obj
+
+        conf = Sim2SeisConfig.model_validate(data, context={"paths": paths_obj})
 
         # Read necessary part of global configurations and parameters
         conf.update_with_global(

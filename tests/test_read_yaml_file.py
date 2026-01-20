@@ -42,9 +42,10 @@ def test_read_comb_data_yaml_file(monkeypatch, data_dir):
     monkeypatch.chdir(config_dir)
     config_file = Path("sim2seis_combined_config.yml")
     conf = read_yaml_file(
-        file_name=config_file,
-        config_dir=config_dir,
-        update_with_global=True,
+        sim2seis_config_file=config_file,
+        sim2seis_config_dir=config_dir,
+        global_config_dir=Path("../../fmuconfig/output"),
+        global_config_file=Path("global_variables.yml"),
         parse_inputs=True,
     )
     # Make some random validations according to default settings
