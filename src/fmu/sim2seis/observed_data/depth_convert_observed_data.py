@@ -11,7 +11,6 @@ from fmu.tools.domainconversion import DomainConversion
 
 def depth_convert_observed_data(
     time_cubes: dict[SeismicName, DifferenceSeismic | SingleSeismic],
-    # config: ObservedDataConfig,
     depth_conversion: DepthConvertConfig,
     depth_surfaces: dict[str, xtgeo.RegularSurface],
     time_surfaces: dict[str, xtgeo.RegularSurface],

@@ -15,13 +15,13 @@ from fmu.sim2seis.utilities import (
     cube_export,
     parse_arguments,
     populate_seismic_attributes,
+    read_cubes,
+    read_surfaces,
     read_yaml_file,
 )
 
 from ._dump_results import _dump_observed_results
 from .depth_convert_observed_data import depth_convert_observed_data
-from .depth_surf import get_depth_surfaces
-from .import_time_data import read_time_data
 from .symlink import make_symlinks_observed_seismic
 
 
@@ -49,14 +49,29 @@ def main(arguments=None):
                 input_datapath=config.global_params["global"]["seismic"][
                     "real_4d_cropped_path"
                 ],
-                output_datapath=config.observed_data_path,
+                output_datapath=config.paths.preprocessed_seismic_dir,
             )
 
         # Create depth surfaces
-        depth_surf = get_depth_surfaces(config)
+        depth_surf = read_surfaces(
+            horizon_dir=config.paths.observed_horizon_dir,
+            horizon_names=config.depth_conversion.horizon_names,
+            horizon_suffix=config.depth_conversion.depth_suffix,
+        )
 
         # Read observed data in time
-        time_cubes, time_surfaces = read_time_data(config)
+        time_surfaces = read_surfaces(
+            horizon_dir=config.paths.observed_horizon_dir,
+            horizon_names=config.depth_conversion.horizon_names,
+            horizon_suffix=config.depth_conversion.time_suffix,
+        )
+        time_cubes = read_cubes(
+            cube_dir=config.paths.preprocessed_seismic_dir,
+            cube_prefix=config.depth_conversion.time_cube_prefix,
+            domain="time",
+            dates=config.global_params.seis_dates,
+            diff_dates=config.global_params.diff_dates,
+        )
 
         # Run depth conversion
         depth_cubes = depth_convert_observed_data(

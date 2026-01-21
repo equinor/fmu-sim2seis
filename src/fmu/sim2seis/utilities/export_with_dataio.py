@@ -85,9 +85,9 @@ def attribute_export(
     # Must determine the absolute output path before changing directory. Different
     # directories for observed (preprocessed) data and modelled data
     if is_preprocessed:
-        output_path = config_file.webviz_map.output_path_observed_data.resolve()
+        output_path = config_file.paths.output_path_observed_data.resolve()
     else:
-        output_path = config_file.webviz_map.output_path_modelled_data.resolve()
+        output_path = config_file.paths.output_path_modelled_data.resolve()
     with restore_dir(run_path.joinpath("../..")):
         for attr in export_attributes:
             for calc, value in zip(attr.calc_types, attr.value):
@@ -166,14 +166,12 @@ def _get_grid_info(
     # Import grid, zones, regions
     with restore_dir(config_dir):
         grid = xtgeo.grid_from_file(
-            config_file.webviz_map.grid_path.joinpath(config_file.webviz_map.grid_file)
+            config_file.paths.grid_dir.joinpath(config_file.webviz_map.grid_file)
         )
         zones = xtgeo.gridproperty_from_file(
-            config_file.webviz_map.grid_path.joinpath(config_file.webviz_map.zone_file)
+            config_file.paths.grid_dir.joinpath(config_file.webviz_map.zone_file)
         )
         regions = xtgeo.gridproperty_from_file(
-            config_file.webviz_map.grid_path.joinpath(
-                config_file.webviz_map.region_file
-            )
+            config_file.paths.grid_dir.joinpath(config_file.webviz_map.region_file)
         )
         return grid, zones, regions

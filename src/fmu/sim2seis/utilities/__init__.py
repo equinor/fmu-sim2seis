@@ -5,7 +5,9 @@ from .dump_results import (
     retrieve_result_objects,
 )
 from .export_with_dataio import attribute_export, cube_export
+from .get_surfaces import read_surfaces
 from .get_yaml_file import read_yaml_file
+from .import_cubes import read_cubes
 from .interval_parser import populate_seismic_attributes
 from .link_and_folder_utils import (
     make_folders,
@@ -46,6 +48,8 @@ __all__ = [
     "make_symlink",
     "parse_arguments",
     "populate_seismic_attributes",
+    "read_cubes",
+    "read_surfaces",
     "read_yaml_file",
     "retrieve_result_objects",
 ]

@@ -68,6 +68,10 @@ class Sim2SeisPaths(BaseModel):
         default=Path("../../share/results/tables"),
         description="Ascii files for WebViz or ERT are written to this directory",
     )
+    output_path_observed_data: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../ert/input/preprocessed/seismic"),
+        description="Ascii files for WebViz or ERT are written to this directory",
+    )
 
 
 class PickleFilePrefix(BaseModel):
@@ -185,6 +189,11 @@ class DepthConvertConfig(BaseModel):
         description="Horizon names used in time to depth conversion "
         "have extension '.gri', of type RMS binary, with "
         "name ending on '--depth'",
+    )
+    time_cube_prefix: SkipJsonSchema[str] = Field(
+        default="seismic--",
+        description="Seismic cube prefix for observed seismic cubes to be "
+        "depth converted",
     )
 
     @model_validator(mode="after")

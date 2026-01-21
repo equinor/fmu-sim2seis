@@ -23,7 +23,6 @@
 #______________________________________________________________________________________________________________________#
 # attribute_definition_file: observed_data_intervals_drogon.yml
 # rel_path_global_config: ../../fmuconfig/output
-flowsim_is_prediction: False
 
 ## Section for depth maps - inputs only
 #______________________________________________________________________________________________________________________#
@@ -33,17 +32,11 @@ observed_depth_surf:
   horizon_names: [MSL, TopVolantis, BaseVolantis, BaseVelmodel]
 
 
-
-
 ## Section for time data
 #______________________________________________________________________________________________________________________#
 #observed_time_data:
   # time_cube_prefix: seismic--
   # time_suffix: --time.gri
-
-
-## End of config file
-#______________________________________________________________________________________________________________________#
 
 
 ## For the main class

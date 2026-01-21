@@ -33,9 +33,9 @@ def exe_seismic_forward(
     for date in formatted_seis_dates:
         # Copy the right vintage PEM output file to generic pem.grdecl
         copy2(
-            src=config_file.seismic_fwd.pem_output_dir
+            src=config_file.paths.pem_output_dir
             / Path("pem--" + date + ".grdecl"),
-            dst=config_file.seismic_fwd.pem_output_dir / Path("pem.grdecl"),
+            dst=config_file.paths.rel_path_pem / Path("pem.grdecl"),
         )
 
         if date == config_file.global_params.seis_dates[0]:

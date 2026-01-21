@@ -25,15 +25,17 @@ r_tol = 0.001
 def test_obs_data(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
-    # Modify the config file: add `test_run = True`
-    with open(obs_data_config_file_name) as fin:
-        conf_dict = yaml.safe_load(fin)
-        conf_dict["test_run"] = True
+
+    with open(sim2seis_config_file_name) as fin:
+        data = yaml.safe_load(fin)
+        # Modify the config file: add `test_run = True`
+        data["test_run"] = True
     fout_name = Path(
         sim2seis_config_file_name.stem + "_test" + sim2seis_config_file_name.suffix
     )
     with open(fout_name, "w") as fout:
-        yaml.safe_dump(conf_dict, fout)
+        yaml.safe_dump(data, fout)
+
     run_obs_data(
         [
             "--config-dir",
@@ -50,18 +52,18 @@ def test_obs_data(monkeypatch, data_dir):
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path(
-            "../../share/preprocessed/maps/topvolantis--amplitude_rms_depth--20200701_20180101.gri"
+            "../../share/preprocessed/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/preprocessed/maps/topvolantis--relai_min_depth--20200701_20180101.gri"
+            "../../share/preprocessed/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/preprocessed/tables/topvolantis--amplitude_mean_depth--20200701_20180101.csv"
+            "../../share/preprocessed/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
         ),
         Path(
-            "../../share/preprocessed/tables/topvolantis--relai_rms_depth--20200701_20180101.csv"
+            "../../share/preprocessed/tables/topvolantis--relai_full_rms_depth--20200701_20180101.csv"
         ),
-        Path("../../share/preprocessed/pickle_files/observed_data_time_cubes.pkl"),
+        Path("../../share/results/pickle_files/observed_data_time_cubes.pkl"),
     ]
     expected_values = [
         737.739982963365,
