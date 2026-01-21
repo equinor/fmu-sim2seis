@@ -50,11 +50,12 @@ def main(arguments=None):
         )
         if hasattr(args, "prefix_list"):
             clear_result_objects(
-                output_path=config.pickle_file_output_path, prefix_list=args.prefix_list
+                output_path=config.paths.pickle_file_output_dir,
+                prefix_list=args.prefix_list,
             )
         else:
             clear_result_objects(
-                output_path=config.pickle_file_output_path,
+                output_path=config.paths.pickle_file_output_dir,
             )
 
 

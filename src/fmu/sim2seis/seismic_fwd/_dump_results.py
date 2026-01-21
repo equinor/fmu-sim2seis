@@ -23,37 +23,43 @@ def _dump_results(
     velocity_model_object: DomainConversion,
 ) -> None:
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_fwd.pickle_file_prefix + "_depth.pkl"),
+        output_path=config.paths.pickle_file_output_dir,
+        file_name=Path(config.pickle_file_prefix.seismic_forward + "_depth.pkl"),
         output_obj=depth_object,
     )
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_fwd.pickle_file_prefix + "_time.pkl"),
+        output_path=config.paths.pickle_file_output_dir,
+        file_name=Path(config.pickle_file_prefix.seismic_forward + "_time.pkl"),
         output_obj=time_object,
     )
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_diff.pickle_file_prefix + "_depth.pkl"),
+        output_path=config.paths.pickle_file_output_dir,
+        file_name=Path(config.pickle_file_prefix.seismic_diff + "_depth.pkl"),
         output_obj=depth_diff_object,
     )
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_diff.pickle_file_prefix + "_time.pkl"),
+        output_path=config.paths.pickle_file_output_dir,
+        file_name=Path(config.pickle_file_prefix.seismic_diff + "_time.pkl"),
         output_obj=time_diff_object,
     )
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_fwd.pickle_file_prefix + "_depth_horizons.pkl"),
+        output_path=config.paths.pickle_file_output_dir,
+        file_name=Path(
+            config.pickle_file_prefix.seismic_forward + "_depth_horizons.pkl"
+        ),
         output_obj=depth_horizon_object,
     )
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_fwd.pickle_file_prefix + "_time_horizons.pkl"),
+        output_path=config.paths.pickle_file_output_dir,
+        file_name=Path(
+            config.pickle_file_prefix.seismic_forward + "_time_horizons.pkl"
+        ),
         output_obj=time_horizon_object,
     )
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_fwd.pickle_file_prefix + "_velocity_model.pkl"),
+        output_path=config.paths.pickle_file_output_dir,
+        file_name=Path(
+            config.pickle_file_prefix.seismic_forward + "_velocity_model.pkl"
+        ),
         output_obj=velocity_model_object,
     )

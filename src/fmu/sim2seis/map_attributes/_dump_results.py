@@ -17,16 +17,16 @@ def _dump_map_results(
     attribute_type: Literal["amplitude", "relai"],
 ) -> None:
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
-        file_name=Path(config.amplitude_map.pickle_file_prefix + "_depth_surfaces.pkl"),
+        output_path=config.paths.pickle_file_output_dir,
+        file_name=Path(config.pickle_file_prefix.amplitude_maps + "_depth_surfaces.pkl"),
         output_obj=depth_surfaces,
     )
     if attribute_type == "amplitude":
-        attr_prefix = config.amplitude_map.pickle_file_prefix
+        attr_prefix = config.pickle_file_prefix.amplitude_maps
     else:
-        attr_prefix = config.inversion_map.pickle_file_prefix
+        attr_prefix = config.pickle_file_prefix.relai_maps
     dump_result_objects(
-        output_path=config.pickle_file_output_path,
+        output_path=config.paths.pickle_file_output_dir,
         file_name=Path(attr_prefix + "_depth_attributes.pkl"),
         output_obj=attributes,
     )
