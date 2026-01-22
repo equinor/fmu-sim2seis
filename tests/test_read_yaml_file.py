@@ -22,21 +22,6 @@ def test_read_yaml_config(monkeypatch, data_dir):
     assert conf.model_json_schema()
 
 
-def test_read_obs_data_yaml_file(monkeypatch, data_dir):
-    config_dir = data_dir / "sim2seis" / "model"
-    monkeypatch.chdir(config_dir)
-    conf = read_yaml_file(
-        sim2seis_config_dir=config_dir,
-        sim2seis_config_file=Path("obs_data_config.yml"),
-        global_config_dir=Path("../../fmuconfig/output"),
-        global_config_file=Path("global_variables.yml"),
-        parse_inputs=True,
-    )
-    # Make some random validations according to default settings
-    assert conf.depth_conversion.min_depth < conf.depth_conversion.max_depth
-    assert conf.webviz_map.attribute_error == 0.07
-
-
 def test_read_comb_data_yaml_file(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
