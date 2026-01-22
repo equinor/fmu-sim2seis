@@ -45,8 +45,10 @@ def main(arguments=None):
         # tests runs, where a test dataset is copied instead
         if not (config.test_run or args.no_attributes):
             make_symlinks_observed_seismic(
-                vintages=config.global_params["global"]["seismic"]["real_4d"],
-                input_datapath=config.global_params["global"]["seismic"][
+                vintages=config.global_params.global_config["global"]["seismic"][
+                    "real_4d"
+                ],
+                input_datapath=config.global_params.global_config["global"]["seismic"][
                     "real_4d_cropped_path"
                 ],
                 output_datapath=config.paths.preprocessed_seismic_dir,
