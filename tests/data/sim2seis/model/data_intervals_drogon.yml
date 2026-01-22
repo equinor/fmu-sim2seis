@@ -8,7 +8,7 @@ global:
   surface_postfix: --depth.gri
 cubes: # Setup for the cubes for which maps will be generated
   relai_depth: # arbitrary name of cube
-    cube_prefix: seismic--relai_depth-- # start of observed cube name
+    cube_prefix: seismic--relai_full_depth-- # start of observed cube name
     formations: # settings for each formation maps will be generated for
       volantis:
         top_horizon: topvolantis # Horizon used as top of the formation. ".gri" assumed as extension
@@ -21,7 +21,7 @@ cubes: # Setup for the cubes for which maps will be generated
           top_surface_shift: -15
           scale_factor: 1.05
   amplitude_depth: # arbitrary name of cube
-    cube_prefix: seismic--amplitude_depth-- # start of cube name
+    cube_prefix: seismic--amplitude_full_depth-- # start of cube name
     formations: # settings for each formation maps will be generated for
       volantis:
         top_horizon: topvolantis # Horizon used as top of the formation. ".gri" assumed as extension
