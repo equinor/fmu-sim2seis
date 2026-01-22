@@ -52,8 +52,8 @@ def main(arguments=None):
 
         # Depth conversion, as the inversion is run in time domain
         velocity_model = retrieve_result_objects(
-            input_path=conf.pickle_file_output_path,
-            file_name=conf.seismic_fwd.pickle_file_prefix + "_velocity_model.pkl",
+            input_path=conf.paths.pickle_file_output_dir,
+            file_name=conf.pickle_file_prefix.seismic_forward + "_velocity_model.pkl",
         )
         rel_ai_depth_dict = depth_convert_ai(
             velocity_model=velocity_model,

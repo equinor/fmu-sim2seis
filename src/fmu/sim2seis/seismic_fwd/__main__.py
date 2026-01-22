@@ -17,13 +17,14 @@ from fmu.sim2seis.utilities import (
     check_startup_dir,
     cube_export,
     parse_arguments,
+    read_surfaces,
     read_yaml_file,
 )
 from fmu.tools import DomainConversion
 
 from ._dump_results import _dump_results
 from .seismic_diff import calculate_seismic_diff
-from .seismic_forward import exe_seismic_forward, read_time_and_depth_horizons
+from .seismic_forward import exe_seismic_forward
 
 
 def main(arguments=None):
@@ -43,7 +44,16 @@ def main(arguments=None):
 
         # Read the horizons that are used in depth conversion and later for extraction
         # of attributes
-        time_horizons, depth_horizons = read_time_and_depth_horizons(config)
+        time_horizons = read_surfaces(
+            horizon_dir=config.paths.modelled_horizon_dir,
+            horizon_names=config.depth_conversion.horizon_names,
+            horizon_suffix=config.depth_conversion.time_suffix,
+        )
+        depth_horizons = read_surfaces(
+            horizon_dir=config.paths.modelled_horizon_dir,
+            horizon_names=config.depth_conversion.horizon_names,
+            horizon_suffix=config.depth_conversion.depth_suffix,
+        )
 
         # Establish velocity model for time/depth conversion
         velocity_model = DomainConversion(
@@ -54,6 +64,7 @@ def main(arguments=None):
         # Seismic forward modelling
         depth_cubes, time_cubes = exe_seismic_forward(
             config_file=config,
+            config_dir=run_folder,
             velocity_model=velocity_model,
             verbose=args.verbose,
         )

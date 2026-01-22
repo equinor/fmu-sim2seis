@@ -78,13 +78,13 @@ def run_relative_inversion_si4ti(
             )
             diff_rel_ai_dict[tmp_inv_diff_name] = DifferenceSeismic(
                 monitor=SingleSeismic(
-                    from_dir=config.seismic_inversion.path.name,
+                    from_dir=config.paths.modelled_seismic_dir.name,
                     cube_name=tmp_inv_monitor_name,
                     date=SeismicDate(tmp_inv_monitor_name.date),
                     cube=relai_time_cubes[-1],
                 ),
                 base=SingleSeismic(
-                    from_dir=config.seismic_inversion.path.name,
+                    from_dir=config.paths.modelled_seismic_dir.name,
                     cube_name=tmp_inv_base_name,
                     date=SeismicDate(tmp_inv_base_name.date),
                     cube=relai_time_cubes[0],
