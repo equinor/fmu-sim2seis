@@ -57,6 +57,7 @@ def read_yaml_file(
         # Build paths by merging YAML overrides with defaults
         paths_data = data.get("paths", {})
         paths_obj = Sim2SeisPaths.model_validate(paths_data)
+        paths_obj.config_dir_sim2seis = sim2seis_config_dir
         data["paths"] = paths_obj
 
         conf = Sim2SeisConfig.model_validate(data, context={"paths": paths_obj})
