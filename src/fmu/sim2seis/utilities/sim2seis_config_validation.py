@@ -121,29 +121,30 @@ class SeismicForward(BaseModel):
             raise ValueError(f"Invalid attribute: {v}")
         return v
 
+    @model_validator(mode="after")
+    def check_seismic_fwd(self, info: ValidationInfo) -> Self:
+        paths = info.context.get("paths") if info and info.context else None
+        if not paths:
+            return self
 
-@model_validator(mode="after")
-def check_seismic_fwd(self, info: ValidationInfo) -> Self:
-    paths = info.context.get("paths") if info and info.context else None
-    if not paths:
-        return self
+        base = paths.modelled_seismic_dir
+        resolved = {}
+        for key, value in self.stack_models.items():
+            path = base / value
+            if not path.is_file():
+                raise ValueError(
+                    f"stack model file {value.name} is not present in directory {base}"
+                )
+            resolved[key] = path
+        self.stack_models = resolved
 
-    base = paths.modelled_seismic_dir
-    resolved = {}
-    for key, value in self.stack_models.items():
-        path = base / value
-        if not path.is_file():
+        if not paths.pem_output_dir.is_dir():
             raise ValueError(
-                f"stack model file {value.name} is not present in directory {base}"
+                f"pem_output_dir is not a directory: {paths.pem_output_dir}"
             )
-        resolved[key] = path
-    self.stack_models = resolved
-
-    if not paths.pem_output_dir.is_dir():
-        raise ValueError(f"pem_output_dir is not a directory: {paths.pem_output_dir}")
-    if not self.twt_model.is_file():
-        raise ValueError(f"twt_model: {self.twt_model!s} is not a file")
-    return self
+        if not self.twt_model.is_file():
+            raise ValueError(f"twt_model: {self.twt_model!s} is not a file")
+        return self
 
 
 class DepthConvertConfig(BaseModel):

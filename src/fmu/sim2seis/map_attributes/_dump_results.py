@@ -18,7 +18,9 @@ def _dump_map_results(
 ) -> None:
     dump_result_objects(
         output_path=config.paths.pickle_file_output_dir,
-        file_name=Path(config.pickle_file_prefix.amplitude_maps + "_depth_surfaces.pkl"),
+        file_name=Path(
+            config.pickle_file_prefix.amplitude_maps + "_depth_surfaces.pkl"
+        ),
         output_obj=depth_surfaces,
     )
     if attribute_type == "amplitude":
