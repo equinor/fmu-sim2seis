@@ -85,9 +85,9 @@ def attribute_export(
     # Must determine the absolute output path before changing directory. Different
     # directories for observed (preprocessed) data and modelled data
     if is_preprocessed:
-        output_path = config_file.paths.output_path_observed_data.resolve()
+        output_path = config_file.paths.output_dir_observed_data.resolve()
     else:
-        output_path = config_file.paths.output_path_modelled_data.resolve()
+        output_path = config_file.paths.output_dir_modelled_data.resolve()
     with restore_dir(run_path.joinpath("../..")):
         for attr in export_attributes:
             for calc, value in zip(attr.calc_types, attr.value):

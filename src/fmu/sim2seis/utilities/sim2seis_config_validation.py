@@ -52,6 +52,16 @@ class Sim2SeisPaths(BaseModel):
         description="The standard folder for horizons both of time and depth domain, "
         "as well as attribute maps",
     )
+    time_horizon_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/results/maps"),
+        description="The standard folder for horizons both of time and depth domain, "
+        "as well as attribute maps",
+    )
+    depth_horizon_dir: SkipJsonSchema[DirectoryPath] = Field(
+        default=Path("../../share/results/maps"),
+        description="The standard folder for horizons both of time and depth domain, "
+        "as well as attribute maps",
+    )
     observed_horizon_dir: SkipJsonSchema[DirectoryPath] = Field(
         default=Path("../../share/preprocessed/maps"),
         description="The standard folder for horizons both of time and depth domain",
@@ -64,13 +74,18 @@ class Sim2SeisPaths(BaseModel):
         default=Path("../../share/results/pickle_files"),
         description="Directory for storing all module results in pickle format",
     )
-    output_path_modelled_data: SkipJsonSchema[DirectoryPath] = Field(
+    output_dir_modelled_data: SkipJsonSchema[DirectoryPath] = Field(
         default=Path("../../share/results/tables"),
         description="Ascii files for WebViz or ERT are written to this directory",
     )
-    output_path_observed_data: SkipJsonSchema[DirectoryPath] = Field(
+    output_dir_observed_data: SkipJsonSchema[DirectoryPath] = Field(
         default=Path("../../ert/input/preprocessed/seismic"),
         description="Ascii files for WebViz or ERT are written to this directory",
+    )
+    config_dir_sim2seis: SkipJsonSchema[Path] = Field(
+        default=Path.cwd(),
+        description="Configuration directory for sim2seis model, correct path "
+        "is set from command line options",
     )
 
 
@@ -127,7 +142,7 @@ class SeismicForward(BaseModel):
         if not paths:
             return self
 
-        base = paths.modelled_seismic_dir
+        base = paths.config_dir_sim2seis
         resolved = {}
         for key, value in self.stack_models.items():
             path = base / value

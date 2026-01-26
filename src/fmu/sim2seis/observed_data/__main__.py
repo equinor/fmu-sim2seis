@@ -55,15 +55,15 @@ def main(arguments=None):
             )
 
         # Create depth surfaces
-        depth_surf = read_surfaces(
-            horizon_dir=config.paths.observed_horizon_dir,
+        depth_horizons = read_surfaces(
+            horizon_dir=config.paths.depth_horizon_dir,
             horizon_names=config.depth_conversion.horizon_names,
             horizon_suffix=config.depth_conversion.depth_suffix,
         )
 
         # Read observed data in time
-        time_surfaces = read_surfaces(
-            horizon_dir=config.paths.observed_horizon_dir,
+        time_horizons = read_surfaces(
+            horizon_dir=config.paths.time_horizon_dir,
             horizon_names=config.depth_conversion.horizon_names,
             horizon_suffix=config.depth_conversion.time_suffix,
         )
@@ -79,8 +79,8 @@ def main(arguments=None):
         depth_cubes = depth_convert_observed_data(
             time_cubes=time_cubes,
             depth_conversion=config.depth_conversion,
-            depth_surfaces=depth_surf,
-            time_surfaces=time_surfaces,
+            depth_surfaces=depth_horizons,
+            time_surfaces=time_horizons,
         )
 
         # Extract attributes
@@ -94,21 +94,21 @@ def main(arguments=None):
                     parse_inputs=False,
                 ),
                 cubes=depth_cubes,
-                surfaces=depth_surf,
+                surfaces=depth_horizons,
             )
             attribute_export(
                 config_file=config,
                 export_attributes=attr_list,
                 config_dir=run_folder,
                 is_observed=True,
-                is_preprocessed=True,
+                is_preprocessed=not config.test_run,
             )
 
         # Dump results - empty attribute list will skip attribute export
         _dump_observed_results(
             config=config,
-            time_surfaces=time_surfaces,
-            depth_surfaces=depth_surf,
+            time_surfaces=time_horizons,
+            depth_surfaces=depth_horizons,
             time_cubes=time_cubes,
             depth_cubes=depth_cubes,
             attributes=attr_list,
@@ -125,7 +125,7 @@ def main(arguments=None):
             # If there is per-realisation depth uncertainty, we
             # must set the 'preprocessed' attribute for fmu-dataio
             # This takes precedence over is_observation
-            is_preprocessed=not args.no_attributes,
+            is_preprocessed=not (args.no_attributes or config.test_run),
         )
 
 

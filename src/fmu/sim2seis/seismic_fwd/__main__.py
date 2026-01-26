@@ -45,12 +45,12 @@ def main(arguments=None):
         # Read the horizons that are used in depth conversion and later for extraction
         # of attributes
         time_horizons = read_surfaces(
-            horizon_dir=config.paths.modelled_horizon_dir,
+            horizon_dir=config.paths.time_horizon_dir,
             horizon_names=config.depth_conversion.horizon_names,
             horizon_suffix=config.depth_conversion.time_suffix,
         )
         depth_horizons = read_surfaces(
-            horizon_dir=config.paths.modelled_horizon_dir,
+            horizon_dir=config.paths.depth_horizon_dir,
             horizon_names=config.depth_conversion.horizon_names,
             horizon_suffix=config.depth_conversion.depth_suffix,
         )
