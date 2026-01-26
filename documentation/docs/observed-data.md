@@ -2,7 +2,7 @@
 
 The steps in `sim2seis` are typically executed within an `ert`-controlled ensemble run, which includes multiple
 realisations. Since the observed seismic data remains constant, only a single run is required, and this is performed
-outside of `ert` via the command line:
+outside of `ert` via the command-line:
 
 ```shell
 # Normal run
@@ -19,19 +19,19 @@ outside of `ert` via the command line:
 
 ## Configuration file
 
-As part of the `sim2seis` workflow, the processing of observed data is controlled by a YAML configuration files. There
+As part of the `sim2seis` workflow, the processing of observed data is controlled by a YAML configuration file. There
 is one common parameter file, shown in [Figure 2](#figure-2-example-yaml-file), and one common interval definition file
 for generating attribute maps. The interval definition file follows the format described in [attribute maps](./attribute-maps.md).
 
 <<< ../../tests/data/sim2seis/model/sim2seis_combined_config.yml{yml}
-<span id="figure-2-example-yaml-file"><strong>Figure 2:</strong> Example YAML configuration file for observed data.</span>
+<span id="figure-2-example-yaml-file"><strong>Figure 2:</strong> Example YAML configuration file for sim2seis, including observed data.</span>
 
 ## Symlink to observed seismic cubes
 
-To save space, the observed data are not duplicated for each realization in an `ert` run. Instead, symbolic links are
+To save space, the observed data are not duplicated for each realisation in an `ert` run. Instead, symbolic links are
 generated from the seismic cube directory (`./share/preprocessed/cubes`) to the directory that contains the observed
-seismic cubes. This directory is set in the global configuration file. Below the entire seismic settings are included.
-For the symbolic links, it is the `real_4d_cropped_path` that is used.
+seismic cubes. This directory is defined in the global configuration file (see [Figure 3](#figure-3-global-settings)).
+The symbolic links, use `real_4d_cropped_path`.
 
 ```yaml
   seismic:
@@ -100,7 +100,7 @@ For the symbolic links, it is the `real_4d_cropped_path` that is used.
 ## When to run Observed Data Processing from `ert`
 
 If `sim2seis` is run with structural uncertainty, the depth conversion of observed seismic data should be repeated for
-each realisation, as it will vary. If not, cubes and attribute maps in depth domain will not be consistent between
+each realisation, as it will vary. If not, cubes in depth domain will not be consistent between
 observed and modelled data. All required parameters are defined in [ert configuration](./ert-configuration.md).
 
 ```ert
@@ -109,6 +109,6 @@ FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<JOB_CONFIG_DIR>, <CONFIG_FILE>=<SIM2SE
 ```
 
 <strong>Note</strong> that there is a difference in cases where there is or is not structural uncertainty. In a case with
-no structural uncertainty, the observed data are regarded as being `preprocessed`, and e.g. resulting attributes etc.
-are stored in `./share/preprocessed/maps`. In a case with structural uncertainty, the observed data use the term
-`observed`, and so do the output directories: `./share/observations/...`.
+no structural uncertainty, the observed data are regarded as `preprocessed`, and the resulting attributes
+are stored in `./share/preprocessed/maps`. In a case with structural uncertainty, the observed data are labelled
+`observations`, and so are the output directories: `./share/observations/...`.
