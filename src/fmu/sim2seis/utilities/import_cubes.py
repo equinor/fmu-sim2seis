@@ -15,7 +15,7 @@ def read_cubes(
     domain: Literal["time", "depth"],
     dates: list[str],
     diff_dates: list[str],
-) -> tuple[dict[(str, str), SingleSeismic], dict[str, xtgeo.RegularSurface]]:
+) -> dict[(str, str), SingleSeismic]:
     time_cube_dict = {}
     # Extract file names with the correct prefix
     cube_names = [

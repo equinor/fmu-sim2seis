@@ -289,7 +289,7 @@ class WebvizMap(BaseModel):
 
         full_name = paths.grid_dir / v
         if not full_name.is_file():
-            raise ValueError(f"webvizMap: {full_name!s} is not a file")
+            raise ValueError(f"WebvizMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("zone_file", mode="before")
@@ -300,7 +300,7 @@ class WebvizMap(BaseModel):
 
         full_name = paths.grid_dir / v
         if not full_name.is_file():
-            raise ValueError(f"webvizMap: {full_name!s} is not a file")
+            raise ValueError(f"WebvizMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("region_file", mode="before")
@@ -311,7 +311,7 @@ class WebvizMap(BaseModel):
 
         full_name = paths.grid_dir / v
         if not full_name.is_file():
-            raise ValueError(f"webvizMap: {full_name!s} is not a file")
+            raise ValueError(f"WebvizMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("attribute_error", mode="before")

@@ -33,7 +33,7 @@
 #
 # Pickle file settings
 #
-# Pickle files are used to transfer class objects between the different parts of the sim2seis workflow.Neither their
+# Pickle files are used to transfer class objects between the different parts of the sim2seis workflow. Neither their
 # prefix names or the directory (in paths) will need to be modified, that will only lead to likely errors
 #
 ########################################################################################################################
