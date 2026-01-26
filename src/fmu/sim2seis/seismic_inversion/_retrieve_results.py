@@ -11,6 +11,6 @@ def retrieve_seismic_forward_results(
     """
     # Single depth cubes may not be needed
     return retrieve_result_objects(
-        input_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_diff.pickle_file_prefix + "_time.pkl"),
+        input_path=config.paths.pickle_file_output_dir,
+        file_name=Path(config.pickle_file_prefix.seismic_diff + "_time.pkl"),
     )

@@ -87,3 +87,4 @@ fmu-sim2seis-schema.json
 **/.vitepress/dist
 **/.vitepress/cache
 Scripts/compare_si4ti.py
+Scripts/debug_lines.py

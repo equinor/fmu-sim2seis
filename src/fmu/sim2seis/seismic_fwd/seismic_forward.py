@@ -15,6 +15,7 @@ from fmu.tools import DomainConversion
 
 def exe_seismic_forward(
     config_file: Sim2SeisConfig,
+    config_dir: Path,
     velocity_model: DomainConversion,
     verbose: bool = False,
 ) -> tuple[dict[SeismicName, SingleSeismic], dict[SeismicName, SingleSeismic]]:
@@ -33,14 +34,13 @@ def exe_seismic_forward(
     for date in formatted_seis_dates:
         # Copy the right vintage PEM output file to generic pem.grdecl
         copy2(
-            src=config_file.seismic_fwd.pem_output_dir
-            / Path("pem--" + date + ".grdecl"),
-            dst=config_file.seismic_fwd.pem_output_dir / Path("pem.grdecl"),
+            src=config_file.paths.pem_output_dir / Path("pem--" + date + ".grdecl"),
+            dst=config_file.paths.pem_output_dir / Path("pem.grdecl"),
         )
 
         if date == config_file.global_params.seis_dates[0]:
             # Generate a twt framework for the initial conditions
-            model_file = config_file.seismic_fwd.stack_model_path / "model_file_twt.xml"
+            model_file = config_dir / "model_file_twt.xml"
             result = run_simulation(model_file)
             assert result["success"]  # Success == True
 
@@ -51,18 +51,20 @@ def exe_seismic_forward(
                 print(result)
 
             # Modify name of synthetic seismic segy files output
-            s_depth_src = config_file.seismic_fwd.seismic_output_dir.joinpath(
-                config_file.seismic_fwd.segy_depth
+            s_depth_src = config_dir.joinpath(
+                config_file.paths.modelled_seismic_dir,
+                config_file.seismic_fwd.segy_depth,
             )
             depth_name_str = f"seismic--amplitude_{stack}_depth--{date}.segy"
             new_depth_name = SeismicName.parse_name(depth_name_str)
-            s_depth_file = config_file.seismic_fwd.seismic_output_dir.joinpath(
-                depth_name_str
+            s_depth_file = config_dir.joinpath(
+                config_file.paths.modelled_seismic_dir,
+                depth_name_str,
             )
             rename(s_depth_src, s_depth_file)
             depth_cube = xtgeo.cube_from_file(s_depth_file)
             depth_cubes[new_depth_name] = SingleSeismic(
-                from_dir=config_file.seismic_fwd.seismic_output_dir,
+                from_dir=config_file.paths.modelled_seismic_dir,
                 cube_name=new_depth_name,
                 date=SeismicDate(date),
                 cube=depth_cube,
@@ -77,7 +79,7 @@ def exe_seismic_forward(
             time_name_str = f"seismic--amplitude_{stack}_time--{date}.segy"
             new_time_name = SeismicName.parse_name(time_name_str)
             time_cubes[new_time_name] = SingleSeismic(
-                from_dir=config_file.seismic_fwd.seismic_output_dir,
+                from_dir=config_file.paths.modelled_seismic_dir,
                 cube_name=new_time_name,
                 date=SeismicDate(date),
                 cube=time_cube,
@@ -97,7 +99,7 @@ def read_time_and_depth_horizons(
     time_surfs = {}
     depth_surfs = {}
     for horizon in config.depth_conversion.horizon_names:
-        time_name = config.depth_conversion.horizon_dir.joinpath(
+        time_name = config.paths.modelled_horizon_dir.joinpath(
             horizon.lower() + config.depth_conversion.time_suffix
         )
         time_surf = xtgeo.surface_from_file(str(time_name))

@@ -29,7 +29,6 @@ def setup_sim2seis_test_data(testdata, tmp_path_factory):
         "./share/preprocessed/cubes",
         "./share/preprocessed/maps",
         "./share/preprocessed/tables",
-        "./share/observations/tables",
         "./share/results/cubes",
         "./share/results/pickle_files",
         "./share/results/tables",
@@ -39,12 +38,12 @@ def setup_sim2seis_test_data(testdata, tmp_path_factory):
         config_dir.joinpath(make_dir).mkdir(parents=True, exist_ok=True)
 
     special_files = [
-        "./share/preprocessed/cubes/test_data/seismic--amplitude_time--20180701_20180101.segy",
-        "./share/preprocessed/cubes/test_data/seismic--amplitude_time--20190701_20180101.segy",
-        "./share/preprocessed/cubes/test_data/seismic--amplitude_time--20200701_20180101.segy",
-        "./share/preprocessed/cubes/test_data/seismic--relai_time--20180701_20180101.segy",
-        "./share/preprocessed/cubes/test_data/seismic--relai_time--20190701_20180101.segy",
-        "./share/preprocessed/cubes/test_data/seismic--relai_time--20200701_20180101.segy",
+        "./share/preprocessed/cubes/test_data/seismic--amplitude_full_time--20180701_20180101.segy",
+        "./share/preprocessed/cubes/test_data/seismic--amplitude_full_time--20190701_20180101.segy",
+        "./share/preprocessed/cubes/test_data/seismic--amplitude_full_time--20200701_20180101.segy",
+        "./share/preprocessed/cubes/test_data/seismic--relai_full_time--20180701_20180101.segy",
+        "./share/preprocessed/cubes/test_data/seismic--relai_full_time--20190701_20180101.segy",
+        "./share/preprocessed/cubes/test_data/seismic--relai_full_time--20200701_20180101.segy",
     ]
     for filename in special_files:
         copy2(

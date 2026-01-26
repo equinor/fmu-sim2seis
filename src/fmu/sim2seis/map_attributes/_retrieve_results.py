@@ -21,18 +21,20 @@ def retrieve_seismic_forward_results(
     if inversion_flag:
         # read depth cubes from inversion instead
         depth_cubes = retrieve_result_objects(
-            input_path=config.pickle_file_output_path,
-            file_name=Path(config.seismic_inversion.pickle_file_prefix + "_depth.pkl"),
+            input_path=config.paths.pickle_file_output_dir,
+            file_name=Path(config.pickle_file_prefix.relai_diff + "_depth.pkl"),
         )
     else:
         depth_cubes = retrieve_result_objects(
-            input_path=config.pickle_file_output_path,
-            file_name=Path(config.seismic_diff.pickle_file_prefix + "_depth.pkl"),
+            input_path=config.paths.pickle_file_output_dir,
+            file_name=Path(config.pickle_file_prefix.seismic_diff + "_depth.pkl"),
         )
 
     depth_surfaces = retrieve_result_objects(
-        input_path=config.pickle_file_output_path,
-        file_name=Path(config.seismic_fwd.pickle_file_prefix + "_depth_horizons.pkl"),
+        input_path=config.paths.pickle_file_output_dir,
+        file_name=Path(
+            config.pickle_file_prefix.seismic_forward + "_depth_horizons.pkl"
+        ),
     )
 
     return depth_cubes, depth_surfaces
