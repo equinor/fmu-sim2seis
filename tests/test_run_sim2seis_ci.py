@@ -52,16 +52,16 @@ def test_obs_data(monkeypatch, data_dir):
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path(
-            "../../share/preprocessed/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
+            "../../share/observations/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/preprocessed/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
+            "../../share/observations/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/preprocessed/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
+            "../../share/observations/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
         ),
         Path(
-            "../../share/preprocessed/tables/topvolantis--relai_full_rms_depth--20200701_20180101.csv"
+            "../../share/observations/tables/topvolantis--relai_full_rms_depth--20200701_20180101.csv"
         ),
         Path("../../share/results/pickle_files/observed_data_time_cubes.pkl"),
     ]
