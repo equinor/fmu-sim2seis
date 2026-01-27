@@ -95,3 +95,4 @@ comments. In this example, we run `sim2seis` on a copy of the Drogon test data s
 > # clean-up
 > sim2seis_cleanup --help
 > sim2seis_cleanup -c ./sim2seis/model -f new_pem_config.yml -g ../../fmuconfig/output -o global_variables.yml 
+```
