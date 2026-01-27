@@ -108,7 +108,8 @@ observed and modelled data. All required parameters are defined in [ert configur
 FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<JOB_CONFIG_DIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <VERBOSE>=<VERBOSE_OUTPUT>)
 ```
 
-<strong>Note</strong> that there is a difference in cases where there is or is not structural uncertainty. In a case with
+**Note** that there is a difference in cases where there is or is not structural uncertainty. In a case with
 no structural uncertainty, the observed data are regarded as `preprocessed`, and the resulting attributes
 are stored in `./share/preprocessed/maps`. In a case with structural uncertainty, the observed data are labelled
-`observations`, and so are the output directories: `./share/observations/...`.
+`observations`, and so are the output directories: `./share/observations/...`. It is only in the cases with structural
+uncertainty that observed data are depth converted for each realisation.
