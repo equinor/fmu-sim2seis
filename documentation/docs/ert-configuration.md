@@ -1,11 +1,12 @@
 # ERT configuration file
 
-You can include `sim2seis` in your ERT setup by including the following snippet:
+You can include `sim2seis` in your ERT set-up by including the following snippet:
 
 ```ert
 -- Define your variables:
-DEFINE <JOB_STARTDIR> <RUNPATH>/sim2seis/model
+DEFINE <JOB_CONFIG_DIR> <RUNPATH>/sim2seis/model
 DEFINE <MODEL_PATH> <CONFIG_PATH>/../../sim2seis/model
+DEFINE <RELPATH_CONFIG_FILES> <JOB_CONFIG_DIR>
 DEFINE <PEM_CONFIG_FILE_NAME> pem_config.yml
 DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_config.yml
 DEFINE <GLOBAL_PATH> ../../fmuconfig/output

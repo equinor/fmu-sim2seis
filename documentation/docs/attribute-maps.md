@@ -6,7 +6,7 @@ for estimating attribute maps is controlled by a separate YAML file.
 ## YAML File Section
 
 Default values typically apply for attribute map generation in the `sim2seis` configuration file, as most information is
-derived from the dedicated interval definition file. [Figure 1](#igure-1-seismic-attributes-in-yaml) shows the relevant
+derived from the dedicated interval definition file. [Figure 1](#figure-1-seismic-attributes-in-yaml) shows the relevant
 sections of the configuration file. `webviz_map` refers to export of attribute maps in formats that can be read by
 `webviz` and `ert` for visualisation and history matching. As all parameters are commented out, this indicates that
 the default settings are used. It is only the name of the attribute definition file in the `main class setting` that
@@ -30,8 +30,9 @@ must be specified.
 #
 # Main class settings
 #
-# For the main class, there are only two required parameters. `test_run` is used in tests, and should be False in 
-# real runs
+# Note: The full `sim2seis` configuration requires multiple sections (e.g. `seismic_fwd`, `depth_conversion`,
+# `webviz_map`). The snippet below highlights the attribute-map-related main setting.
+# `test_run` is used in tests and should be `False` in real runs.
 #______________________________________________________________________________________________________________________#
 attribute_definition_file: data_intervals_drogon.yml
 ```
@@ -45,10 +46,10 @@ file:
 attribute_definition_file: modelled_data_intervals_drogon.yml
 ```
 
-## Interval Definition YAML  File
+## Interval Definition YAML File
 
 The interval definition file provides flexibility in defining intervals, resulting in a complex structure.
-[Figure 2](#figure-2-interval-definiiton-in-yaml) illustrates the structure of the interval definition YAML file.
+[Figure 2](#figure-2-interval-definition-in-yaml) illustrates the structure of the interval definition YAML file.
 
 <<< ../../tests/data/sim2seis/model/modelled_data_intervals_drogon.yml{yml}
 <span id="figure-2-interval-definition-in-yaml"><strong>Figure 2:</strong> Parameters to define intervals for attribute map estimation.</span>

@@ -30,7 +30,7 @@ between seismic vintages.
 #  rel_ai_0: ../../sim2seis/output/seismic_forward/seismic--relai_0.sgy
 #  d_syn_1: ../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy
 #  rel_ai_1: ../../sim2seis/output/seismic_forward/seismic--relai_1.sgy
-#  inversion_params:
+#  inversion_parameters:
 #      lateral_smoothing_4d: 0.05
 #      damping_3d: 0.001
 #      damping_4d: 0.001

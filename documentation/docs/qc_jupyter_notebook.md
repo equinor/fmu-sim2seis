@@ -1,8 +1,8 @@
 # QC using Jupyter Notebooks
-Jupyter Notebooks are very versatile tools for QC'ing `sim2seis` results. The resulting cubes and attribute maps can 
-easily be read into a notebook using `xtgeo`. A simple example is shown below, where two amplitude maps and two 
-relative AI maps are compared, both visually and in cross plots.
 
+Jupyter Notebooks are very versatile tools for QC'ing `sim2seis` results. The resulting cubes and attribute maps can
+easily be read into a notebook using `xtgeo`. A simple example is shown below, where two amplitude maps and two
+relative AI maps are compared, both visually and in cross plots.
 
 ```python
 # Import modules
@@ -96,4 +96,5 @@ axes[1, 2].set_ylim(relai_min, relai_max)
 plt.tight_layout()
 plt.show()
 ```
-<img src="./images/qc_jupyter.png">
+
+![Example QC notebook output](./images/qc_jupyter.png)

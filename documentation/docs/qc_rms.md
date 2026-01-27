@@ -1,69 +1,73 @@
 # QC using RMS
-Even if `sim2seis` is not connected to `RMS` anymore, the results can of course be validated within `RMS` if the 
-application is available. 
+
+Even if `sim2seis` is not connected to `RMS` any more, the results can of course be validated within `RMS` if the
+application is available.
 
 The results from `sim2seis` are attribute maps, seismic cubes and grid properties from `pem`. All of these data types
 can be imported into RMS for visual inspection and further analysis. The standard procedure is to import the data items
-using the RMS import menus, but an alternative is to create Python scripts that utilise the functionality of `xtgeo`.
+using the RMS import menus, but an alternative is to create Python scripts that use the functionality of `xtgeo`.
 
-### Seismic Cubes
+## Seismic cubes
+
 Seismic amplitude and relative acoustic impedance cubes are saved to disk in `.segy` format. In the `sim2seis` workflow,
 the end results are typically difference data between two vintages of modelled seismic. The file name will contain
 information about which dates are the seismic base and monitor. As the seismic cubes can have time or depth as the third
 dimension, this information must be provided when cubes are imported into RMS.
 
+![RMS cube import. Depth domain is set](./images/rms_cube_import.png)
+<span id="figure-1-cube-import"></span>
+**Figure 1:** User dialog for cube import in RMS.
 
-<img src="./images/rms_cube_import.png" alt="RMS cube import. Depth domain is set">
-<span id="figure-1-cube-import"><strong>Figure 1:</strong> User dialog for cube import in RMS.</span>
+![Set segy format parameters](./images/rms_cube_format.png)
+<span id="figure-2-cube-format"></span>
+**Figure 2:** RMS scans for segy format and sets parameter positions.
 
-<br><br>
+![Display cube using the 3D view](./images/rms_cube_display.png)
+<span id="figure-3-cube-display"></span>
+**Figure 3:** Visualise the cube using RMS 3D view.
 
-<img src="./images/rms_cube_format.png" alt="Set segy format parameters">
-<span id="figure-2-cube-format"><strong>Figure 2:</strong> RMS scans for segy format and sets parameter positions.</span>
-
-<br><br>
-
-<img src="./images/rms_cube_display.png" alt="Display cube using the 3D view">
-<span id="figure-3-cube-display"><strong>Figure 3:</strong> Visualise the cube using RMS 3D view.</span>
-
-<br><br>
 All file formats saved from a `sim2seis` run are recognised by RMS, but instead of manual import, it might be easier to
 use a Python script and the `xtgeo` module for import. The example below is intended for running within an RMS session:
 
-### Amplitude maps
-The user dialog is the same for importing to `clipboard` or a horizon folder in the Project data tree. **NB!** 
-attributes with low numerical values are not handled particularly well by RMS, so it might be an advantage to 
-scale values, e.g. to the thousands range.
+## Amplitude maps
 
-<img src="./images/attribute_map_to_clipboard.png" alt="RMS map import to clipboard">
-<span id="figure-4-map-import"><strong>Figure 4:</strong> Attribute map import to clipboard.</span>
-<br><br>
+The user dialog is the same for importing to `clipboard` or a horizon folder in the Project data tree.
 
-<img src="./images/map_display_low_values.png" alt="Display attribute map in map view">
-<span id="figure-5-map-display"><strong>Figure 5:</strong> Visualise the attribute map. Low numerical values make the value readout insensitive.</span>
-<br><br>
+Note: attributes with low numerical values are not handled particularly well by RMS, so it may be helpful to
+scale values (e.g. to the thousands range).
 
-To improve the readout of values, it is possible to scale the values in the attribute map. This can be done by multiplying the values by a factor of 1 000 000, for example. This will make the readout more accurate in the map view.
+![RMS map import to clipboard](./images/attribute_map_to_clipboard.png)
+<span id="figure-4-map-import"></span>
+**Figure 4:** Attribute map import to clipboard.
 
+![Display attribute map in map view](./images/map_display_low_values.png)
+<span id="figure-5-map-display"></span>
+**Figure 5:** Visualise the attribute map. Low numerical values make the value readout insensitive.
 
-<img src="./images/map_display_high_values.png" alt="Display attribute map in map view">
-<span id="figure-6-map-display"><strong>Figure 6:</strong> Boosting the values by a factor of 1 000 000 makes exact value readout more accurate.</span>
+To improve the readout of values, it is possible to scale the values in the attribute map. This can be done by
+multiplying the values by a factor of 1 000 000, for example. This will make the readout more accurate in the map view.
 
+![Display attribute map in map view](./images/map_display_high_values.png)
+<span id="figure-6-map-display"></span>
+**Figure 6:** Boosting the values by a factor of 1 000 000 makes exact value readout more accurate.
 
-### Grid Property from `PEM`
+## Grid property from `PEM`
+
 The grid model that the pem properties are imported to must exist before property import. Binary `roff` format is
 used for grid import. Grids are best visualised in the 3D view.
 
-<img src="./images/grid_import.png" alt="RMS grid import.">
-<span id="figure-7-cube-import"><strong>Figure 7:</strong> User dialog for grid import in RMS.</span>
-<br><br>
+![RMS grid import.](./images/grid_import.png)
+<span id="figure-7-cube-import"></span>
+**Figure 7:** User dialog for grid import in RMS.
 
-<img src="./images/grid_display.png" alt="RMS grid visualisation.">
-<span id="figure-8-cube-import"><strong>Figure 8:</strong> Grid visualisation using 3D view.</span>
+![RMS grid visualisation.](./images/grid_display.png)
+<span id="figure-8-cube-import"></span>
+**Figure 8:** Grid visualisation using 3D view.
 
-### Python Import Script using `xtgeo`
+## Python import script using `xtgeo`
+
 Below is a Python script that illustrates how the `xtgeo` functionality can be used to read cube, grid and attribute map
-objects from file and save them to an RMS project. Note that some folders or grid models must be defined prior to 
+objects from file and save them to an RMS project. Note that some folders or grid models must be defined prior to
 running the `.to_roxar(...)` commands
 
 ```python

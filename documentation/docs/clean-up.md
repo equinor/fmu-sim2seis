@@ -7,7 +7,7 @@ files can be quite large, they should be deleted when no longer required. This *
 executed via the command line:
 
 ```shell
-> sim2seis_cleanup -c ./sim2seis/model -f new_pem_config.yml -g ../../fmuconfig/output -o global_variables.yml 
+> sim2seis_cleanup -c ./sim2seis/model -f sim2seis_config.yml -g ../../fmuconfig/output -o global_variables.yml 
 ```
 
 With the settings above, all pickle files are deleted. It is also possible to specify that only the pickle files from

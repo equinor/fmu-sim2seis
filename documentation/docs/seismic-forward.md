@@ -9,7 +9,7 @@ use in `sim2seis` is to produce one or more angle stacks, commonly `full`, `near
 
 It is possible to generate zero incidence seismic, by specifying offset or angle range to be 0, and set output to
 `<seismic-depth-segy>` instead of `<seismic-depth>` under section `<seismic-stack>`. In this case, the parameter for
-`segy_depth` under the `seismic_forward` section in the YAML parameter file must be changed from its default value
+`segy_depth` under the `seismic_fwd` section in the YAML parameter file must be changed from its default value
 of `seismic_temp_seismic_depth_stack.segy` to `seismic_temp_seismic_depth.segy`.
 
 The resulting angle stacks are compared to observed/acquired seismic data, and for this reason the parameters

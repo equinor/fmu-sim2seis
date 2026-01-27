@@ -1,6 +1,7 @@
 # QC of `sim2seis` modelling
 
 QC should include:
+
 - Value range of results. If there are grids, cubes, or attribute maps with unreasonable values, this may indicate
   that an input has been provided with an unexpected unit (it is generally assumed that all inputs use SI units).
 - `pem` can be configured to save intermediate results, such as effective mineral and fluid properties. These represent
@@ -12,7 +13,7 @@ QC should include:
   to the seismic amplitude or relative acoustic impedance response.
 
 The documentation for `pem` provides more detailed information on the process of calibrating rock physics models. Much of the workflow
-in `sim2seis` is less dependent on parameter settings, except for the Seismic Forward modelling component. It is important
+in `sim2seis` is less dependent on parameter settings, except for the seismic forward modelling component. It is important
 to understand the settings in the XML model files and conduct tests to optimise parameters.
 
 There are several options available for QC of results from `sim2seis`, and the workflow is not restricted to any
