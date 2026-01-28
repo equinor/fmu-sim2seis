@@ -50,7 +50,6 @@ class MapAttributes(ForwardModelStepPlugin):
                 "<CONFIG_FILE>=sim2seis_config.yml, "
                 "<GLOBAL_DIR>=../../fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
-                "<ATTRIBUTE>=amplitude/relai, "
-                "<VERBOSE>=true/false)"
+                "<ATTRIBUTE>=amplitude/relai)"
             ),
         )
