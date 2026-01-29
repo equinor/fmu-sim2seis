@@ -21,8 +21,6 @@ class ObservedData(ForwardModelStepPlugin):
                 "<GLOBAL_DIR>",
                 "--global-file",
                 "<GLOBAL_FILE>",
-                "--model-dir",
-                "<MODEL_DIR>",
                 "--verbose",
                 "<VERBOSE>",
             ],
@@ -50,7 +48,6 @@ class ObservedData(ForwardModelStepPlugin):
                 "<CONFIG_FILE>=sim2seis_config.yml, "
                 "<GLOBAL_DIR>=../../fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
-                "<MODEL_DIR>=/my_fmu_structure/sim2seis/model, "
                 "<VERBOSE>=true/false)"
             ),
         )

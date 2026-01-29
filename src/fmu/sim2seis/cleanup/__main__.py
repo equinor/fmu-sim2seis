@@ -48,15 +48,15 @@ def main(arguments=None):
             global_config_dir=args.global_dir,
             global_config_file=args.global_file,
         )
-        if hasattr(args, "prefix_list"):
-            clear_result_objects(
-                output_path=config.paths.pickle_file_output_dir,
-                prefix_list=args.prefix_list,
-            )
-        else:
-            clear_result_objects(
-                output_path=config.paths.pickle_file_output_dir,
-            )
+        prefix_list = getattr(args, "prefix_list", None)
+        if not prefix_list or prefix_list in ([""], ["<PREFIX_LIST>"]):
+            clear_result_objects(output_path=config.paths.pickle_file_output_dir)
+            return
+
+        clear_result_objects(
+            output_path=config.paths.pickle_file_output_dir,
+            prefix_list=prefix_list,
+        )
 
 
 if __name__ == "__main__":

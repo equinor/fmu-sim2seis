@@ -3,12 +3,26 @@ from pathlib import Path
 from warnings import warn
 
 
+def _str2bool(value: object) -> bool:
+    if isinstance(value, bool):
+        return value
+    text = str(value).strip().lower()
+    if text in {"1", "true", "t", "yes", "y", "on"}:
+        return True
+    if text in {"0", "false", "f", "no", "n", "off"}:
+        return False
+    raise argparse.ArgumentTypeError(
+        f"Invalid boolean value: {value!r}. Expected true/false."
+    )
+
+
 def parse_arguments(
     arguments, extra_arguments: list[str] | None = None
 ) -> argparse.Namespace:
     """
     Uses argparse to parse arguments as expected from command line invocation
     """
+    extra_arguments = extra_arguments or []
     parser = argparse.ArgumentParser(__file__)
     parser.add_argument(
         "-c",
@@ -60,7 +74,7 @@ def parse_arguments(
         parser.add_argument(
             "-v",
             "--verbose",
-            type=bool,
+            type=_str2bool,
             required=False,
             default=False,
             help="Select verbose or minimal output",
@@ -69,7 +83,7 @@ def parse_arguments(
         parser.add_argument(
             "-n",
             "--no-attributes",
-            type=bool,
+            type=_str2bool,
             required=False,
             default=False,
             help="Skip generation of observed data attributes",
