@@ -87,4 +87,4 @@ import{_ as i,c as a,o as h,ae as n}from"./chunks/framework.xmna4E1W.js";const k
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Adjust layout</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">plt.tight_layout()</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">plt.show()</span></span></code></pre></div><img src="`+k+'">',4)]))}const F=i(l,[["render",p]]);export{y as __pageData,F as default};
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">plt.show()</span></span></code></pre></div><p><img src="`+k+'" alt="Example QC notebook output"></p>',4)]))}const F=i(l,[["render",p]]);export{y as __pageData,F as default};
