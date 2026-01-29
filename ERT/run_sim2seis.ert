@@ -20,6 +20,7 @@ FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/preprocessed/cubes)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/preprocessed/tables)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/preprocessed/maps)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/input/pem)
+FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/input/seismic_forward)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/model)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/output/pem)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/output/pem/intermediate_results)
@@ -34,8 +35,9 @@ FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/results/cubes, <TO
 FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/results/grids, <TO>=<RUNPATH>/share/results)
 FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/results/maps, <TO>=<RUNPATH>/share/results)
 FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/input/pem, <TO>=<RUNPATH>/sim2seis/input)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/input/seismic_forward, <TO>=<RUNPATH>/sim2seis/input)
 FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/model, <TO>=<RUNPATH>/sim2seis)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/output/seismic_forward, <TO>=<RUNPATH>/sim2seis/output)
+-- FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/output/seismic_forward, <TO>=<RUNPATH>/sim2seis/output)
 FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/observations/maps, <TO>=<RUNPATH>/share/observations)
 
 --Comment the two following lines if ert is re-run without deleting the realization directory
@@ -46,14 +48,14 @@ FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/observations/maps,
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/model)
 
 DEFINE <CONFIGDIR> <RUNPATH>/sim2seis/model
-DEFINE <PEM_CONFIG_FILE_NAME> new_pem_config.yml
+DEFINE <PEM_CONFIG_FILE_NAME> pem_config_condensate.yml
 DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_config.yml
-DEFINE <GLOBAL_PATH> <CONFIGDIR>/../../fmuconfig/output
+DEFINE <GLOBAL_PATH> ../../fmuconfig/output
 DEFINE <GLOBAL_CONFIG_FILE> global_variables.yml
 DEFINE <VERBOSE_OUTPUT> False
 
 -- Run observed data processing
-FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <VERBOSE>=<VERBOSE_OUTPUT>)
+-- FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <VERBOSE>=<VERBOSE_OUTPUT>)
 
 -- Run the PEM
 FORWARD_MODEL PEM(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<PEM_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <MODEL_DIR>=<MODEL_PATH>)
