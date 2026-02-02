@@ -13,7 +13,6 @@ from .link_and_folder_utils import (
     make_folders,
     make_symlink,
 )
-from .obs_data_config_validation import ObservedDataConfig
 from .sim2seis_class_definitions import (
     AttributeDef,
     DifferenceSeismic,
