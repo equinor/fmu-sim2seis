@@ -37,7 +37,10 @@ from fmu.sim2seis.utilities import (
 def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
-    args = parse_arguments(arguments, extra_arguments=["cleanup"])
+    args = parse_arguments(
+        arguments=arguments,
+        extra_arguments=["cleanup"],
+    )
     # args may contain only an empty string in "prefixlist". If so, remove attribute
     run_folder = check_startup_dir(args.config_dir)
 
@@ -45,8 +48,6 @@ def main(arguments=None):
         config = read_yaml_file(
             sim2seis_config_dir=args.config_dir,
             sim2seis_config_file=args.config_file,
-            global_config_dir=args.global_dir,
-            global_config_file=args.global_file,
         )
         prefix_list = getattr(args, "prefix_list", None)
         if not prefix_list or prefix_list in ([""], ["<PREFIX_LIST>"]):

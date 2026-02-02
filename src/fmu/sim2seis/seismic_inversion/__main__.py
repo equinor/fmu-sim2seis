@@ -28,7 +28,14 @@ from .relative_seismic_inversion import run_relative_inversion_si4ti
 def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
-    args = parse_arguments(arguments, extra_arguments=["verbose"])
+    args = parse_arguments(
+        arguments=arguments,
+        extra_arguments=[
+            "verbose",
+            "global_dir",
+            "global_file",
+        ],
+    )
 
     run_folder = check_startup_dir(args.config_dir)
 

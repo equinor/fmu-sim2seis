@@ -30,7 +30,16 @@ from .seismic_forward import exe_seismic_forward
 def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
-    args = parse_arguments(arguments, extra_arguments=["verbose"])
+    args = parse_arguments(
+        arguments=arguments,
+        extra_arguments=[
+            "verbose",
+            "model_dir",
+            "global_dir",
+            "global_file",
+            "mod_date_prefix",
+        ],
+    )
     run_folder = check_startup_dir(args.config_dir)
 
     with restore_dir(run_folder):
@@ -40,6 +49,7 @@ def main(arguments=None):
             sim2seis_config_file=args.config_file,
             global_config_dir=args.global_dir,
             global_config_file=args.global_file,
+            mod_prefix=args.mod_date_prefix,
         )
 
         # Read the horizons that are used in depth conversion and later for extraction
@@ -72,11 +82,11 @@ def main(arguments=None):
         # Get the dates to estimate 4D differences for and do
         # calculations for time and depth cubes
         diff_depth = calculate_seismic_diff(
-            dates=config.global_params.diff_dates,
+            dates=config.global_params.mod_diffdates,
             cubes=depth_cubes,
         )
         diff_time = calculate_seismic_diff(
-            dates=config.global_params.diff_dates,
+            dates=config.global_params.mod_diffdates,
             cubes=time_cubes,
         )
 

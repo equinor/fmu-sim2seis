@@ -19,7 +19,15 @@ from ._retrieve_results import (
 def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
-    args = parse_arguments(arguments, extra_arguments=["attribute", "verbose"])
+    args = parse_arguments(
+        arguments,
+        extra_arguments=[
+            "attribute",
+            "verbose",
+            "global_dir",
+            "global_file",
+        ],
+    )
     run_folder = check_startup_dir(args.config_dir)
 
     with restore_dir(run_folder):

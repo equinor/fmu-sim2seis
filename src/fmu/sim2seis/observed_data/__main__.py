@@ -28,7 +28,16 @@ from .symlink import make_symlinks_observed_seismic
 def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
-    args = parse_arguments(arguments, extra_arguments=["verbose", "no_attributes"])
+    args = parse_arguments(
+        arguments=arguments,
+        extra_arguments=[
+            "verbose",
+            "no_attributes",
+            "global_dir",
+            "global_file",
+            "obs_date_prefix",
+        ],
+    )
     # Validate startup directory
     run_folder = check_startup_dir(args.config_dir)
 
@@ -39,18 +48,40 @@ def main(arguments=None):
             sim2seis_config_file=args.config_file,
             global_config_dir=args.global_dir,
             global_config_file=args.global_file,
+            obs_prefix=args.obs_date_prefix,
         )
 
         # Establish symlinks to the observed seismic data, make exception for
         # tests runs, where a test dataset is copied instead
         if not (config.test_run or args.no_attributes):
             make_symlinks_observed_seismic(
-                vintages=config.global_params.global_config["global"]["seismic"][
-                    "real_4d"
-                ],
-                input_datapath=config.global_params.global_config["global"]["seismic"][
-                    "real_4d_cropped_path"
-                ],
+                # vintages=config.global_params.global_config["global"]["seismic"][
+        # for key in vintage_info:
+        #     if key == "ecldate":
+        #         in_dates = vintage_info[key]
+        #         monitor_date, base_date = (
+        #             str(my_date).replace("-", "") for my_date in in_dates
+        #         )  # vintage_dates  # split into two dates
+        #         date = monitor_date + "_" + base_date
+        #         if verbose:
+        #             print("=" * 80, "\nDatapair:", date)
+        #     elif key in ("time", "depth"):
+        #         cubes = vintage_info[key]
+        #         for attr in cubes:
+        #             link_name = Path(
+        #                 output_datapath,
+        #                 "seismic" + sep + attr + "_" + key + sep + date + ".segy",
+        #             )
+
+        #     else:
+        #         print(f"Key {key} is not a valid key in fmuconfig _seismic")
+                #     "real_4d"
+                # ],
+                vintages=config.global_params.seismic.real_4d,
+                # input_datapath=config.global_params.global_config["global"]["seismic"][
+                #     "real_4d_cropped_path"
+                # ],
+                input_datapath=config.global_params.seismic.real_4d_cropped_path,
                 output_datapath=config.paths.preprocessed_seismic_dir,
             )
 
@@ -71,8 +102,8 @@ def main(arguments=None):
             cube_dir=config.paths.preprocessed_seismic_dir,
             cube_prefix=config.depth_conversion.time_cube_prefix,
             domain="time",
-            dates=config.global_params.seis_dates,
-            diff_dates=config.global_params.diff_dates,
+            dates=config.global_params.obs_dates,
+            diff_dates=config.global_params.obs_diffdates,
         )
 
         # Run depth conversion
