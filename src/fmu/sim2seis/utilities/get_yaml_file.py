@@ -13,6 +13,8 @@ def read_yaml_file(
     global_config_file: Path | None = None,
     global_config_dir: Path | None = None,
     parse_inputs: bool = True,
+    obs_prefix: str | None = None,
+    mod_prefix: str | None = None,
 ) -> Sim2SeisConfig | dict:
     """Read the YAML file and return the configuration.
 
@@ -46,11 +48,9 @@ def read_yaml_file(
         # add information about the config file name
         data["config_file_name"] = sim2seis_config_file
 
-        # If there is not information about global configuration, we can't
-        # parse the information, just return a dict from the yaml file
-        if not global_config_file:
-            assert not parse_inputs
-
+        # If there is no information about global configuration, we can either
+        # return a dict which is not parsed at all, or parse the YAML file without
+        # adding the global configuration
         if not parse_inputs:
             return data
 
@@ -62,12 +62,16 @@ def read_yaml_file(
 
         conf = Sim2SeisConfig.model_validate(data, context={"paths": paths_obj})
 
-        # Read necessary part of global configurations and parameters
-        conf.update_with_global(
-            get_global_params_and_dates(
-                global_config_dir=sim2seis_config_dir / global_config_dir,
-                global_conf_file=global_config_file,
+        # Read necessary part of global configurations and parameters if there is
+        # information about global file
+        if global_config_dir and global_config_file:
+            conf.update_with_global(
+                get_global_params_and_dates(
+                    global_config_dir=sim2seis_config_dir / global_config_dir,
+                    global_conf_file=global_config_file,
+                    obs_prefix=obs_prefix,
+                    mod_prefix=mod_prefix,
+                )
             )
-        )
 
     return conf
