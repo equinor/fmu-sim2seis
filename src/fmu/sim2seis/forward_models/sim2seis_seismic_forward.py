@@ -29,6 +29,8 @@ class SeismicForward(ForwardModelStepPlugin):
                 "<GLOBAL_FILE>",
                 "--model-dir",
                 "<MODEL_DIR>",
+                "--mod-date-prefix",
+                "<MOD_DATE_PREFIX>",
                 "--verbose",
                 "<VERBOSE>",
             ],

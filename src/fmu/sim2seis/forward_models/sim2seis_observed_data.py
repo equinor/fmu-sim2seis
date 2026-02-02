@@ -21,6 +21,8 @@ class ObservedData(ForwardModelStepPlugin):
                 "<GLOBAL_DIR>",
                 "--global-file",
                 "<GLOBAL_FILE>",
+                "--obs-date-prefix",
+                "<OBS_DATE_PREFIX>",
                 "--verbose",
                 "<VERBOSE>",
             ],
@@ -48,6 +50,7 @@ class ObservedData(ForwardModelStepPlugin):
                 "<CONFIG_FILE>=sim2seis_config.yml, "
                 "<GLOBAL_DIR>=../../fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
+                "<OBS_DATE_PREFIX>=HIST, "
                 "<VERBOSE>=true/false)"
             ),
         )
