@@ -55,32 +55,7 @@ def main(arguments=None):
         # tests runs, where a test dataset is copied instead
         if not (config.test_run or args.no_attributes):
             make_symlinks_observed_seismic(
-                # vintages=config.global_params.global_config["global"]["seismic"][
-        # for key in vintage_info:
-        #     if key == "ecldate":
-        #         in_dates = vintage_info[key]
-        #         monitor_date, base_date = (
-        #             str(my_date).replace("-", "") for my_date in in_dates
-        #         )  # vintage_dates  # split into two dates
-        #         date = monitor_date + "_" + base_date
-        #         if verbose:
-        #             print("=" * 80, "\nDatapair:", date)
-        #     elif key in ("time", "depth"):
-        #         cubes = vintage_info[key]
-        #         for attr in cubes:
-        #             link_name = Path(
-        #                 output_datapath,
-        #                 "seismic" + sep + attr + "_" + key + sep + date + ".segy",
-        #             )
-
-        #     else:
-        #         print(f"Key {key} is not a valid key in fmuconfig _seismic")
-                #     "real_4d"
-                # ],
                 vintages=config.global_params.seismic.real_4d,
-                # input_datapath=config.global_params.global_config["global"]["seismic"][
-                #     "real_4d_cropped_path"
-                # ],
                 input_datapath=config.global_params.seismic.real_4d_cropped_path,
                 output_datapath=config.paths.preprocessed_seismic_dir,
             )

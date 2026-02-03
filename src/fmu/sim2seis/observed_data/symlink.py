@@ -45,7 +45,7 @@ def make_symlinks_observed_seismic(
                 )
                 make_symlink(filename, link_name, verbose=verbose)
         if vintage_info.depth:
-            for link, cube in vintage_info.time.items():
+            for link, cube in vintage_info.depth.items():
                 filename = Path(input_datapath, cube)
                 link_name = Path(
                     output_datapath,
