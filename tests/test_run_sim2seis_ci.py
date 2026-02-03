@@ -107,9 +107,9 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
             "--mod-date-prefix",
             "HIST",
             "--model-dir",
-            "../../fmuconfig/output",
+            str(config_dir),
             "--verbose",
-            False,
+            "False",
         ]
     )
 
@@ -151,7 +151,7 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
             "--global-file",
             "global_variables.yml",
             "--verbose",
-            False,
+            "False",
         ]
     )
 

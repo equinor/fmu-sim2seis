@@ -105,7 +105,7 @@ observed and modelled data. All required parameters are defined in [ert configur
 
 ```ert
 -- Optional run of depth conversion of observed data:
-FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<JOB_CONFIG_DIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <VERBOSE>=<VERBOSE_OUTPUT>)
+FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<JOB_CONFIG_DIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <OBS_DATE_PREFIX>=<OBS_PREFIX>, <VERBOSE>=<VERBOSE_OUTPUT>)
 ```
 
 **Note** that there is a difference in cases where there is or is not structural uncertainty. In a case with

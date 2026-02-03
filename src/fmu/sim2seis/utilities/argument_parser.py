@@ -109,7 +109,7 @@ def parse_arguments(
         )
     if "cleanup" in extra_arguments:
         parser.add_argument(
-            "-p",
+            "-l",
             "--prefix-list",
             required=False,
             default=False,
