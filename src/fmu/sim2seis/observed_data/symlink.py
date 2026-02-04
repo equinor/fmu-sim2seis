@@ -4,6 +4,7 @@ TRAL/RNYB/JRIV/HFLE
 
 from pathlib import Path
 
+from fmu.pem.pem_utilities.pem_config_validation import SeismicSurvey
 from fmu.sim2seis.utilities import (
     make_folders,
     make_symlink,
@@ -11,7 +12,7 @@ from fmu.sim2seis.utilities import (
 
 
 def make_symlinks_observed_seismic(
-    vintages: dict,
+    vintages: dict[str, SeismicSurvey],
     input_datapath: Path,
     output_datapath: Path,
     verbose: bool = False,
@@ -29,29 +30,24 @@ def make_symlinks_observed_seismic(
     verbose : bool, optional
         level of output, by default False
     """
-    # _cfg, vintages, datapath, _sim2_seis_pred = _startup(conf)
     sep = "--"
-    date = ""
     make_folders([output_datapath])
 
     for vintage_info in vintages.values():
-        for key in vintage_info:
-            if key == "ecldate":
-                in_dates = vintage_info[key]
-                monitor_date, base_date = (
-                    str(my_date).replace("-", "") for my_date in in_dates
-                )  # vintage_dates  # split into two dates
-                date = monitor_date + "_" + base_date
-                if verbose:
-                    print("=" * 80, "\nDatapair:", date)
-            elif key in ("time", "depth"):
-                cubes = vintage_info[key]
-                for attr in cubes:
-                    filename = Path(input_datapath, cubes[attr])
-                    link_name = Path(
-                        output_datapath,
-                        "seismic" + sep + attr + "_" + key + sep + date + ".segy",
-                    )
-                    make_symlink(filename, link_name, verbose=verbose)
-            else:
-                print(f"Key {key} is not a valid key in fmuconfig _seismic")
+        date = "_".join(vintage_info.ecldate)
+        if vintage_info.time:
+            for link, cube in vintage_info.time.items():
+                filename = Path(input_datapath, cube)
+                link_name = Path(
+                    output_datapath,
+                    f"seismic{sep}{link}_time{sep}{date}.segy",
+                )
+                make_symlink(filename, link_name, verbose=verbose)
+        if vintage_info.depth:
+            for link, cube in vintage_info.depth.items():
+                filename = Path(input_datapath, cube)
+                link_name = Path(
+                    output_datapath,
+                    f"seismic{sep}{link}_depth{sep}{date}.segy",
+                )
+                make_symlink(filename, link_name, verbose=verbose)

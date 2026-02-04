@@ -38,34 +38,53 @@ def parse_arguments(
         required=True,
         help="Configuration yaml file name",
     )
-    parser.add_argument(
-        "-g",
-        "--global-dir",
-        type=Path,
-        required=True,
-        help="Relative path to global config file (required)",
-    )
-    parser.add_argument(
-        "-o",
-        "--global-file",
-        type=Path,
-        required=True,
-        help="Global configuration yaml file name (required)",
-    )
-    parser.add_argument(
-        "-m",
-        "--model-dir",
-        type=Path,
-        required=False,
-        help="For ERT run: Absolute directory name for the configuration parameter"
-        " file within the FMU project",
-    )
+    if "global_dir" in extra_arguments:
+        parser.add_argument(
+            "-g",
+            "--global-dir",
+            type=Path,
+            required=True,
+            help="Relative path to global config file (required)",
+        )
+    if "global_file" in extra_arguments:
+        parser.add_argument(
+            "-o",
+            "--global-file",
+            type=Path,
+            required=True,
+            help="Global configuration yaml file name (required)",
+        )
+    if "model_dir" in extra_arguments:
+        parser.add_argument(
+            "-m",
+            "--model-dir",
+            type=Path,
+            required=True,
+            help="For ERT run: Absolute directory name for the configuration parameter"
+            " file within the FMU project",
+        )
+    if "obs_date_prefix" in extra_arguments:
+        parser.add_argument(
+            "-p",
+            "--obs-date-prefix",
+            type=str,
+            required=True,
+            help="Global seismic section: Prefix for seismic dates for observed data",
+        )
+    if "mod_date_prefix" in extra_arguments:
+        parser.add_argument(
+            "-q",
+            "--mod-date-prefix",
+            type=str,
+            required=True,
+            help="Global seismic section: Prefix for seismic dates for modelled data",
+        )
     if "attribute" in extra_arguments:
         parser.add_argument(
             "-a",
             "--attribute",
             type=str,
-            required=False,
+            required=True,
             default=False,
             help="Selection of 'amplitude' or 'relai' attributes. "
             "For sim2seis_map_attributes only",
@@ -90,7 +109,7 @@ def parse_arguments(
         )
     if "cleanup" in extra_arguments:
         parser.add_argument(
-            "-p",
+            "-l",
             "--prefix-list",
             required=False,
             default=False,

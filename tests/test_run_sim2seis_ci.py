@@ -46,6 +46,8 @@ def test_obs_data(monkeypatch, data_dir):
             "../../fmuconfig/output",
             "--global-file",
             "global_variables.yml",
+            "--obs-date-prefix",
+            "HIST",
         ]
     )
 
@@ -102,8 +104,12 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
             "../../fmuconfig/output",
             "--global-file",
             "global_variables.yml",
+            "--mod-date-prefix",
+            "HIST",
+            "--model-dir",
+            str(config_dir),
             "--verbose",
-            False,
+            "False",
         ]
     )
 
@@ -145,7 +151,7 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
             "--global-file",
             "global_variables.yml",
             "--verbose",
-            False,
+            "False",
         ]
     )
 

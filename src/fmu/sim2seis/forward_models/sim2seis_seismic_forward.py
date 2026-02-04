@@ -29,6 +29,8 @@ class SeismicForward(ForwardModelStepPlugin):
                 "<GLOBAL_FILE>",
                 "--model-dir",
                 "<MODEL_DIR>",
+                "--mod-date-prefix",
+                "<MOD_DATE_PREFIX>",
                 "--verbose",
                 "<VERBOSE>",
             ],
@@ -77,6 +79,7 @@ class SeismicForward(ForwardModelStepPlugin):
                 "<GLOBAL_DIR>=../../fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
                 "<MODEL_DIR>=/my_fmu_structure/sim2seis/model, "
+                "<MOD_DATE_PREFIX>=HIST, "
                 "<VERBOSE>=true/false)"
             ),
         )

@@ -19,10 +19,6 @@ class Cleanup(ForwardModelStepPlugin):
                 "<CONFIG_DIR>",
                 "--config-file",
                 "<CONFIG_FILE>",
-                "--global-dir",
-                "<GLOBAL_DIR>",
-                "--global-file",
-                "<GLOBAL_FILE>",
                 "--prefix-list",
                 "<PREFIX_LIST>",
             ],
@@ -48,8 +44,6 @@ class Cleanup(ForwardModelStepPlugin):
                 "FORWARD_MODEL CLEANUP("
                 "<CONFIG_DIR>=../../sim2seis/model, "
                 "<CONFIG_FILE>=sim2seis_config.yml, "
-                "<GLOBAL_DIR>=../../fmuconfig/output, "
-                "<GLOBAL_FILE>=global_variables.yml, "
                 "<PREFIX_LIST>=relai)"
             ),
         )

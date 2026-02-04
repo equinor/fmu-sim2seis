@@ -28,7 +28,7 @@ def exe_seismic_forward(
     time_cubes = {}
 
     formatted_seis_dates = [
-        str(s_date).replace("-", "") for s_date in config_file.global_params.seis_dates
+        str(s_date).replace("-", "") for s_date in config_file.global_params.mod_dates
     ]
 
     for date in formatted_seis_dates:
@@ -38,7 +38,7 @@ def exe_seismic_forward(
             dst=config_file.paths.pem_output_dir / Path("pem.grdecl"),
         )
 
-        if date == config_file.global_params.seis_dates[0]:
+        if date == config_file.global_params.mod_dates[0]:
             # Generate a twt framework for the initial conditions
             model_file = config_dir / "model_file_twt.xml"
             result = run_simulation(model_file)
