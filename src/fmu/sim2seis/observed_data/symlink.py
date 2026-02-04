@@ -31,7 +31,6 @@ def make_symlinks_observed_seismic(
         level of output, by default False
     """
     sep = "--"
-    date = ""
     make_folders([output_datapath])
 
     for vintage_info in vintages.values():
@@ -41,7 +40,7 @@ def make_symlinks_observed_seismic(
                 filename = Path(input_datapath, cube)
                 link_name = Path(
                     output_datapath,
-                    "seismic" + sep + link + "_" + "time" + sep + date + ".segy",
+                    f"seismic{sep}{link}_time{sep}{date}.segy",
                 )
                 make_symlink(filename, link_name, verbose=verbose)
         if vintage_info.depth:
@@ -49,6 +48,6 @@ def make_symlinks_observed_seismic(
                 filename = Path(input_datapath, cube)
                 link_name = Path(
                     output_datapath,
-                    "seismic" + sep + link + "_" + "depth" + sep + date + ".segy",
+                    f"seismic{sep}{link}_depth{sep}{date}.segy",
                 )
                 make_symlink(filename, link_name, verbose=verbose)
