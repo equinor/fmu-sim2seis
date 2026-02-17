@@ -1,3 +1,4 @@
+from os import getenv
 from pathlib import Path
 
 import yaml
@@ -5,6 +6,20 @@ import yaml
 from fmu.pem.pem_utilities import get_global_params_and_dates
 
 from .sim2seis_config_validation import Sim2SeisConfig, Sim2SeisPaths
+
+
+def _resolve_fmu_rootpath(config_dir: Path) -> Path:
+    """Determine the FMU realization root directory.
+
+    When running under ERT, the _ERT_RUNPATH environment variable points
+    directly to the realization root.  When running from the command line
+    the config_dir is at ./sim2seis/model relative to the root, so we
+    move up two levels.
+    """
+    ert_runpath = getenv("_ERT_RUNPATH")
+    if ert_runpath is not None:
+        return Path(ert_runpath).resolve()
+    return (config_dir / "../..").resolve()
 
 
 def read_yaml_file(
@@ -58,6 +73,7 @@ def read_yaml_file(
         paths_data = data.get("paths", {})
         paths_obj = Sim2SeisPaths.model_validate(paths_data)
         paths_obj.config_dir_sim2seis = sim2seis_config_dir
+        paths_obj.fmu_rootpath = _resolve_fmu_rootpath(sim2seis_config_dir)
         data["paths"] = paths_obj
 
         conf = Sim2SeisConfig.model_validate(data, context={"paths": paths_obj})

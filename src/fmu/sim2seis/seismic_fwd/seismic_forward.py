@@ -44,6 +44,10 @@ def exe_seismic_forward(
             result = run_simulation(model_file)
             assert result["success"]  # Success == True
 
+        # Resolve the cubes directory once so subsequent path operations
+        # are explicit and independent of the current working directory.
+        cubes_dir = (config_dir / config_file.paths.modelled_seismic_dir).resolve()
+
         for stack, model in config_file.seismic_fwd.stack_models.items():
             result = run_simulation(model)
             assert result["success"]
@@ -51,16 +55,10 @@ def exe_seismic_forward(
                 print(result)
 
             # Modify name of synthetic seismic segy files output
-            s_depth_src = config_dir.joinpath(
-                config_file.paths.modelled_seismic_dir,
-                config_file.seismic_fwd.segy_depth,
-            )
+            s_depth_src = cubes_dir / config_file.seismic_fwd.segy_depth
             depth_name_str = f"seismic--amplitude_{stack}_depth--{date}.segy"
             new_depth_name = SeismicName.parse_name(depth_name_str)
-            s_depth_file = config_dir.joinpath(
-                config_file.paths.modelled_seismic_dir,
-                depth_name_str,
-            )
+            s_depth_file = cubes_dir / depth_name_str
             rename(s_depth_src, s_depth_file)
             depth_cube = xtgeo.cube_from_file(s_depth_file)
             depth_cubes[new_depth_name] = SingleSeismic(

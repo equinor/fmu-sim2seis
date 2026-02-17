@@ -87,6 +87,12 @@ class Sim2SeisPaths(BaseModel):
         description="Configuration directory for sim2seis model, correct path "
         "is set from command line options",
     )
+    fmu_rootpath: SkipJsonSchema[Path] = Field(
+        default=Path.cwd(),
+        description="Absolute path to the FMU realization root directory. "
+        "Set automatically from _ERT_RUNPATH (ERT) or derived from "
+        "config_dir (CLI). All relative paths are resolved against this.",
+    )
 
 
 class PickleFilePrefix(BaseModel):
