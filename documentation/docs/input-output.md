@@ -52,7 +52,6 @@ changed to `observations`.
 | Description | Directory | File |
 | ------------- | ----------- | ---- |
 | Output seismic cubes | `./share/results/cubes` | `seismic--amplitude_<stack>_<time/depth>--<date/date pair>.segy` |
-| Depth attribute maps | `./share/results/maps` | `<horizon>--amplitude_<stack>_<calc>_depth--<date pair>.gri` |
 | Saved class objects from the modules in `fmu-sim2seis` | `./share/results/pickle_files` | `seis_4d_*.pkl` |
 
 ## Relative acoustic impedance  calculation
@@ -72,7 +71,6 @@ changed to `observations`.
 | Description | Directory | File |
 | ------------- | ----------- | ---- |
 | Output seismic cubes | `./share/results/cubes` | `seismic--relai_<stack>_depth--<date/date pair>.segy` |
-| Depth attribute maps | `./share/results/maps` | `<horizon>--relai_<stack>_<calc>_depth--<date pair>.gri` |
 | Saved class objects from the modules in fmu-sim2seis | `./share/results/pickle_files` | `relai_<time/depth>.pkl` |
 
 ## Map attributes
@@ -87,7 +85,9 @@ changed to `observations`.
 
 | Description | Directory | File |
 | ------------- | ----------- | ---- |
-| Attribute maps from forward model or relative ai | `./share/results/pickle_files` | `amplitude_maps_depth_attributes.pkl` / `relai_maps_depth_attributes.pkl` |
+| Saved class objects from the modules in fmu-sim2seis | `./share/results/pickle_files` | `amplitude_maps_depth_attributes.pkl` / `relai_maps_depth_attributes.pkl` |
+| Depth attribute maps from seismic forward | `./share/results/maps` | `<horizon>--amplitude_<stack>_<calc>_depth--<date pair>.gri` |
+| Depth attribute maps from relative inversion | `./share/results/maps` | `<horizon>--relai_<stack>_<calc>_depth--<date pair>.gri` |
 | Attribute maps for ERT | `./share/results/tables` | `<horizon>--<attribute>_<stack>_<calc>_depth--<date pair>.txt` |
 | Attribute map with metadata (Webviz) | `./share/results/tables` | `meta--<horizon>--<attribute>_<stack>_<calc>_depth--<date pair>.txt` |
 | Attribute maps export from fmu-dataio | `./share/results/tables` | `<horizon>--<attribute>_<stack>_<calc>_depth--<date pair>.csv` |
@@ -111,7 +111,7 @@ changed to `observations`.
 
 | Description | Directory | File |
 | ------------- | ----------- | ---- |
-| Detailed results per restart date and differences | `../../share/results/grids` | `*.roff` |
+| Detailed results per restart date and differences | `./share/results/grids` | `*.roff` |
 | `Vp`, `Vs`, density | `./sim2seis/output/pem` | `pem--<date>.grdecl` |
 | Elastic properties of fluids and minerals | `./share/results/grids` | `*.roff` |
 
