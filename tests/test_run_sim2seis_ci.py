@@ -106,8 +106,6 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
             "global_variables.yml",
             "--mod-date-prefix",
             "HIST",
-            "--model-dir",
-            str(config_dir),
             "--verbose",
             "False",
         ]

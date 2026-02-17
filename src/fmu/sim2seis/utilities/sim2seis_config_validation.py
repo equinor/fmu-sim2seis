@@ -415,6 +415,7 @@ class Sim2SeisConfig(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True, title="Sim2Seis Configuration"
     )
+    config_file_name: Path
     paths: Sim2SeisPaths
     pickle_file_prefix: SkipJsonSchema[PickleFilePrefix] = Field(
         default=PickleFilePrefix()
@@ -450,7 +451,7 @@ class Sim2SeisConfig(BaseModel):
     def check_sim2seis_config(self, info: ValidationInfo) -> Self:
         # Check attribute_definition_file exists relative to config file
         if not self.attribute_definition_file.is_file():
-            if self.config_file_name.parent.joinpath(
+            if self.path.config_dir_sim2seis.joinpath(
                 self.attribute_definition_file
             ).is_file():
                 pass

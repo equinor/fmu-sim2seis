@@ -54,15 +54,6 @@ def parse_arguments(
             required=True,
             help="Global configuration yaml file name (required)",
         )
-    if "model_dir" in extra_arguments:
-        parser.add_argument(
-            "-m",
-            "--model-dir",
-            type=Path,
-            required=True,
-            help="For ERT run: Absolute directory name for the configuration parameter"
-            " file within the FMU project",
-        )
     if "obs_date_prefix" in extra_arguments:
         parser.add_argument(
             "-p",

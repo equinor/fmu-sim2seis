@@ -34,7 +34,6 @@ def main(arguments=None):
         arguments=arguments,
         extra_arguments=[
             "verbose",
-            "model_dir",
             "global_dir",
             "global_file",
             "mod_date_prefix",
