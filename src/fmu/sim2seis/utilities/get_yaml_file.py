@@ -1,4 +1,3 @@
-from os import getenv
 from pathlib import Path
 
 import yaml
@@ -9,17 +8,21 @@ from .sim2seis_config_validation import Sim2SeisConfig, Sim2SeisPaths
 
 
 def _resolve_fmu_rootpath(config_dir: Path) -> Path:
-    """Determine the FMU realization root directory.
+    # Ensure config_dir is absolute before computing the FMU root to avoid
+    # depending on the current working directory (common in CLI entrypoints).
+    resolved_config_dir = (
+        config_dir if config_dir.is_absolute() else config_dir.resolve()
+    )
 
-    When running under ERT, the _ERT_RUNPATH environment variable points
-    directly to the realization root.  When running from the command line
-    the config_dir is at ./sim2seis/model relative to the root, so we
-    move up two levels.
-    """
-    ert_runpath = getenv("_ERT_RUNPATH")
-    if ert_runpath is not None:
-        return Path(ert_runpath).resolve()
-    return (config_dir / "../..").resolve()
+    # The sim2seis config directory is expected to be at ./sim2seis/model
+    # relative to the FMU root, so we move up two levels. Use parents[1]
+    # instead of appending "../.." to avoid mis-resolution of relative paths.
+    try:
+        return resolved_config_dir.parents[1]
+    except IndexError:
+        # Fallback for unexpected shallow directory structures: use the
+        # immediate parent rather than failing outright.
+        return resolved_config_dir.parent
 
 
 def read_yaml_file(

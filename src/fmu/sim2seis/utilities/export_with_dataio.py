@@ -72,9 +72,13 @@ def attribute_export(
     # Resolve the absolute output path against config_dir, so it does not
     # depend on the current working directory at call time.
     if is_preprocessed:
-        output_path = (config_dir / config_file.paths.output_dir_observed_data).resolve()
+        output_path = (
+            config_dir / config_file.paths.output_dir_observed_data
+        ).resolve()
     else:
-        output_path = (config_dir / config_file.paths.output_dir_modelled_data).resolve()
+        output_path = (
+            config_dir / config_file.paths.output_dir_modelled_data
+        ).resolve()
     with restore_dir(fmu_rootpath):
         for attr in export_attributes:
             for calc, value in zip(attr.calc_types, attr.value):

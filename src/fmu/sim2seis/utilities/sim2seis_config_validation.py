@@ -457,7 +457,7 @@ class Sim2SeisConfig(BaseModel):
     def check_sim2seis_config(self, info: ValidationInfo) -> Self:
         # Check attribute_definition_file exists relative to config file
         if not self.attribute_definition_file.is_file():
-            if self.path.config_dir_sim2seis.joinpath(
+            if self.paths.config_dir_sim2seis.joinpath(
                 self.attribute_definition_file
             ).is_file():
                 pass

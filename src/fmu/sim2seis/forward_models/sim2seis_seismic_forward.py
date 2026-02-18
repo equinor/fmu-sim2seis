@@ -51,7 +51,7 @@ class SeismicForward(ForwardModelStepPlugin):
             ],
         )
         # Hard-code relative path to global config file
-        global_dir = args.config_dir.joinpath("../../fmuconfig/output")
+        global_dir = args.config_dir / args.global_dir
 
         try:
             with restore_dir(args.config_dir):

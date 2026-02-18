@@ -48,7 +48,7 @@ export default defineConfig({
             {
                 text: 'Setup',
                 items: [
-                    {Text: 'Commend-line interface', link: '/command-line-interface'},
+                    {text: 'Command-line interface', link: '/command-line-interface'},
                     {text: 'ERT configuration', link: '/ert-configuration'},
                     {text: 'Sim2seis configuration', link: '/sim2seis-configuration'},
                     {text: 'Input & output', link: '/input-output'}
