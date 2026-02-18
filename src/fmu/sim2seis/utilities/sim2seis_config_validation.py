@@ -422,7 +422,7 @@ class Sim2SeisConfig(BaseModel):
         arbitrary_types_allowed=True, title="Sim2Seis Configuration"
     )
     config_file_name: Path
-    paths: Sim2SeisPaths
+    paths: SkipJsonSchema[Sim2SeisPaths]
     pickle_file_prefix: SkipJsonSchema[PickleFilePrefix] = Field(
         default=PickleFilePrefix()
     )
