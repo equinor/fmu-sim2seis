@@ -96,7 +96,7 @@ def main(arguments=None):
             attr_list = populate_seismic_attributes(
                 config=read_yaml_file(
                     sim2seis_config_dir=run_folder,
-                    sim2seis_config_file=config.attribute_definition_file,
+                    sim2seis_config_file=config.attribute_map_definition_file,
                     parse_inputs=False,
                 ),
                 cubes=depth_cubes,

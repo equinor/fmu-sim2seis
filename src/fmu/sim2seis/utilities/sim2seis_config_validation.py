@@ -435,7 +435,7 @@ class Sim2SeisConfig(BaseModel):
     amplitude_map: SkipJsonSchema[AmplitudeMapConfig] = Field(
         default_factory=AmplitudeMapConfig
     )
-    attribute_definition_file: Path = Field(
+    attribute_map_definition_file: Path = Field(
         description="Yaml file with definition of all intervals for calculating "
         "attributes of forward seismic and relative inversion cubes. "
         "It is assumed to be placed in the same directory as the "
@@ -455,15 +455,15 @@ class Sim2SeisConfig(BaseModel):
 
     @model_validator(mode="after")
     def check_sim2seis_config(self, info: ValidationInfo) -> Self:
-        # Check attribute_definition_file exists relative to config file
-        if not self.attribute_definition_file.is_file():
+        # Check attribute_map_definition_file exists relative to config file
+        if not self.attribute_map_definition_file.is_file():
             if self.paths.config_dir_sim2seis.joinpath(
-                self.attribute_definition_file
+                self.attribute_map_definition_file
             ).is_file():
                 pass
             else:
                 raise ValueError(
-                    f"{self.attribute_definition_file} is not recognised as a file"
+                    f"{self.attribute_map_definition_file} is not recognised as a file"
                 )
 
         return self

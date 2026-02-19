@@ -11,7 +11,7 @@
 
 ## For the main class: relative path to the config file
 #______________________________________________________________________________________________________________________#
-attribute_definition_file: observed_data_intervals_drogon.yml
+attribute_map_definition_file: observed_data_intervals_drogon.yml
 # rel_path_global_config: ../../fmuconfig/output
 
 
