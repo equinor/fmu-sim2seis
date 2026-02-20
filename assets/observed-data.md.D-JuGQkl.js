@@ -140,7 +140,7 @@ import{_ as i,c as a,o as n,ae as l}from"./chunks/framework.xmna4E1W.js";const E
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Amplitude map and inversion map settings</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Best left with default values. The actual settings that define intervals and operators for attribute maps are </span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># placed in the \`attribute_definition_file\`, given in the main class</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># placed in the \`attribute_map_definition_file\`, given in the main class</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">########################################################################################################################</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># amplitude_map:</span></span>
@@ -156,7 +156,7 @@ import{_ as i,c as a,o as n,ae as l}from"./chunks/framework.xmna4E1W.js";const E
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># For the main class, there are only two required parameters. \`test_run\` is used in tests, and should be False in </span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># real runs</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#______________________________________________________________________________________________________________________#</span></span>
-<span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">attribute_definition_file</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">data_intervals_drogon.yml</span></span>
+<span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">attribute_map_definition_file</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">data_intervals_drogon.yml</span></span>
 <span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">test_run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">True</span></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">########################################################################################################################</span></span>
