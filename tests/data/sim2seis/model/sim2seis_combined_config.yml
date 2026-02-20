@@ -133,7 +133,7 @@ webviz_map:
 # Amplitude map and inversion map settings
 #
 # Best left with default values. The actual settings that define intervals and operators for attribute maps are 
-# placed in the `attribute_definition_file`, given in the main class
+# placed in the `attribute_map_definition_file`, given in the main class
 #
 ########################################################################################################################
 # amplitude_map:
@@ -149,7 +149,7 @@ webviz_map:
 # For the main class, there are only two required parameters. `test_run` is used in tests, and should be False in 
 # real runs
 #______________________________________________________________________________________________________________________#
-attribute_definition_file: data_intervals_drogon.yml
+attribute_map_definition_file: data_intervals_drogon.yml
 test_run: True
 
 ########################################################################################################################

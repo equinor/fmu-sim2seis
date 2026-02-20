@@ -87,6 +87,12 @@ class Sim2SeisPaths(BaseModel):
         description="Configuration directory for sim2seis model, correct path "
         "is set from command line options",
     )
+    fmu_rootpath: SkipJsonSchema[Path] = Field(
+        default=Path.cwd(),
+        description="Absolute path to the FMU realization root directory. "
+        "Set automatically from _ERT_RUNPATH (ERT) or derived from "
+        "config_dir (CLI). All relative paths are resolved against this.",
+    )
 
 
 class PickleFilePrefix(BaseModel):
@@ -415,7 +421,8 @@ class Sim2SeisConfig(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True, title="Sim2Seis Configuration"
     )
-    paths: Sim2SeisPaths
+    config_file_name: Path
+    paths: SkipJsonSchema[Sim2SeisPaths]
     pickle_file_prefix: SkipJsonSchema[PickleFilePrefix] = Field(
         default=PickleFilePrefix()
     )
@@ -428,7 +435,7 @@ class Sim2SeisConfig(BaseModel):
     amplitude_map: SkipJsonSchema[AmplitudeMapConfig] = Field(
         default_factory=AmplitudeMapConfig
     )
-    attribute_definition_file: Path = Field(
+    attribute_map_definition_file: Path = Field(
         description="Yaml file with definition of all intervals for calculating "
         "attributes of forward seismic and relative inversion cubes. "
         "It is assumed to be placed in the same directory as the "
@@ -448,15 +455,15 @@ class Sim2SeisConfig(BaseModel):
 
     @model_validator(mode="after")
     def check_sim2seis_config(self, info: ValidationInfo) -> Self:
-        # Check attribute_definition_file exists relative to config file
-        if not self.attribute_definition_file.is_file():
-            if self.config_file_name.parent.joinpath(
-                self.attribute_definition_file
+        # Check attribute_map_definition_file exists relative to config file
+        if not self.attribute_map_definition_file.is_file():
+            if self.paths.config_dir_sim2seis.joinpath(
+                self.attribute_map_definition_file
             ).is_file():
                 pass
             else:
                 raise ValueError(
-                    f"{self.attribute_definition_file} is not recognised as a file"
+                    f"{self.attribute_map_definition_file} is not recognised as a file"
                 )
 
         return self

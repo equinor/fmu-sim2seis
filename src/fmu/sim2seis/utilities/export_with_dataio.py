@@ -1,4 +1,4 @@
-from os import getenv, symlink, unlink
+from os import symlink, unlink
 from pathlib import Path
 
 import xtgeo
@@ -23,21 +23,11 @@ def cube_export(
     is_preprocessed: bool = False,
     override_folder: str = "",
 ) -> None:
-    global_variables = config_file.global_params.global_config
     """Output depth cube via fmu.dataio"""
-    try:
-        # _ERT_RUNPATH will point to the top of the fmu directory structure, as
-        # is expected by fmu-dataio, so no need to move up
-        run_path = Path(getenv("_ERT_RUNPATH"))
-        rel_dir = Path(".")
-    except TypeError:
-        # in case this is run from command line, _ERT_RUNPATH is not set, and config_dir
-        # is at ./sim2seis/model, relative to the top of the fmu directory structure.
-        # To follow the requirements of fmu-dataio right, we need to move up two levels
-        run_path = Path(config_dir)
-        rel_dir = Path("../..")
+    global_variables = config_file.global_params.global_config
+    fmu_rootpath = config_file.paths.fmu_rootpath
 
-    with restore_dir(run_path / rel_dir):
+    with restore_dir(fmu_rootpath):
         for key, value in export_cubes.items():
             if value.base_date is None and value.monitor_date is None:
                 time_data = [[value.date]]
@@ -70,25 +60,26 @@ def attribute_export(
     is_observed: bool = False,
     is_preprocessed: bool = False,
 ) -> None:
-    global_variables = config_file.global_params.global_config
     """Output attribute map via fmu.dataio"""
-    try:
-        run_path = Path(getenv("_ERT_RUNPATH"))
-    except TypeError:
-        run_path = config_dir
+    global_variables = config_file.global_params.global_config
+    fmu_rootpath = config_file.paths.fmu_rootpath
 
     # prepare for ert/webviz export
     simgrid, zone_def, region_def = _get_grid_info(
         config_file=config_file,
         config_dir=config_dir,
     )
-    # Must determine the absolute output path before changing directory. Different
-    # directories for observed (preprocessed) data and modelled data
+    # Resolve the absolute output path against config_dir, so it does not
+    # depend on the current working directory at call time.
     if is_preprocessed:
-        output_path = config_file.paths.output_dir_observed_data.resolve()
+        output_path = (
+            config_dir / config_file.paths.output_dir_observed_data
+        ).resolve()
     else:
-        output_path = config_file.paths.output_dir_modelled_data.resolve()
-    with restore_dir(run_path.joinpath("../..")):
+        output_path = (
+            config_dir / config_file.paths.output_dir_modelled_data
+        ).resolve()
+    with restore_dir(fmu_rootpath):
         for attr in export_attributes:
             for calc, value in zip(attr.calc_types, attr.value):
                 key = attr.from_cube.cube_name

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 from ert import (
     ForwardModelStepDocumentation,
     ForwardModelStepJSON,
@@ -10,7 +8,7 @@ from ert import (
 )
 
 from fmu.pem.pem_utilities import restore_dir
-from fmu.sim2seis.utilities import read_yaml_file
+from fmu.sim2seis.utilities import parse_arguments, read_yaml_file
 
 
 class SeismicForward(ForwardModelStepPlugin):
@@ -27,8 +25,6 @@ class SeismicForward(ForwardModelStepPlugin):
                 "<GLOBAL_DIR>",
                 "--global-file",
                 "<GLOBAL_FILE>",
-                "--model-dir",
-                "<MODEL_DIR>",
                 "--mod-date-prefix",
                 "<MOD_DATE_PREFIX>",
                 "--verbose",
@@ -45,19 +41,25 @@ class SeismicForward(ForwardModelStepPlugin):
         # Parse YAML parameter file by pydantic pre-experiment to catch errors at an
         # early stage
 
-        config_file = Path(fm_step_json["argList"][3])
-        model_dir = Path(fm_step_json["argList"][9])
-        config_dir = model_dir
-        global_dir = model_dir / Path(fm_step_json["argList"][5])
-        global_file = Path(fm_step_json["argList"][7])
+        args = parse_arguments(
+            arguments=fm_step_json["argList"],
+            extra_arguments=[
+                "verbose",
+                "global_dir",
+                "global_file",
+                "mod_date_prefix",
+            ],
+        )
+        # Hard-code relative path to global config file
+        global_dir = args.config_dir / args.global_dir
 
         try:
-            with restore_dir(config_dir):
+            with restore_dir(args.config_dir):
                 _ = read_yaml_file(
-                    sim2seis_config_dir=config_dir,
-                    sim2seis_config_file=config_file,
+                    sim2seis_config_dir=args.config_dir,
+                    sim2seis_config_file=args.config_file,
                     global_config_dir=global_dir,
-                    global_config_file=global_file,
+                    global_config_file=args.global_file,
                 )
         except Exception as e:
             raise ForwardModelStepValidationError(
@@ -78,7 +80,6 @@ class SeismicForward(ForwardModelStepPlugin):
                 "<CONFIG_FILE>=sim2seis_config.yml, "
                 "<GLOBAL_DIR>=../../fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
-                "<MODEL_DIR>=/my_fmu_structure/sim2seis/model, "
                 "<MOD_DATE_PREFIX>=HIST, "
                 "<VERBOSE>=true/false)"
             ),

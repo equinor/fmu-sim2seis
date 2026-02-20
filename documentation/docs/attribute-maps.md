@@ -18,7 +18,7 @@ must be specified.
 # Amplitude map and inversion map settings
 #
 # Best left with default values. The actual settings that define intervals and operators for attribute maps are 
-# placed in the `attribute_definition_file`, given in the main class
+# placed in the `attribute_map_definition_file`, given in the main class
 #
 ########################################################################################################################
 # amplitude_map:
@@ -34,7 +34,7 @@ must be specified.
 # `webviz_map`). The snippet below highlights the attribute-map-related main setting.
 # `test_run` is used in tests and should be `False` in real runs.
 #______________________________________________________________________________________________________________________#
-attribute_definition_file: data_intervals_drogon.yml
+attribute_map_definition_file: data_intervals_drogon.yml
 ```
 
 <span id="figure-1-seismic-attributes-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to attribute maps.</span>
@@ -43,7 +43,7 @@ In addition, the file name for the interval definition file is specified in the 
 file:
 
 ```yaml
-attribute_definition_file: modelled_data_intervals_drogon.yml
+attribute_map_definition_file: modelled_data_intervals_drogon.yml
 ```
 
 ## Interval Definition YAML File

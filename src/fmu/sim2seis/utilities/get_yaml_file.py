@@ -7,6 +7,24 @@ from fmu.pem.pem_utilities import get_global_params_and_dates
 from .sim2seis_config_validation import Sim2SeisConfig, Sim2SeisPaths
 
 
+def _resolve_fmu_rootpath(config_dir: Path) -> Path:
+    # Ensure config_dir is absolute before computing the FMU root to avoid
+    # depending on the current working directory (common in CLI entrypoints).
+    resolved_config_dir = (
+        config_dir if config_dir.is_absolute() else config_dir.resolve()
+    )
+
+    # The sim2seis config directory is expected to be at ./sim2seis/model
+    # relative to the FMU root, so we move up two levels. Use parents[1]
+    # instead of appending "../.." to avoid mis-resolution of relative paths.
+    try:
+        return resolved_config_dir.parents[1]
+    except IndexError:
+        # Fallback for unexpected shallow directory structures: use the
+        # immediate parent rather than failing outright.
+        return resolved_config_dir.parent
+
+
 def read_yaml_file(
     sim2seis_config_file: Path,
     sim2seis_config_dir: Path,
@@ -58,6 +76,7 @@ def read_yaml_file(
         paths_data = data.get("paths", {})
         paths_obj = Sim2SeisPaths.model_validate(paths_data)
         paths_obj.config_dir_sim2seis = sim2seis_config_dir
+        paths_obj.fmu_rootpath = _resolve_fmu_rootpath(sim2seis_config_dir)
         data["paths"] = paths_obj
 
         conf = Sim2SeisConfig.model_validate(data, context={"paths": paths_obj})

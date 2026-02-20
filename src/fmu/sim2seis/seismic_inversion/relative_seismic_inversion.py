@@ -7,7 +7,6 @@ The output is 4Drelai (in time) for each diffdate.
 JRIV/EZA/RNYB/HFLE
 """
 
-import os
 from pathlib import Path
 
 from si4ti import compute_impedance
@@ -27,21 +26,10 @@ def run_relative_inversion_si4ti(
     time_cubes: dict[SeismicName, DifferenceSeismic],
     config: Sim2SeisConfig,
 ) -> dict[SeismicName, DifferenceSeismic]:
-    # To get the paths right, both when run from ERT and command line -
-    try:
-        # _ERT_RUNPATH will point to the top of the fmu directory structure, as
-        # is expected by fmu-dataio, so no need to move up
-        run_path = Path(os.getenv("_ERT_RUNPATH"))
-        rel_dir = Path(".")
-    except TypeError:
-        # in case this is run from command line, _ERT_RUNPATH is not set, and config_dir
-        # is at ./sim2seis/model, relative to the top of the fmu directory structure.
-        # To follow the requirements of fmu-dataio right, we need to move up two levels
-        run_path = Path(config_dir)
-        rel_dir = Path("../..")
+    fmu_rootpath = config.paths.fmu_rootpath
 
     diff_rel_ai_dict = {}
-    with restore_dir(run_path.joinpath(rel_dir)):
+    with restore_dir(fmu_rootpath):
         for seis_diff_name, seis_diff_obj in time_cubes.items():
             tmp_inv_diff_name = SeismicName(
                 process=seis_diff_name.process,

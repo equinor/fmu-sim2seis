@@ -1,7 +1,7 @@
 [build-system]
 requires = [
-    "setuptools>=45.0",
-    "setuptools_scm[toml]>=6.2",
+    "setuptools>=80.10.1",
+    "setuptools_scm[toml]>=9.2.2",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -46,7 +46,7 @@ dependencies = [
     "fmu-tools >= 1.16.0",
     "fmu-config",
     "fmu-dataio",
-    "fmu-pem >= 0.1.0",
+    "fmu-pem >= 0.1.1",
     "pydantic",
     "ert",
     "seismic-forward",
@@ -95,6 +95,7 @@ disable = "missing-module-docstring"
 
 [tool.ruff]
 line-length = 88
+extend-exclude = ["src/fmu/sim2seis/version.py"]
 
 [tool.ruff.lint]
 select = [
