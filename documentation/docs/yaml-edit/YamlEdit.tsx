@@ -32,9 +32,32 @@ export const YamlEdit = () => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [populateDefault, setPopulateDefault] = React.useState(false);
 
-  const [initialConfig, setInitialConfig] = React.useState({});
+  const [initialConfig, setInitialConfig] = React.useState(() => {
+    const savedFormData = sessionStorage.getItem('formData');
+    if (savedFormData) {
+      try {
+        return JSON.parse(savedFormData);
+      } catch (error) {
+        console.error('Failed to parse saved form data:', error);
+        return {};
+      }
+    }
+    return {};
+  });
 
-  const userInputRef = React.useRef({});
+  const userInputRef = React.useRef(initialConfig);
+
+  React.useEffect(() => {
+    // Clear session storage when the user reloads same tab
+    const handleBeforeUnload = () => {
+      sessionStorage.removeItem('formData');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   const yamlOutput =
     (validInput ? "" : "# This YAML file is not complete/valid\n\n") +
@@ -129,6 +152,8 @@ export const YamlEdit = () => {
             }}
             onChange={(event) => {
               userInputRef.current = event.formData;
+              sessionStorage.setItem('formData', JSON.stringify(event.formData));
+
               if (
                 event.errors.length === 0 &&
                 // @ts-ignore
