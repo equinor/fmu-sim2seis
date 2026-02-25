@@ -219,7 +219,24 @@ class DepthConvertConfig(BaseModel):
     )
 
     @model_validator(mode="after")
-    def check_depth_and_time(self, info: ValidationInfo) -> Self:
+    def check_depth_convert_config(self, info: ValidationInfo) -> Self:
+        """Validate depth/time range consistency and verify horizon files on disk.
+
+        Range checks
+        ------------
+        - ``max_depth`` must be positive and greater than ``min_depth``, and the
+          range must be divisible by ``z_inc``.
+        - Same constraints apply to the time equivalents.
+
+        Horizon file checks
+        -------------------
+        Each name in ``horizon_names`` must resolve to an existing file in both
+        ``paths.time_horizon_dir`` (with ``time_suffix``) and
+        ``paths.depth_horizon_dir`` (with ``depth_suffix``).
+        ``paths`` is injected via the Pydantic validation context (key ``"paths"``).
+        When no context is provided the file check is skipped.
+        """
+        # --- range consistency ---
         max_depth = self.max_depth
         min_depth = self.min_depth
         z_inc = self.z_inc
@@ -241,6 +258,28 @@ class DepthConvertConfig(BaseModel):
                 raise ValueError("max_time must be greater than min_time")
             if (max_time - min_time) % t_inc != 0:
                 raise ValueError("max_time minus min_time must be divisible by t_inc")
+
+        # --- horizon file existence ---
+        paths = info.context.get("paths") if info and info.context else None
+        if paths:
+            missing: list[str] = []
+            for name in self.horizon_names:
+                lower_name = name.lower()
+
+                time_file = paths.time_horizon_dir / (lower_name + self.time_suffix)
+                if not time_file.is_file():
+                    missing.append(str(time_file))
+
+                depth_file = paths.depth_horizon_dir / (lower_name + self.depth_suffix)
+                if not depth_file.is_file():
+                    missing.append(str(depth_file))
+
+            if missing:
+                missing_list = "\n  ".join(missing)
+                raise ValueError(
+                    f"The following horizon files listed in 'horizon_names' were not "
+                    f"found on disk:\n  {missing_list}"
+                )
 
         return self
 
