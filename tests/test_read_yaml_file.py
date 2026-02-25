@@ -36,3 +36,27 @@ def test_read_comb_data_yaml_file(monkeypatch, data_dir):
     # Make some random validations according to default settings
     assert conf.depth_conversion.min_depth < conf.depth_conversion.max_depth
     assert conf.webviz_map.attribute_error == 0.07
+
+
+def test_read_seismic_fwd_only_config(monkeypatch, data_dir):
+    """Test that a config with only seismic_fwd section is valid.
+
+    Ref. issue #45: users should be able to work with one section at a time,
+    starting with seismic_forward before adding depth_conversion, webviz_map
+    and attribute_map_definition_file.
+    """
+    config_dir = data_dir / "sim2seis" / "model"
+    monkeypatch.chdir(config_dir)
+    config_file = Path("sim2seis_seismic_fwd_only_config.yml")
+    conf = read_yaml_file(
+        sim2seis_config_file=config_file,
+        sim2seis_config_dir=config_dir,
+        parse_inputs=True,
+    )
+    # seismic_fwd section is present and stack_models are set
+    assert conf.seismic_fwd is not None
+    assert len(conf.seismic_fwd.stack_models) >= 1
+    # Optional sections are absent (None) when not provided
+    assert conf.depth_conversion is None
+    assert conf.webviz_map is None
+    assert conf.attribute_map_definition_file is None

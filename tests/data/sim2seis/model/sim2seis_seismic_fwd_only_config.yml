@@ -1,0 +1,23 @@
+########################################################################################################################
+#
+# Minimal configuration file for running only seismic_forward.
+#
+# This demonstrates that depth_conversion, webviz_map and
+# attribute_map_definition_file are NOT required when a user is only setting up
+# and testing the seismic forward modelling step (ref. issue #45).
+#
+########################################################################################################################
+
+#region seis_fwd
+## Section for seismic forward 4D
+#______________________________________________________________________________________________________________________#
+seismic_fwd:
+  stack_models:
+    full: model_file.xml
+#endregion seis_fwd
+
+########################################################################################################################
+#
+# End of minimal configuration file for seismic_forward only
+#
+########################################################################################################################

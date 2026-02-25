@@ -55,3 +55,34 @@ If relative acoustic impedance is also included, the sequence becomes:
 
 A set-up file for an `ert` job is shown in [`ert` configuration](./ert-configuration.md).
 
+## Incremental Configuration Setup
+
+It is possible to build the `sim2seis_config.yml` one section at a time, running and validating each workflow step
+before moving on to the next. This makes it easier to isolate configuration or data issues to the specific step you
+are working on.
+
+The table below shows which sections of `sim2seis_config.yml` are required for each forward model step. Sections not
+needed for the step you are currently setting up can simply be left out of the file.
+
+| Config section | `SEISMIC_FORWARD` | `RELATIVE_INVERSION` | `MAP_ATTRIBUTES` | `OBSERVED_DATA` |
+|---|:---:|:---:|:---:|:---:|
+| `seismic_fwd` | ✅ required | — | — | — |
+| `depth_conversion` | ✅ required | ✅ required | — | ✅ required |
+| `attribute_map_definition_file` | — | — | ✅ required | ✅ required |
+| `webviz_map` | — | — | ✅ required | ✅ required |
+| `seismic_inversion` | — | optional¹ | — | — |
+
+¹ `seismic_inversion` has sensible defaults for all its parameters and does not need to be set explicitly. It can
+be added to the config to tune the inversion parameters for a specific field.
+
+A typical incremental workflow would be:
+
+1. Start with only the `seismic_fwd` and `depth_conversion` sections and run `SEISMIC_FORWARD` until it produces
+   correct results.
+2. Add `depth_conversion` to the config if not already present, then run `RELATIVE_INVERSION`.
+3. Add `attribute_map_definition_file` and `webviz_map` and run `MAP_ATTRIBUTES`.
+4. Run `OBSERVED_DATA`, which requires `depth_conversion`, `attribute_map_definition_file` and `webviz_map`.
+
+If a required section is missing when a forward model step is executed, a clear error message will indicate which
+section must be added.
+
