@@ -431,17 +431,29 @@ class Sim2SeisConfig(BaseModel):
         description="Set 'test_run' to True when running tests "
         "on observed data processing",
     )
-    seismic_fwd: SeismicForward
+    seismic_fwd: SeismicForward | None = Field(
+        default=None,
+        description="Configuration for seismic forward modelling. "
+        "Required when running SEISMIC_FORWARD. "
+        "Can be omitted when only running MAP_ATTRIBUTES or OBSERVED_DATA.",
+    )
     amplitude_map: SkipJsonSchema[AmplitudeMapConfig] = Field(
         default_factory=AmplitudeMapConfig
     )
-    attribute_map_definition_file: Path = Field(
+    attribute_map_definition_file: Path | None = Field(
+        default=None,
         description="Yaml file with definition of all intervals for calculating "
         "attributes of forward seismic and relative inversion cubes. "
         "It is assumed to be placed in the same directory as the "
-        "Yaml file for all `sim2seis` parameters"
+        "Yaml file for all `sim2seis` parameters. "
+        "Required when running MAP_ATTRIBUTES or OBSERVED_DATA.",
     )
-    depth_conversion: DepthConvertConfig
+    depth_conversion: DepthConvertConfig | None = Field(
+        default=None,
+        description="Time/depth conversion settings. "
+        "Required when running SEISMIC_FORWARD or OBSERVED_DATA. "
+        "Can be omitted when only running MAP_ATTRIBUTES.",
+    )
     global_params: SkipJsonSchema[FromGlobal | None] = Field(
         default=None,
     )
@@ -451,20 +463,28 @@ class Sim2SeisConfig(BaseModel):
     seismic_inversion: SkipJsonSchema[SeismicInversionConfig] = Field(
         default_factory=SeismicInversionConfig,
     )
-    webviz_map: SkipJsonSchema[WebvizMap]
+    webviz_map: SkipJsonSchema[WebvizMap | None] = Field(
+        default=None,
+        description="Settings for grid, zone and region files used by webviz and "
+        "ERT attribute export. Required when running MAP_ATTRIBUTES or "
+        "OBSERVED_DATA. The .roff grid files referenced here do not need to "
+        "exist when only running SEISMIC_FORWARD.",
+    )
 
     @model_validator(mode="after")
     def check_sim2seis_config(self, info: ValidationInfo) -> Self:
-        # Check attribute_map_definition_file exists relative to config file
-        if not self.attribute_map_definition_file.is_file():
-            if self.paths.config_dir_sim2seis.joinpath(
-                self.attribute_map_definition_file
-            ).is_file():
-                pass
-            else:
-                raise ValueError(
-                    f"{self.attribute_map_definition_file} is not recognised as a file"
-                )
+        # Check attribute_map_definition_file exists relative to config file,
+        # but only when it is actually provided (it is optional).
+        if self.attribute_map_definition_file is not None:
+            if not self.attribute_map_definition_file.is_file():
+                if self.paths.config_dir_sim2seis.joinpath(
+                    self.attribute_map_definition_file
+                ).is_file():
+                    pass
+                else:
+                    raise ValueError(
+                        f"{self.attribute_map_definition_file} is not recognised as a file"
+                    )
 
         return self
 
