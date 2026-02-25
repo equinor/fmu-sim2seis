@@ -51,6 +51,17 @@ def main(arguments=None):
             mod_prefix=args.mod_date_prefix,
         )
 
+        if config.seismic_fwd is None:
+            raise ValueError(
+                "SEISMIC_FORWARD requires a 'seismic_fwd' section in the "
+                f"config file {args.config_file}."
+            )
+        if config.depth_conversion is None:
+            raise ValueError(
+                "SEISMIC_FORWARD requires a 'depth_conversion' section in the "
+                f"config file {args.config_file}."
+            )
+
         # Read the horizons that are used in depth conversion and later for extraction
         # of attributes
         time_horizons = read_surfaces(

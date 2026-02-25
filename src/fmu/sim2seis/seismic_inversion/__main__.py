@@ -47,6 +47,12 @@ def main(arguments=None):
             global_config_file=args.global_file,
         )
 
+        if conf.depth_conversion is None:
+            raise ValueError(
+                "RELATIVE_INVERSION requires a 'depth_conversion' section in the "
+                f"config file {args.config_file}."
+            )
+
         # Retrieve the seismic time cubes from seismic forward modelling
         seismic_time_cubes = retrieve_seismic_forward_results(config=conf)
 

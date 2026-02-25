@@ -51,6 +51,22 @@ def main(arguments=None):
             obs_prefix=args.obs_date_prefix,
         )
 
+        if config.depth_conversion is None:
+            raise ValueError(
+                "OBSERVED_DATA requires a 'depth_conversion' section in the "
+                f"config file {args.config_file}."
+            )
+        if config.attribute_map_definition_file is None:
+            raise ValueError(
+                "OBSERVED_DATA requires an 'attribute_map_definition_file' entry "
+                f"in the config file {args.config_file}."
+            )
+        if config.webviz_map is None:
+            raise ValueError(
+                "OBSERVED_DATA requires a 'webviz_map' section in the "
+                f"config file {args.config_file}."
+            )
+
         # Establish symlinks to the observed seismic data, make exception for
         # tests runs, where a test dataset is copied instead
         if not (config.test_run or args.no_attributes):

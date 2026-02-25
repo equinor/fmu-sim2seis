@@ -39,6 +39,17 @@ def main(arguments=None):
             global_config_file=args.global_file,
         )
 
+        if config.attribute_map_definition_file is None:
+            raise ValueError(
+                "MAP_ATTRIBUTES requires an 'attribute_map_definition_file' entry "
+                f"in the config file {args.config_file}."
+            )
+        if config.webviz_map is None:
+            raise ValueError(
+                "MAP_ATTRIBUTES requires a 'webviz_map' section in the "
+                f"config file {args.config_file}."
+            )
+
         # Determine if the attributes are from seismic amplitude or inverted
         # seismic data to read the correct set of input cubes
         if args.attribute == config.amplitude_map.attribute:  # 'amplitude'
