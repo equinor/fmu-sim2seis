@@ -475,16 +475,18 @@ class Sim2SeisConfig(BaseModel):
     def check_sim2seis_config(self, info: ValidationInfo) -> Self:
         # Check attribute_map_definition_file exists relative to config file,
         # but only when it is actually provided (it is optional).
-        if self.attribute_map_definition_file is not None:
-            if not self.attribute_map_definition_file.is_file():
-                if self.paths.config_dir_sim2seis.joinpath(
-                    self.attribute_map_definition_file
-                ).is_file():
-                    pass
-                else:
-                    raise ValueError(
-                        f"{self.attribute_map_definition_file} is not recognised as a file"
-                    )
+        if (
+            self.attribute_map_definition_file is not None
+            and not self.attribute_map_definition_file.is_file()
+        ):
+            if self.paths.config_dir_sim2seis.joinpath(
+                self.attribute_map_definition_file
+            ).is_file():
+                pass
+            else:
+                raise ValueError(
+                    f"{self.attribute_map_definition_file} is not recognised as a file"
+                )
 
         return self
 

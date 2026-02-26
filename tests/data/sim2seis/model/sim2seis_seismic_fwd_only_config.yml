@@ -1,10 +1,11 @@
 ########################################################################################################################
 #
-# Minimal configuration file for running only seismic_forward.
+# Minimal configuration file for running only SEISMIC_FORWARD (ref. issue #45).
 #
-# This demonstrates that depth_conversion, webviz_map and
-# attribute_map_definition_file are NOT required when a user is only setting up
-# and testing the seismic forward modelling step (ref. issue #45).
+# seismic_fwd and depth_conversion belong together as part of the SEISMIC_FORWARD
+# step. webviz_map and attribute_map_definition_file are only needed for
+# MAP_ATTRIBUTES and OBSERVED_DATA and can be left out until those steps are
+# being set up.
 #
 ########################################################################################################################
 
@@ -16,8 +17,21 @@ seismic_fwd:
     full: model_file.xml
 #endregion seis_fwd
 
+#region depth_conversion
+## Section for depth conversion (integral part of SEISMIC_FORWARD)
+#______________________________________________________________________________________________________________________#
+depth_conversion:
+  horizon_names: [MSL, TopVolantis, BaseVolantis, BaseVelmodel]
+  min_depth: 1500
+  max_depth: 2000
+  z_inc: 4
+  min_time: 1500
+  max_time: 2000
+  t_inc: 4
+#endregion depth_conversion
+
 ########################################################################################################################
 #
-# End of minimal configuration file for seismic_forward only
+# End of minimal configuration file for SEISMIC_FORWARD
 #
 ########################################################################################################################

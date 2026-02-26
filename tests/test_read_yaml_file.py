@@ -39,11 +39,13 @@ def test_read_comb_data_yaml_file(monkeypatch, data_dir):
 
 
 def test_read_seismic_fwd_only_config(monkeypatch, data_dir):
-    """Test that a config with only seismic_fwd section is valid.
+    """Test that a config with only the seismic_fwd and depth_conversion sections is
+    valid.
 
-    Ref. issue #45: users should be able to work with one section at a time,
-    starting with seismic_forward before adding depth_conversion, webviz_map
-    and attribute_map_definition_file.
+    Ref. issue #45: users should be able to work with one section at a time.
+    seismic_fwd and depth_conversion go together as part of the SEISMIC_FORWARD
+    step. webviz_map and attribute_map_definition_file are only needed for
+    MAP_ATTRIBUTES and OBSERVED_DATA and can be added later.
     """
     config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(config_dir)
@@ -53,10 +55,11 @@ def test_read_seismic_fwd_only_config(monkeypatch, data_dir):
         sim2seis_config_dir=config_dir,
         parse_inputs=True,
     )
-    # seismic_fwd section is present and stack_models are set
+    # seismic_fwd and depth_conversion are present (both part of SEISMIC_FORWARD)
     assert conf.seismic_fwd is not None
     assert len(conf.seismic_fwd.stack_models) >= 1
-    # Optional sections are absent (None) when not provided
-    assert conf.depth_conversion is None
+    assert conf.depth_conversion is not None
+    assert conf.depth_conversion.max_depth > conf.depth_conversion.min_depth
+    # Sections for later steps are absent (None) when not provided
     assert conf.webviz_map is None
     assert conf.attribute_map_definition_file is None

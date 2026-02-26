@@ -67,22 +67,24 @@ needed for the step you are currently setting up can simply be left out of the f
 | Config section | `SEISMIC_FORWARD` | `RELATIVE_INVERSION` | `MAP_ATTRIBUTES` | `OBSERVED_DATA` |
 |---|:---:|:---:|:---:|:---:|
 | `seismic_fwd` | ✅ required | — | — | — |
-| `depth_conversion` | ✅ required | ✅ required | — | ✅ required |
+| `depth_conversion` | ✅ required | —¹ | — | ✅ required |
 | `attribute_map_definition_file` | — | — | ✅ required | ✅ required |
 | `webviz_map` | — | — | ✅ required | ✅ required |
-| `seismic_inversion` | — | optional¹ | — | — |
+| `seismic_inversion` | — | optional² | — | — |
 
-¹ `seismic_inversion` has sensible defaults for all its parameters and does not need to be set explicitly. It can
+¹ `depth_conversion` is an integral part of `SEISMIC_FORWARD` and must be present in the config when running that
+step. Since `RELATIVE_INVERSION` always runs after `SEISMIC_FORWARD` using the same config file, `depth_conversion`
+will already be present.
+
+² `seismic_inversion` has sensible defaults for all its parameters and does not need to be set explicitly. It can
 be added to the config to tune the inversion parameters for a specific field.
 
 A typical incremental workflow would be:
 
-1. Start with only the `seismic_fwd` and `depth_conversion` sections and run `SEISMIC_FORWARD` until it produces
-   correct results.
-2. Add `depth_conversion` to the config if not already present, then run `RELATIVE_INVERSION`.
+1. Add `seismic_fwd` and `depth_conversion` and run `SEISMIC_FORWARD` until it produces correct results.
+2. Optionally add `seismic_inversion` to tune inversion parameters, then run `RELATIVE_INVERSION`.
 3. Add `attribute_map_definition_file` and `webviz_map` and run `MAP_ATTRIBUTES`.
-4. Run `OBSERVED_DATA`, which requires `depth_conversion`, `attribute_map_definition_file` and `webviz_map`.
+4. Run `OBSERVED_DATA`, which additionally requires `depth_conversion` (already present from step 1).
 
 If a required section is missing when a forward model step is executed, a clear error message will indicate which
 section must be added.
-
