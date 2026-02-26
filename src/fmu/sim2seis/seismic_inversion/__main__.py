@@ -50,7 +50,9 @@ def main(arguments=None):
         if conf.depth_conversion is None:
             raise ValueError(
                 "RELATIVE_INVERSION requires a 'depth_conversion' section in the "
-                f"config file {args.config_file}."
+                f"config file {args.config_file}. "
+                "'depth_conversion' is part of the SEISMIC_FORWARD configuration "
+                "and should already be present if that step has been set up."
             )
 
         # Retrieve the seismic time cubes from seismic forward modelling
