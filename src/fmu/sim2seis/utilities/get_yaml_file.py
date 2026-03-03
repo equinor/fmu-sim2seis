@@ -51,10 +51,12 @@ def read_yaml_file(
         if this is set to false, file is read, but there is no parsing of
         parameter object, by default True
     pre_experiment : bool, optional
-        when True, all file-system validators (directory/file existence checks)
-        are skipped. This is intended for use from ERT's ``validate_pre_experiment``
-        hook, where realization directories have not yet been created. By default
-        False.
+        when True, file-system validators that depend on realization-specific
+        directories or files are skipped. Config-resident paths (e.g. stack
+        model XMLs, ``twt_model``, ``attribute_map_definition_file``, WebvizMap
+        grid files) are still validated against ``config_dir_sim2seis``. Intended
+        for ERT's ``validate_pre_experiment`` hook, where realization directories
+        have not yet been created. By default False.
 
     Returns
     -------
@@ -69,8 +71,6 @@ def read_yaml_file(
 
     with open(sim2seis_config_dir / sim2seis_config_file) as f:
         data = yaml.safe_load(f)
-        # add information about the config file name
-        data["config_file_name"] = sim2seis_config_file
 
         # If there is no information about global configuration, we can either
         # return a dict which is not parsed at all, or parse the YAML file without

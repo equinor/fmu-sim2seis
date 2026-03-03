@@ -368,6 +368,7 @@ class WebvizMap(BaseModel):
         full_name, should_validate = cls._resolve_grid_path(v, info)
         if should_validate and not full_name.is_file():
             raise ValueError(f"WebvizMap: {full_name!s} is not a file")
+        return Path(v)
 
     @field_validator("attribute_error", mode="before")
     def attribute_error_check(cls, v: float | Path):

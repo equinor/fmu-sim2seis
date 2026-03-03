@@ -42,10 +42,11 @@ class SeismicForward(ForwardModelStepPlugin):
         # errors at an early stage.
         #
         # At this point ERT has not yet created the per-realization directory
-        # structure, so file/directory existence checks must be skipped.
-        # pre_experiment=True is passed to read_yaml_file so that all pydantic
-        # validators that check the file system are suppressed, while validators
-        # for non-path parameters (types, ranges, etc.) still run normally.
+        # structure, so realization-specific file/directory existence checks must
+        # be skipped. pre_experiment=True is passed to read_yaml_file so that
+        # realization-specific filesystem validators are suppressed, while
+        # config-resident file checks and non-path validators (types, ranges,
+        # etc.) still run normally.
 
         args = parse_arguments(
             arguments=fm_step_json["argList"],
