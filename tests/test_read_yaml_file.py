@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from fmu.sim2seis.utilities import read_yaml_file
 
@@ -80,9 +81,10 @@ def test_read_yaml_pre_experiment_skips_filesystem_checks(
 
     monkeypatch.chdir(config_dir)
 
-    # Without pre_experiment=True this would fail because directories such as
-    # ../../sim2seis/output/pem do not exist under tmp_path.
-    with pytest.raises(Exception):
+    # Without pre_experiment=True this must raise a pydantic ValidationError
+    # because the realization output directories (e.g. pem_output_dir) do not
+    # exist under tmp_path.
+    with pytest.raises(ValidationError, match="is not an existing directory"):
         read_yaml_file(
             sim2seis_config_dir=config_dir,
             sim2seis_config_file=Path("sim2seis_config.yml"),
