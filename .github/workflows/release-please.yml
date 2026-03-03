@@ -7,6 +7,8 @@ on:
                 description: "When 'true', a release PR was merged"
                 value: ${{ jobs.release-please.outputs.release_created }}
 
+permissions: {}
+
 jobs:
     release-please:
         runs-on: ubuntu-latest
