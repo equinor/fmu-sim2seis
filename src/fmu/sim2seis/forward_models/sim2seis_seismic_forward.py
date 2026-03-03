@@ -38,8 +38,15 @@ class SeismicForward(ForwardModelStepPlugin):
         return fm_step_json
 
     def validate_pre_experiment(self, fm_step_json: ForwardModelStepJSON) -> None:
-        # Parse YAML parameter file by pydantic pre-experiment to catch errors at an
-        # early stage
+        # Parse YAML parameter file by pydantic pre-experiment to catch configuration
+        # errors at an early stage.
+        #
+        # At this point ERT has not yet created the per-realization directory
+        # structure, so realization-specific file/directory existence checks must
+        # be skipped. pre_experiment=True is passed to read_yaml_file so that
+        # realization-specific filesystem validators are suppressed, while
+        # config-resident file checks and non-path validators (types, ranges,
+        # etc.) still run normally.
 
         args = parse_arguments(
             arguments=fm_step_json["argList"],
@@ -60,6 +67,7 @@ class SeismicForward(ForwardModelStepPlugin):
                     sim2seis_config_file=args.config_file,
                     global_config_dir=global_dir,
                     global_config_file=args.global_file,
+                    pre_experiment=True,
                 )
         except Exception as e:
             raise ForwardModelStepValidationError(
