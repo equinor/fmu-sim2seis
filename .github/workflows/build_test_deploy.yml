@@ -8,6 +8,10 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   test:
     name: "Test: Python ${{ matrix.python-version }}"
@@ -73,6 +77,7 @@ jobs:
         run: |
           uv pip install --system build
           export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_FMU_SIM2SEIS="${{ needs.release-please.outputs.tag_name }}"
+          export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_FMU_SIM2SEIS="${SETUPTOOLS_SCM_PRETEND_VERSION_FOR_FMU_SIM2SEIS#v}"
           python -m build
 
       - name: Upload Package Artifact
