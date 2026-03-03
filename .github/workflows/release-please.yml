@@ -1,0 +1,26 @@
+name: release-please
+
+on:
+    workflow_call:
+        outputs:
+            release_created:
+                description: "When 'true', a release PR was merged"
+                value: ${{ jobs.release-please.outputs.release_created }}
+
+jobs:
+    release-please:
+        runs-on: ubuntu-latest
+        steps:
+            - name: release-please
+              id: release
+              uses: googleapis/release-please-action@v4
+              with:
+                  config-file: .github/release-please-config.json
+                  manifest-file: .github/release-please-manifest.json
+            - name: Outputs
+              run: |
+                  # Log release-please output
+                  echo "PR created/updated: ${{ steps.release.outputs.prs_created || 'false' }}"
+                  echo "release created:    ${{ steps.release.outputs.release_created || 'false' }}"
+        outputs:
+            release_created: ${{ steps.release.outputs.release_created }}
