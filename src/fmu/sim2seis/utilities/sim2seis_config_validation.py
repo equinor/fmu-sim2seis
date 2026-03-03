@@ -120,9 +120,7 @@ class Sim2SeisPaths(BaseModel):
         for field_name in _DIRECTORY_FIELDS:
             path: Path = getattr(self, field_name)
             if not path.is_dir():
-                raise ValueError(
-                    f"{field_name}: '{path}' is not an existing directory"
-                )
+                raise ValueError(f"{field_name}: '{path}' is not an existing directory")
         return self
 
 

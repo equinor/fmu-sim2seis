@@ -83,9 +83,7 @@ def read_yaml_file(
         # ERT can validate config parameters before realization dirs are created.
         validation_context: dict = {"pre_experiment": pre_experiment}
         paths_data = data.get("paths", {})
-        paths_obj = Sim2SeisPaths.model_validate(
-            paths_data, context=validation_context
-        )
+        paths_obj = Sim2SeisPaths.model_validate(paths_data, context=validation_context)
         paths_obj.config_dir_sim2seis = sim2seis_config_dir
         paths_obj.fmu_rootpath = _resolve_fmu_rootpath(sim2seis_config_dir)
         data["paths"] = paths_obj
