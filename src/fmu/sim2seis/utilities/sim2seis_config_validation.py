@@ -421,7 +421,6 @@ class Sim2SeisConfig(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True, title="Sim2Seis Configuration"
     )
-    config_file_name: Path
     paths: SkipJsonSchema[Sim2SeisPaths]
     pickle_file_prefix: SkipJsonSchema[PickleFilePrefix] = Field(
         default=PickleFilePrefix()
