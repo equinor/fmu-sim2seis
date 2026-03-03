@@ -6,6 +6,9 @@ on:
             release_created:
                 description: "When 'true', a release PR was merged"
                 value: ${{ jobs.release-please.outputs.release_created }}
+            tag_name:
+                description: "The tag name of the release, if one was created"
+                value: ${{ jobs.release-please.outputs.tag_name }}
 
 permissions: {}
 
@@ -26,3 +29,4 @@ jobs:
                   echo "release created:    ${{ steps.release.outputs.release_created || 'false' }}"
         outputs:
             release_created: ${{ steps.release.outputs.release_created }}
+            tag_name: ${{ steps.release.outputs.tag_name }}
