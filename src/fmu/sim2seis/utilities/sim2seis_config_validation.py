@@ -173,17 +173,20 @@ class SeismicForward(BaseModel):
 
     @model_validator(mode="after")
     def check_seismic_fwd(self, info: ValidationInfo) -> Self:
-        if info and info.context and info.context.get("pre_experiment"):
-            return self
-
         paths = info.context.get("paths") if info and info.context else None
         if not paths:
             return self
 
         base = paths.config_dir_sim2seis
+        pre_experiment = bool(
+            info and info.context and info.context.get("pre_experiment")
+        )
+
+        # Stack model files live in sim2seis/model — validate against config dir
+        # both in normal runs and at pre_experiment time.
         resolved = {}
         for key, value in self.stack_models.items():
-            path = base / value
+            path = (base / value).resolve()
             if not path.is_file():
                 raise ValueError(
                     f"stack model file {value.name} is not present in directory {base}"
@@ -191,12 +194,21 @@ class SeismicForward(BaseModel):
             resolved[key] = path
         self.stack_models = resolved
 
+        # twt_model lives in sim2seis/model — validate against config dir always.
+        twt_path = (base / self.twt_model).resolve()
+        if not twt_path.is_file():
+            raise ValueError(f"twt_model: {twt_path!s} is not a file")
+        self.twt_model = twt_path
+
+        if pre_experiment:
+            # Realization-specific paths (pem_output_dir, etc.) are not yet
+            # available; skip those checks.
+            return self
+
         if not paths.pem_output_dir.is_dir():
             raise ValueError(
                 f"pem_output_dir is not a directory: {paths.pem_output_dir}"
             )
-        if not self.twt_model.is_file():
-            raise ValueError(f"twt_model: {self.twt_model!s} is not a file")
         return self
 
 
@@ -319,44 +331,43 @@ class WebvizMap(BaseModel):
         default=0.0,
     )
 
-    @field_validator("grid_file", mode="before")
-    def grid_file_check(cls, v: str, info: ValidationInfo):
-        if info and info.context and info.context.get("pre_experiment"):
-            return Path(v)
+    @staticmethod
+    def _resolve_grid_path(v: str, info: ValidationInfo) -> tuple[Path, bool]:
+        """Return (full_path, should_validate) for a grid file.
+
+        In both normal and pre_experiment mode the file is resolved against
+        ``paths.grid_dir``.  When ``config_dir_sim2seis`` is available, the
+        relative ``grid_dir`` is anchored to the config directory so that the
+        check works from the shared config location rather than the (not-yet-
+        created) realization runpath.
+        """
         paths = info.context.get("paths") if info and info.context else None
         if not paths:
-            return Path(v)  # Skip validation if no context
+            return Path(v), False  # no context — skip validation
+        grid_dir = paths.grid_dir
+        if not grid_dir.is_absolute():
+            grid_dir = (paths.config_dir_sim2seis / grid_dir).resolve()
+        return grid_dir / v, True
 
-        full_name = paths.grid_dir / v
-        if not full_name.is_file():
+    @field_validator("grid_file", mode="before")
+    def grid_file_check(cls, v: str, info: ValidationInfo):
+        full_name, should_validate = cls._resolve_grid_path(v, info)
+        if should_validate and not full_name.is_file():
             raise ValueError(f"WebvizMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("zone_file", mode="before")
     def zone_file_check(cls, v: str, info: ValidationInfo):
-        if info and info.context and info.context.get("pre_experiment"):
-            return Path(v)
-        paths = info.context.get("paths") if info and info.context else None
-        if not paths:
-            return Path(v)
-
-        full_name = paths.grid_dir / v
-        if not full_name.is_file():
+        full_name, should_validate = cls._resolve_grid_path(v, info)
+        if should_validate and not full_name.is_file():
             raise ValueError(f"WebvizMap: {full_name!s} is not a file")
         return Path(v)
 
     @field_validator("region_file", mode="before")
     def region_file_check(cls, v: str, info: ValidationInfo):
-        if info and info.context and info.context.get("pre_experiment"):
-            return Path(v)
-        paths = info.context.get("paths") if info and info.context else None
-        if not paths:
-            return Path(v)
-
-        full_name = paths.grid_dir / v
-        if not full_name.is_file():
+        full_name, should_validate = cls._resolve_grid_path(v, info)
+        if should_validate and not full_name.is_file():
             raise ValueError(f"WebvizMap: {full_name!s} is not a file")
-        return Path(v)
 
     @field_validator("attribute_error", mode="before")
     def attribute_error_check(cls, v: float | Path):
@@ -511,19 +522,18 @@ class Sim2SeisConfig(BaseModel):
 
     @model_validator(mode="after")
     def check_sim2seis_config(self, info: ValidationInfo) -> Self:
-        if info and info.context and info.context.get("pre_experiment"):
-            return self
+        # attribute_map_definition_file lives in sim2seis/model — validate
+        # against config_dir_sim2seis in both normal and pre_experiment mode.
+        config_dir = self.paths.config_dir_sim2seis
+        attr_file = self.attribute_map_definition_file
+        if not attr_file.is_file():
+            resolved = config_dir / attr_file
+            if not resolved.is_file():
+                raise ValueError(f"{attr_file} is not recognised as a file")
 
-        # Check attribute_map_definition_file exists relative to config file
-        if not self.attribute_map_definition_file.is_file():
-            if self.paths.config_dir_sim2seis.joinpath(
-                self.attribute_map_definition_file
-            ).is_file():
-                pass
-            else:
-                raise ValueError(
-                    f"{self.attribute_map_definition_file} is not recognised as a file"
-                )
+        if info and info.context and info.context.get("pre_experiment"):
+            # Realization-specific checks are skipped at pre_experiment stage.
+            return self
 
         return self
 
