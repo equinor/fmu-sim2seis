@@ -10,7 +10,10 @@ on:
                 description: "The tag name of the release, if one was created"
                 value: ${{ jobs.release-please.outputs.tag_name }}
 
-permissions: {}
+permissions:
+    contents: write
+    pull-requests: write
+    issues: write
 
 jobs:
     release-please:
