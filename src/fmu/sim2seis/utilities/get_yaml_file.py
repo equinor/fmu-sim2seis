@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import yaml
@@ -8,6 +9,10 @@ from .sim2seis_config_validation import Sim2SeisConfig, Sim2SeisPaths
 
 
 def _resolve_fmu_rootpath(config_dir: Path) -> Path:
+    # First: establish if we run from ERT, if so use the RUNPATH
+    if os.environ.get("_ERT_RUNPATH", None):
+        return Path(os.environ.get("_ERT_RUNPATH"))
+
     # Ensure config_dir is absolute before computing the FMU root to avoid
     # depending on the current working directory (common in CLI entrypoints).
     resolved_config_dir = (
@@ -20,9 +25,11 @@ def _resolve_fmu_rootpath(config_dir: Path) -> Path:
     try:
         return resolved_config_dir.parents[1]
     except IndexError:
-        # Fallback for unexpected shallow directory structures: use the
-        # immediate parent rather than failing outright.
-        return resolved_config_dir.parent
+        # If this is the case, the argument for config_dir must be wrong, and
+        # it's better to raise an error than to continue
+        raise ValueError(
+            f"unable to find fmu rootpath from config_dir: {resolved_config_dir}"
+        )
 
 
 def read_yaml_file(
