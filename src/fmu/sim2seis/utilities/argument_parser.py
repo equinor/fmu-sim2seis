@@ -116,11 +116,11 @@ def parse_arguments(
 
 
 def check_startup_dir(cwd: Path) -> Path:
-    run_folder = cwd.absolute()
-    if not str(run_folder).endswith("sim2seis/model"):
+    config_folder = cwd.absolute()
+    if not str(config_folder).endswith("sim2seis/model"):
         warn("sim2seis workflow should be run from the sim2seis/model folder.")
-    if not (run_folder.exists() and run_folder.is_dir()):
+    if not (config_folder.exists() and config_folder.is_dir()):
         raise ValueError(
-            f"Start directory does not exist or is not a directory: {run_folder}"
+            f"Start directory does not exist or is not a directory: {config_folder}"
         )
-    return run_folder
+    return config_folder
