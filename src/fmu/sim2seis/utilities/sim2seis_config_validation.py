@@ -41,58 +41,59 @@ _DIRECTORY_FIELDS = (
 
 
 class Sim2SeisPaths(BaseModel):
+    # All paths are relative to the FMU rootpath
     pem_output_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../sim2seis/output/pem"),
+        default=Path("sim2seis/output/pem"),
         description="Folder for results from `fmu-pem`. All folder "
         "references in the FMU structure are relative to "
         "./sim2seis/model, where '.' is the top folder in each "
         "realization",
     )
     modelled_seismic_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../share/results/cubes"),
+        default=Path("share/results/cubes"),
         description="The standard folder for resulting cubes is controlled "
         "through the use of fmu-dataio. This folder refers to "
         "the intermediate files from seismic forward modelling",
     )
     preprocessed_seismic_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../share/preprocessed/cubes"),
+        default=Path("share/preprocessed/cubes"),
         description="The standard folder for resulting cubes is controlled "
         "through the use of fmu-dataio. This folder refers to "
         "the intermediate files from seismic forward modelling",
     )
     modelled_horizon_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../share/results/maps"),
+        default=Path("share/results/maps"),
         description="The standard folder for horizons both of time and depth domain, "
         "as well as attribute maps",
     )
     time_horizon_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../share/results/maps"),
+        default=Path("share/results/maps"),
         description="The standard folder for horizons both of time and depth domain, "
         "as well as attribute maps",
     )
     depth_horizon_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../share/results/maps"),
+        default=Path("share/results/maps"),
         description="The standard folder for horizons both of time and depth domain, "
         "as well as attribute maps",
     )
     observed_horizon_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../share/preprocessed/maps"),
+        default=Path("share/preprocessed/maps"),
         description="The standard folder for horizons both of time and depth domain",
     )
     grid_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../sim2seis/input/pem"),
+        default=Path("sim2seis/input/pem"),
         description="This directory is the standard place for grid definition files",
     )
     pickle_file_output_dir: SkipJsonSchema[Path] = Field(
-        default=Path("../../share/results/pickle_files"),
+        default=Path("share/results/pickle_files"),
         description="Directory for storing all module results in pickle format",
     )
     output_dir_modelled_data: SkipJsonSchema[Path] = Field(
-        default=Path("../../share/results/tables"),
+        default=Path("share/results/tables"),
         description="Ascii files for WebViz or ERT are written to this directory",
     )
     output_dir_observed_data: SkipJsonSchema[Path] = Field(
-        default=Path("../../ert/input/preprocessed/seismic"),
+        default=Path("ert/input/preprocessed/seismic"),
         description="Ascii files for WebViz or ERT are written to this directory",
     )
     config_dir_sim2seis: SkipJsonSchema[Path] = Field(
@@ -159,7 +160,7 @@ class SeismicForward(BaseModel):
         # We list the enum values here while waiting on input on https://github.com/rjsf-team/react-jsonschema-form/issues/4682
     )
     twt_model: SkipJsonSchema[Path] = Field(
-        default=Path("../../sim2seis/model/model_file_twt.xml"),
+        default=Path("sim2seis/model/model_file_twt.xml"),
         description="The first run of seismic forward sets up a depth/time "
         "relationship, and a 2D map in 'storm' format is generated. "
         "This map shows the TWT timeshift if the base case ",
@@ -439,22 +440,22 @@ class SeismicInversionConfig(BaseModel):
         default="relai", description="Attribute type for seismic inverted cubes"
     )
     d_syn_0: SkipJsonSchema[Path] = Field(
-        default=Path("../../sim2seis/output/seismic_forward/seismic--d_syn0.sgy"),
+        default=Path("sim2seis/output/seismic_forward/seismic--d_syn0.sgy"),
         description="Default name for synthetic seismic data for the first vintage"
         "based on the relative inversion results and the wavelet",
     )
     d_syn_1: SkipJsonSchema[Path] = Field(
-        default=Path("../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy"),
+        default=Path("sim2seis/output/seismic_forward/seismic--d_syn1.sgy"),
         description="Default name for synthetic seismic data for the second vintage"
         "based on the relative inversion results and the wavelet",
     )
     rel_ai_0: SkipJsonSchema[Path] = Field(
-        default=Path("../../sim2seis/output/seismic_forward/seismic--relai_0.sgy"),
+        default=Path("sim2seis/output/seismic_forward/seismic--relai_0.sgy"),
         description="Default name for relative acoustic impedance for the first "
         "vintage",
     )
     rel_ai_1: SkipJsonSchema[Path] = Field(
-        default=Path("../../sim2seis/output/seismic_forward/seismic--relai_1.sgy"),
+        default=Path("sim2seis/output/seismic_forward/seismic--relai_1.sgy"),
         description="Default name for relative acoustic impedance for the second "
         "vintage",
     )

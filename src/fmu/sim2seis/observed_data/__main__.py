@@ -39,17 +39,16 @@ def main(arguments=None):
         ],
     )
     # Validate startup directory
-    run_folder = check_startup_dir(args.config_dir)
-
-    with restore_dir(run_folder):
+    config_dir = check_startup_dir(args.config_dir)
+    config = read_yaml_file(
+        sim2seis_config_dir=config_dir,
+        sim2seis_config_file=args.config_file,
+        global_config_dir=args.global_dir,
+        global_config_file=args.global_file,
+        obs_prefix=args.obs_date_prefix,
+    )
+    with restore_dir(config.paths.fmu_rootpath):
         # Read configuration file, including global configuration
-        config = read_yaml_file(
-            sim2seis_config_dir=args.config_dir,
-            sim2seis_config_file=args.config_file,
-            global_config_dir=args.global_dir,
-            global_config_file=args.global_file,
-            obs_prefix=args.obs_date_prefix,
-        )
 
         # Establish symlinks to the observed seismic data, make exception for
         # tests runs, where a test dataset is copied instead
@@ -95,7 +94,7 @@ def main(arguments=None):
         else:
             attr_list = populate_seismic_attributes(
                 config=read_yaml_file(
-                    sim2seis_config_dir=run_folder,
+                    sim2seis_config_dir=config_dir,
                     sim2seis_config_file=config.attribute_map_definition_file,
                     parse_inputs=False,
                 ),
@@ -105,7 +104,7 @@ def main(arguments=None):
             attribute_export(
                 config_file=config,
                 export_attributes=attr_list,
-                config_dir=run_folder,
+                config_dir=config_dir,
                 is_observed=True,
                 is_preprocessed=not config.test_run,
             )
@@ -126,7 +125,7 @@ def main(arguments=None):
         cube_export(
             config_file=config,
             export_cubes=depth_cubes,
-            config_dir=run_folder,
+            config_dir=config_dir,
             is_observed=True,
             # If there is per-realisation depth uncertainty, we
             # must set the 'preprocessed' attribute for fmu-dataio
