@@ -47,7 +47,6 @@ class SeismicForward(ForwardModelStepPlugin):
         # realization-specific filesystem validators are suppressed, while
         # config-resident file checks and non-path validators (types, ranges,
         # etc.) still run normally.
-
         args = parse_arguments(
             arguments=fm_step_json["argList"],
             extra_arguments=[
@@ -57,15 +56,13 @@ class SeismicForward(ForwardModelStepPlugin):
                 "mod_date_prefix",
             ],
         )
-        # Hard-code relative path to global config file
-        global_dir = args.config_dir / args.global_dir
 
         try:
             with restore_dir(args.config_dir):
                 _ = read_yaml_file(
                     sim2seis_config_dir=args.config_dir,
                     sim2seis_config_file=args.config_file,
-                    global_config_dir=global_dir,
+                    global_config_dir=args.global_dir,
                     global_config_file=args.global_file,
                     pre_experiment=True,
                 )
@@ -85,7 +82,7 @@ class SeismicForward(ForwardModelStepPlugin):
                 "code-block:: console\n\n"
                 "FORWARD_MODEL SEISMIC_FORWARD("
                 "<CONFIG_DIR>=../../sim2seis/model, "
-                "<CONFIG_FILE>=sim2seis_config.yml, "
+                "<CONFIG_FILE>=sim2seis_combined_config.yml, "
                 "<GLOBAL_DIR>=../../fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
                 "<MOD_DATE_PREFIX>=HIST, "
