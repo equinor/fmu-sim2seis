@@ -37,16 +37,14 @@ def main(arguments=None):
         ],
     )
 
-    run_folder = check_startup_dir(args.config_dir)
-
-    with restore_dir(run_folder):
-        conf = read_yaml_file(
-            sim2seis_config_dir=args.config_dir,
-            sim2seis_config_file=args.config_file,
-            global_config_dir=args.global_dir,
-            global_config_file=args.global_file,
-        )
-
+    config_dir = check_startup_dir(args.config_dir)
+    conf = read_yaml_file(
+        sim2seis_config_dir=args.config_dir,
+        sim2seis_config_file=args.config_file,
+        global_config_dir=args.global_dir,
+        global_config_file=args.global_file,
+    )
+    with restore_dir(conf.paths.fmu_rootpath):
         # Retrieve the seismic time cubes from seismic forward modelling
         seismic_time_cubes = retrieve_seismic_forward_results(config=conf)
 
@@ -54,7 +52,7 @@ def main(arguments=None):
         rel_ai_time_dict = run_relative_inversion_si4ti(
             time_cubes=seismic_time_cubes,
             config=conf,
-            config_dir=run_folder,
+            config_dir=config_dir,
         )
 
         # Depth conversion, as the inversion is run in time domain
@@ -79,7 +77,6 @@ def main(arguments=None):
         cube_export(
             config_file=conf,
             export_cubes=rel_ai_depth_dict,
-            config_dir=run_folder,
             is_observed=False,
         )
 

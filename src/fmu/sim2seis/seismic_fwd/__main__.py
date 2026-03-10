@@ -39,18 +39,26 @@ def main(arguments=None):
             "mod_date_prefix",
         ],
     )
-    run_folder = check_startup_dir(args.config_dir)
+    # Settings to include in script that is controlled by debug server
+    #
+    # import debugpy
 
-    with restore_dir(run_folder):
-        # Get configuration parameters
-        config = read_yaml_file(
-            sim2seis_config_dir=args.config_dir,
-            sim2seis_config_file=args.config_file,
-            global_config_dir=args.global_dir,
-            global_config_file=args.global_file,
-            mod_prefix=args.mod_date_prefix,
-        )
+    # debugpy.listen(("localhost", 5678))
+    # print("⏸ Waiting for debugger to attach on port 5678...", file=sys.stderr)
+    # debugpy.wait_for_client()
+    # print("✓ Debugger attached!", file=sys.stderr)
+    # debugpy.breakpoint()
 
+    config_dir = check_startup_dir(args.config_dir)
+    # Get configuration parameters
+    config = read_yaml_file(
+        sim2seis_config_dir=args.config_dir,
+        sim2seis_config_file=args.config_file,
+        global_config_dir=args.global_dir,
+        global_config_file=args.global_file,
+        mod_prefix=args.mod_date_prefix,
+    )
+    with restore_dir(config.paths.fmu_rootpath):
         # Read the horizons that are used in depth conversion and later for extraction
         # of attributes
         time_horizons = read_surfaces(
@@ -73,7 +81,7 @@ def main(arguments=None):
         # Seismic forward modelling
         depth_cubes, time_cubes = exe_seismic_forward(
             config_file=config,
-            config_dir=run_folder,
+            config_dir=config_dir,
             velocity_model=velocity_model,
             verbose=args.verbose,
         )
@@ -105,7 +113,6 @@ def main(arguments=None):
         cube_export(
             config_file=config,
             export_cubes=diff_depth,
-            config_dir=run_folder,
             is_observed=False,
         )
 
@@ -113,7 +120,6 @@ def main(arguments=None):
         cube_export(
             config_file=config,
             export_cubes=time_cubes,
-            config_dir=run_folder,
             is_observed=False,
         )
 
