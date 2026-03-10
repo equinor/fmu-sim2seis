@@ -42,13 +42,12 @@ def main(arguments=None):
         extra_arguments=["cleanup"],
     )
     # args may contain only an empty string in "prefixlist". If so, remove attribute
-    run_folder = check_startup_dir(args.config_dir)
-
-    with restore_dir(run_folder):
-        config = read_yaml_file(
-            sim2seis_config_dir=args.config_dir,
-            sim2seis_config_file=args.config_file,
-        )
+    config_dir = check_startup_dir(args.config_dir)
+    config = read_yaml_file(
+        sim2seis_config_dir=config_dir,
+        sim2seis_config_file=args.config_file,
+    )
+    with restore_dir(config.paths.fmu_rootpath):
         prefix_list = getattr(args, "prefix_list", None)
         if not prefix_list or prefix_list in ([""], ["<PREFIX_LIST>"]):
             clear_result_objects(output_path=config.paths.pickle_file_output_dir)
