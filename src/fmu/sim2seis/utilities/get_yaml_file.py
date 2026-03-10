@@ -3,11 +3,12 @@ from pathlib import Path
 
 import yaml
 
-from fmu.pem.pem_utilities import get_global_params_and_dates
+from fmu.pem.pem_utilities import get_global_params_and_dates, restore_dir
 
 from .sim2seis_config_validation import Sim2SeisConfig, Sim2SeisPaths
 
 
+# ToDo: import this from fmu-pem once it is part of main
 def _resolve_fmu_rootpath(config_dir: Path) -> Path:
     # First: establish if we run from ERT, if so use the RUNPATH
     if os.environ.get("_ERT_RUNPATH", None):
@@ -88,26 +89,29 @@ def read_yaml_file(
         # Build paths by merging YAML overrides with defaults.
         # In pre_experiment mode, directory-existence checks are skipped so that
         # ERT can validate config parameters before realization dirs are created.
-        validation_context: dict = {"pre_experiment": pre_experiment}
-        paths_data = data.get("paths", {})
-        paths_obj = Sim2SeisPaths.model_validate(paths_data, context=validation_context)
-        paths_obj.config_dir_sim2seis = sim2seis_config_dir
-        paths_obj.fmu_rootpath = _resolve_fmu_rootpath(sim2seis_config_dir)
-        data["paths"] = paths_obj
-
-        validation_context["paths"] = paths_obj
-        conf = Sim2SeisConfig.model_validate(data, context=validation_context)
-
-        # Read necessary part of global configurations and parameters if there is
-        # information about global file
-        if global_config_dir and global_config_file:
-            conf.update_with_global(
-                get_global_params_and_dates(
-                    global_config_dir=sim2seis_config_dir / global_config_dir,
-                    global_conf_file=global_config_file,
-                    obs_prefix=obs_prefix,
-                    mod_prefix=mod_prefix,
-                )
+        with restore_dir(_resolve_fmu_rootpath(sim2seis_config_dir)):
+            validation_context: dict = {"pre_experiment": pre_experiment}
+            paths_data = data.get("paths", {})
+            paths_obj = Sim2SeisPaths.model_validate(
+                paths_data, context=validation_context
             )
+            paths_obj.config_dir_sim2seis = sim2seis_config_dir
+            paths_obj.fmu_rootpath = _resolve_fmu_rootpath(sim2seis_config_dir)
+            data["paths"] = paths_obj
+
+            validation_context["paths"] = paths_obj
+            conf = Sim2SeisConfig.model_validate(data, context=validation_context)
+
+            # Read necessary part of global configurations and parameters if there is
+            # information about global file
+            if global_config_dir and global_config_file:
+                conf.update_with_global(
+                    get_global_params_and_dates(
+                        global_config_dir=global_config_dir,
+                        global_conf_file=global_config_file,
+                        obs_prefix=obs_prefix,
+                        mod_prefix=mod_prefix,
+                    )
+                )
 
     return conf

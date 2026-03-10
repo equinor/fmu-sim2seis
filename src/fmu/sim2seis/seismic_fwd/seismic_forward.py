@@ -46,10 +46,12 @@ def exe_seismic_forward(
 
         # Resolve the cubes directory once so subsequent path operations
         # are explicit and independent of the current working directory.
-        cubes_dir = (config_dir / config_file.paths.modelled_seismic_dir).resolve()
+        cubes_dir = (
+            config_file.paths.fmu_rootpath / config_file.paths.modelled_seismic_dir
+        ).resolve()
 
         for stack, model in config_file.seismic_fwd.stack_models.items():
-            result = run_simulation(model)
+            result = run_simulation(config_dir / model)
             assert result["success"]
             if verbose:
                 print(result)
