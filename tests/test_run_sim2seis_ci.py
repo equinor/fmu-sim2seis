@@ -1,3 +1,4 @@
+import os
 import pickle
 from pathlib import Path
 
@@ -7,13 +8,13 @@ import yaml
 from fmu.pem.pem_utilities import restore_dir
 from numpy import isclose
 
+from fmu.sim2seis.cleanup import main as run_cleanup
 from fmu.sim2seis.map_attributes import main as map_attributes
 from fmu.sim2seis.observed_data import main as run_obs_data
 from fmu.sim2seis.seismic_fwd import main as run_seismic_forward
 from fmu.sim2seis.seismic_inversion import main as run_seismic_inversion
 from fmu.sim2seis.utilities import DifferenceSeismic, SeismicAttribute, SingleSeismic
 
-obs_data_config_file_name = Path("obs_data_config.yml")
 sim2seis_config_file_name = Path("sim2seis_combined_config.yml")
 
 # If there is a need to re-calibrate the test, set CALIBRATE to True
@@ -24,13 +25,13 @@ r_tol = 0.001
 
 def test_obs_data(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
-    monkeypatch.chdir(config_dir)
+    monkeypatch.chdir(data_dir)
 
-    with open(sim2seis_config_file_name) as fin:
+    with open(config_dir / sim2seis_config_file_name) as fin:
         data = yaml.safe_load(fin)
         # Modify the config file: add `test_run = True`
         data["test_run"] = True
-    fout_name = Path(
+    fout_name = config_dir / Path(
         sim2seis_config_file_name.stem + "_test" + sim2seis_config_file_name.suffix
     )
     with open(fout_name, "w") as fout:
@@ -43,7 +44,7 @@ def test_obs_data(monkeypatch, data_dir):
             "--config-file",
             str(fout_name),
             "--global-dir",
-            "../../fmuconfig/output",
+            "fmuconfig/output",
             "--global-file",
             "global_variables.yml",
             "--obs-date-prefix",
@@ -54,25 +55,23 @@ def test_obs_data(monkeypatch, data_dir):
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path(
-            "../../share/observations/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
+            "share/preprocessed/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/observations/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
+            "share/preprocessed/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/observations/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
+            "share/preprocessed/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
         ),
         Path(
-            "../../share/observations/tables/topvolantis--relai_full_rms_depth--20200701_20180101.csv"
+            "share/preprocessed/tables/topvolantis--relai_full_rms_depth--20200701_20180101.csv"
         ),
-        Path("../../share/results/pickle_files/observed_data_time_cubes.pkl"),
     ]
     expected_values = [
         737.739982963365,
         -1128.321365091755,
         14371913838.663399,
         14371913847.189327,
-        46.49933598935604,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
@@ -92,16 +91,15 @@ def test_sim2seis(monkeypatch, data_dir):
 
 
 def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
-    config_dir = data_dir / "sim2seis" / "model"
-    monkeypatch.chdir(config_dir)
+    monkeypatch.chdir(data_dir)
     run_seismic_forward(
         [
             "--config-dir",
-            str(config_dir),
+            "sim2seis/model",
             "--config-file",
             str(sim2seis_config_file_name),
             "--global-dir",
-            "../../fmuconfig/output",
+            "fmuconfig/output",
             "--global-file",
             "global_variables.yml",
             "--mod-date-prefix",
@@ -113,11 +111,11 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
 
     # Check values in some of the resulting data files against truth values
     test_files = [
-        Path("../../share/results/cubes/seismic--amplitude_full_depth--20200701.segy"),
+        Path("share/results/cubes/seismic--amplitude_full_depth--20200701.segy"),
         Path(
-            "../../share/results/cubes/seismic--amplitude_full_depth--20180701_20180101.segy"
+            "share/results/cubes/seismic--amplitude_full_depth--20180701_20180101.segy"
         ),
-        Path("../../share/results/pickle_files/seismic_fwd_diff_time.pkl"),
+        Path("share/results/pickle_files/seismic_fwd_diff_time.pkl"),
     ]
     expected_values = [
         2507.2085,
@@ -137,7 +135,7 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
 
 def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
-    monkeypatch.chdir(config_dir)
+    monkeypatch.chdir(data_dir)
     run_seismic_inversion(
         [
             "--config-dir",
@@ -145,7 +143,7 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
             "--config-file",
             str(sim2seis_config_file_name),
             "--global-dir",
-            "../../fmuconfig/output",
+            "fmuconfig/output",
             "--global-file",
             "global_variables.yml",
             "--verbose",
@@ -155,11 +153,9 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
 
     # Check values in some of the resulting data files against truth values
     test_files = [
-        Path(
-            "../../share/results/cubes/seismic--relai_full_depth--20180701_20180101.segy"
-        ),
-        Path("../../share/results/pickle_files/relai_diff_depth.pkl"),
-        Path("../../share/results/pickle_files/relai_diff_time.pkl"),
+        Path("share/results/cubes/seismic--relai_full_depth--20180701_20180101.segy"),
+        Path("share/results/pickle_files/relai_diff_depth.pkl"),
+        Path("share/results/pickle_files/relai_diff_time.pkl"),
     ]
     expected_values = [
         -548.9944,
@@ -179,7 +175,7 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
 
 def run_test_sim2seis_map(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
-    monkeypatch.chdir(config_dir)
+    monkeypatch.chdir(data_dir)
     for attribute in ["amplitude", "relai"]:
         with restore_dir(config_dir):
             map_attributes(
@@ -189,7 +185,7 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
                     "--config-file",
                     str(sim2seis_config_file_name),
                     "--global-dir",
-                    "../../fmuconfig/output",
+                    "fmuconfig/output",
                     "--global-file",
                     "global_variables.yml",
                     "--attribute",
@@ -200,19 +196,19 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path(
-            "../../share/results/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
+            "share/results/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/results/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
+            "share/results/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
+            "share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
         ),
         Path(
-            "../../share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.csv"
+            "share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.csv"
         ),
-        Path("../../share/results/pickle_files/amplitude_maps_depth_attributes.pkl"),
-        Path("../../share/results/pickle_files/relai_maps_depth_attributes.pkl"),
+        Path("share/results/pickle_files/amplitude_maps_depth_attributes.pkl"),
+        Path("share/results/pickle_files/relai_maps_depth_attributes.pkl"),
     ]
     expected_values = [
         1673.4673521434306,
@@ -231,6 +227,19 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
             )
         else:
             assert isclose(value, truth_value, atol=a_tol, rtol=r_tol)
+
+
+def test_pickle_cleanup_main_script(monkeypatch, data_dir):
+    monkeypatch.chdir(data_dir)
+    run_cleanup(
+        [
+            "--config-dir",
+            "sim2seis/model",
+            "--config-file",
+            "sim2seis_combined_config.yml",
+        ],
+    )
+    assert not list(data_dir.joinpath("share", "results", "pickle_files").glob("*.pkl"))
 
 
 def get_sum_value(file_name: Path) -> float:

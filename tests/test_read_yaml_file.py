@@ -9,11 +9,11 @@ from fmu.sim2seis.utilities import read_yaml_file
 
 def test_read_yaml_config(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
-    monkeypatch.chdir(config_dir)
+    monkeypatch.chdir(data_dir)
     conf = read_yaml_file(
         sim2seis_config_dir=config_dir,
-        sim2seis_config_file=Path("sim2seis_config.yml"),
-        global_config_dir=Path("../../fmuconfig/output"),
+        sim2seis_config_file=Path("sim2seis_combined_config.yml"),
+        global_config_dir=Path("fmuconfig/output"),
         global_config_file=Path("global_variables.yml"),
         parse_inputs=True,
     )
@@ -28,12 +28,12 @@ def test_read_yaml_config(monkeypatch, data_dir):
 
 def test_read_comb_data_yaml_file(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
-    monkeypatch.chdir(config_dir)
+    monkeypatch.chdir(data_dir)
     config_file = Path("sim2seis_combined_config.yml")
     conf = read_yaml_file(
         sim2seis_config_file=config_file,
         sim2seis_config_dir=config_dir,
-        global_config_dir=Path("../../fmuconfig/output"),
+        global_config_dir=Path("fmuconfig/output"),
         global_config_file=Path("global_variables.yml"),
         parse_inputs=True,
     )
@@ -79,7 +79,7 @@ def test_read_yaml_pre_experiment_skips_filesystem_checks(
     for f in src_fmu_dir.iterdir():
         shutil.copy2(f, fmuconfig_dir / f.name)
 
-    monkeypatch.chdir(config_dir)
+    monkeypatch.chdir(tmp_path)
 
     # Without pre_experiment=True this must raise a pydantic ValidationError
     # because the realization output directories (e.g. pem_output_dir) do not
@@ -87,8 +87,8 @@ def test_read_yaml_pre_experiment_skips_filesystem_checks(
     with pytest.raises(ValidationError, match="is not an existing directory"):
         read_yaml_file(
             sim2seis_config_dir=config_dir,
-            sim2seis_config_file=Path("sim2seis_config.yml"),
-            global_config_dir=Path("../../fmuconfig/output"),
+            sim2seis_config_file=Path("sim2seis_combined_config.yml"),
+            global_config_dir=Path("fmuconfig/output"),
             global_config_file=Path("global_variables.yml"),
             parse_inputs=True,
             pre_experiment=False,
@@ -98,8 +98,8 @@ def test_read_yaml_pre_experiment_skips_filesystem_checks(
     # realization-specific directory checks are skipped.
     conf = read_yaml_file(
         sim2seis_config_dir=config_dir,
-        sim2seis_config_file=Path("sim2seis_config.yml"),
-        global_config_dir=Path("../../fmuconfig/output"),
+        sim2seis_config_file=Path("sim2seis_combined_config.yml"),
+        global_config_dir=Path("fmuconfig/output"),
         global_config_file=Path("global_variables.yml"),
         parse_inputs=True,
         pre_experiment=True,

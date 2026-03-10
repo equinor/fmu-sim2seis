@@ -7,7 +7,7 @@ You can include `sim2seis` in your ERT set-up by including the following snippet
 DEFINE <JOB_CONFIG_DIR> <RUNPATH>/sim2seis/model
 DEFINE <RELPATH_CONFIG_FILES> <JOB_CONFIG_DIR>
 DEFINE <PEM_CONFIG_FILE_NAME> pem_config.yml
-DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_config.yml
+DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_combined_config.yml
 DEFINE <GLOBAL_PATH> ../../fmuconfig/output
 DEFINE <GLOBAL_CONFIG_FILE> global_variables.yml
 DEFINE <VERBOSE_OUTPUT> False
@@ -37,6 +37,6 @@ FORWARD_MODEL CLEANUP(<CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SE
 FORWARD_MODEL CLEANUP(<CONFIG_DIR>=<RELPATH_CONFIG_FILES>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <PREFIX_LIST>=<CLEANUP_PREFIX>)
 ```
 
-On the next page you will get help setting up your `sim2seis_config.yml`.
+On the next page you will get help setting up your `sim2seis_combined_config.yml`.
 
 For details on how to configure your `pem_config.yml`, see corresponding [FMU PEM](https://equinor.github.io/fmu-pem/) documentation.

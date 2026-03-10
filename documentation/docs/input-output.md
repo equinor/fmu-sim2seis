@@ -14,7 +14,7 @@ This page gives an overview of relevant input and output files, for the differen
 | Grid definition | `./sim2seis/input/pem` | `simgrid.roff` |
 | Zone definition | `./sim2seis/input/pem` | `simgrid--zone.roff` |
 | Region definition | `./sim2seis/input/pem` | `simgrid--region.roff` |
-| Configuration file | `./sim2seis/model` | `sim2seis_config.yml` |
+| Configuration file | `./sim2seis/model` | `sim2seis_combined_config.yml` |
 | Attribute interval definition file | `./sim2seis/model` | `observed_data_intervals_drogon.yml` |
 
 '*': At project level, not realisation level. Note that in cases modelled with depth uncertainty, `preprocessed` is
@@ -42,7 +42,7 @@ changed to `observations`.
 | Grid definition | `./sim2seis/input/pem` | `simgrid.roff` |
 | Zone definition | `./sim2seis/input/pem` | `simgrid--zone.roff` |
 | Region definition | `./sim2seis/input/pem` | `simgrid--region.roff` |
-| Configuration file | `./sim2seis/model` | `sim2seis_config.yml` |
+| Configuration file | `./sim2seis/model` | `sim2seis_combined_config.yml` |
 | Attribute interval definition file | `./sim2seis/model` | `modelled_data_intervals_drogon.yml` |
 | Model file for seismicforward run | `./sim2seis/model` | `model_file_<stack>.xml` |
 | `Vp`, `Vs`, density output from PEM | `./sim2seis/output/pem` | `pem--<date>.grdecl` |
@@ -61,7 +61,7 @@ changed to `observations`.
 | Description | Directory | File |
 | ------------- | ----------- | ---- |
 | Global config | `./fmuconfig/output` | `global_variables.yml` / `global_variables_pred.yml` |
-| Configuration file | `./sim2seis/model` | `sim2seis_config.yml` |
+| Configuration file | `./sim2seis/model` | `sim2seis_combined_config.yml` |
 | Attribute interval definition file | `./sim2seis/model` | `modelled_data_intervals_drogon.yml` |
 | Velocity model for depth conversion | `./share/results/pickle_files` | `seismic_fwd_velocity_model.pkl` |
 | Input seismic time cubes | `./share/results/cubes` | `seismic--amplitude_<stack>_time--<date>.segy` |

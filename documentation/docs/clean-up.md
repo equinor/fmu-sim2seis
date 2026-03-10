@@ -9,7 +9,7 @@ unless the `-l` option of given, with which it is possible to select one or more
 The clean-up process can be executed via the command line:
 
 ```shell
-> sim2seis_cleanup -c ./sim2seis/model -f sim2seis_config.yml -g ../../fmuconfig/output -o global_variables.yml -l relai
+> sim2seis_cleanup -c ./sim2seis/model -f sim2seis_combined_config.yml -g ../../fmuconfig/output -o global_variables.yml -l relai
 ```
 
 With the settings above, all pickle files are deleted. It is also possible to specify that only the pickle files from
