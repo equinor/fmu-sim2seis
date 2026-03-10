@@ -150,8 +150,8 @@ class SeismicForward(BaseModel):
         "is generated. Check the 'stack models' files",
     )
     stack_models: dict[StackDef, Path] = Field(
-        description="Path to XML files describing modelling of different seismic stacks"
-        " (partial or full). "
+        description="Name(s) of XML files describing modelling of different seismic "
+        "stacks (partial or full). Files are expected to be placed in the config dir."
         "The parameters in the files should reflect the case, e.g. "
         "settings for `Vp`, `Vs` and density for the depth intervals. "
         "Documentation to XML tags and values are found in  "
@@ -160,7 +160,7 @@ class SeismicForward(BaseModel):
         # We list the enum values here while waiting on input on https://github.com/rjsf-team/react-jsonschema-form/issues/4682
     )
     twt_model: SkipJsonSchema[Path] = Field(
-        default=Path("sim2seis/model/model_file_twt.xml"),
+        default=Path("model_file_twt.xml"),
         description="The first run of seismic forward sets up a depth/time "
         "relationship, and a 2D map in 'storm' format is generated. "
         "This map shows the TWT timeshift if the base case ",
@@ -257,7 +257,7 @@ class DepthConvertConfig(BaseModel):
         "have extension '.gri', of type RMS binary, with "
         "name ending on '--depth'",
     )
-    time_cube_prefix: SkipJsonSchema[str] = Field(
+    cube_prefix: SkipJsonSchema[str] = Field(
         default="seismic--",
         description="Seismic cube prefix for observed seismic cubes to be "
         "depth converted",
