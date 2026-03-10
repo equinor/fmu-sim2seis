@@ -18,7 +18,6 @@ from .sim2seis_config_validation import Sim2SeisConfig
 def cube_export(
     config_file: Sim2SeisConfig,
     export_cubes: dict[SeismicName, DifferenceSeismic | SingleSeismic],
-    config_dir: Path,
     is_observed: bool = False,
     is_preprocessed: bool = False,
     override_folder: str = "",
@@ -56,7 +55,6 @@ def cube_export(
 def attribute_export(
     config_file: Sim2SeisConfig,
     export_attributes: list[SeismicAttribute],
-    config_dir: Path,
     is_observed: bool = False,
     is_preprocessed: bool = False,
 ) -> None:
@@ -67,17 +65,17 @@ def attribute_export(
     # prepare for ert/webviz export
     simgrid, zone_def, region_def = _get_grid_info(
         config_file=config_file,
-        config_dir=config_dir,
+        root_dir=fmu_rootpath,
     )
-    # Resolve the absolute output path against config_dir, so it does not
+    # Resolve the absolute output path against fmu_rootpath, so it does not
     # depend on the current working directory at call time.
-    if is_preprocessed:
+    if is_observed:
         output_path = (
-            config_dir / config_file.paths.output_dir_observed_data
+            fmu_rootpath / config_file.paths.output_dir_observed_data
         ).resolve()
     else:
         output_path = (
-            config_dir / config_file.paths.output_dir_modelled_data
+            fmu_rootpath / config_file.paths.output_dir_modelled_data
         ).resolve()
     with restore_dir(fmu_rootpath):
         for attr in export_attributes:
@@ -152,10 +150,10 @@ def attribute_export(
 
 def _get_grid_info(
     config_file: Sim2SeisConfig,
-    config_dir: Path,
+    root_dir: Path,
 ) -> tuple[xtgeo.Grid, xtgeo.GridProperty, xtgeo.GridProperty]:
     # Import grid, zones, regions
-    with restore_dir(config_dir):
+    with restore_dir(root_dir):
         grid = xtgeo.grid_from_file(
             config_file.paths.grid_dir.joinpath(config_file.webviz_map.grid_file)
         )
