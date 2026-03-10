@@ -1,7 +1,7 @@
 <seismic-forward>
    <elastic-param>
      #grid with exported PEM parameters:
-     <eclipse-file>../../sim2seis/output/pem/pem.grdecl</eclipse-file>
+     <eclipse-file>sim2seis/output/pem/pem.grdecl</eclipse-file>
 
      # parameters in overburden (top), underburden (bot) and inactive cells (mid):
      <default-values>
@@ -71,10 +71,10 @@
    <output-grid>
      <top-time>
        #<top-time-constant>0</top-time-constant>
-       <top-time-surface>../../sim2seis/input/seismic_forward/TopVolantis.txt</top-time-surface>
+       <top-time-surface>sim2seis/input/seismic_forward/TopVolantis.txt</top-time-surface>
      </top-time>
      <area-from-segy>
-      <filename>../../sim2seis/input/seismic_forward/seismiclayout.segy</filename>
+      <filename>sim2seis/input/seismic_forward/seismiclayout.segy</filename>
      </area-from-segy>
      <cell-size>
       #<dx>50</dx>
@@ -95,7 +95,7 @@
 
    # Specification of output data
    <output-parameters>
-     <prefix>../../share/results/cubes/seismic_temp</prefix>
+     <prefix>share/results/cubes/seismic_temp</prefix>
      <seismic-time-segy>no</seismic-time-segy>
      <seismic-depth-segy>no</seismic-depth-segy>
      <seismic-stack>
@@ -105,7 +105,7 @@
      <elastic-parameters-depth-segy>no</elastic-parameters-depth-segy>
      <elastic-parameters-time-segy>no</elastic-parameters-time-segy>
    </output-parameters>
-   <timeshift-twt>../../share/results/cubes/seismic_base_twt.storm</timeshift-twt>
+   <timeshift-twt>share/results/cubes/seismic_base_twt.storm</timeshift-twt>
 
    <project-settings>
       # number of threads/cpu. Set to 1 when running in batch

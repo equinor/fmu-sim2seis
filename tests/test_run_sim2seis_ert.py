@@ -80,38 +80,38 @@ def get_sum_value(file_name: Path) -> float:
 
 
 def test_sim2seis_ert(testdata, monkeypatch, data_dir):
-    monkeypatch.chdir(data_dir / "sim2seis" / "model")
+    monkeypatch.chdir(data_dir)
     subprocess.run(
-        ["ert", "test_run", "../../ert/model/run_sim2seis.ert"],
+        ["ert", "test_run", "ert/model/run_sim2seis.ert"],
         check=False,
     )
 
     # Check values in some of the resulting data files against truth values
     test_files = [
-        Path("../../share/results/cubes/seismic--amplitude_full_depth--20200701.segy"),
+        Path("share/results/cubes/seismic--amplitude_full_depth--20200701.segy"),
         Path(
-            "../../share/results/cubes/seismic--amplitude_full_depth--20180701_20180101.segy"
+            "share/results/cubes/seismic--amplitude_full_depth--20180701_20180101.segy"
         ),
-        Path("../../share/results/pickle_files/seismic_fwd_diff_time.pkl"),
+        Path("share/results/pickle_files/seismic_fwd_diff_time.pkl"),
         Path(
-            "../../share/results/cubes/seismic--relai_full_depth--20180701_20180101.segy"
+            "share/results/cubes/seismic--relai_full_depth--20180701_20180101.segy"
         ),
-        Path("../../share/results/pickle_files/relai_diff_depth.pkl"),
-        Path("../../share/results/pickle_files/relai_diff_time.pkl"),
+        Path("share/results/pickle_files/relai_diff_depth.pkl"),
+        Path("share/results/pickle_files/relai_diff_time.pkl"),
         Path(
-            "../../share/results/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
-        ),
-        Path(
-            "../../share/results/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
+            "share/results/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
+            "share/results/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "../../share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.csv"
+            "share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
         ),
-        Path("../../share/results/pickle_files/amplitude_maps_depth_attributes.pkl"),
-        Path("../../share/results/pickle_files/relai_maps_depth_attributes.pkl"),
+        Path(
+            "share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.csv"
+        ),
+        Path("share/results/pickle_files/amplitude_maps_depth_attributes.pkl"),
+        Path("share/results/pickle_files/relai_maps_depth_attributes.pkl"),
     ]
     expected_values = [
         2507.2085,

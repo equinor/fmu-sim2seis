@@ -1,5 +1,5 @@
 global:
-  gridhorizon_path: ../../share/results/maps # path for input horizons
+  gridhorizon_path: share/results/maps # path for input horizons
   attributes: # attributes to be made for each cube
     - rms
     - mean

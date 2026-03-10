@@ -2,7 +2,7 @@
 DEFINE <USER> $USER
 DEFINE <SCRATCH> /scratch/fmu
 DEFINE <MODEL_NAME> dev
-DEFINE <CONFIG_PATH> /project/fmu/tutorial/drogon/resmod/ff/users/<USER>/<MODEL_NAME>/sim2seis/model
+DEFINE <CONFIG_PATH> /project/fmu/tutorial/drogon/resmod/ff/users/<USER>/<MODEL_NAME>
 
 NUM_REALIZATIONS 1
 RUNPATH     <SCRATCH>/<USER>/fmu_sim2seis/realization-<IENS>/iter-<ITER>
@@ -24,44 +24,41 @@ FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/model)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/output/pem)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/output/pem/intermediate_results)
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/output/seismic_forward)
-FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/ert/input/observations/seismic)
+FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/ert/input/preprocessed/seismic)
 
 --New output directory
 FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/share/results/pickle_files)
 
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../fmuconfig/output, <TO>=<RUNPATH>/fmuconfig)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/results/cubes, <TO>=<RUNPATH>/share/results)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/results/grids, <TO>=<RUNPATH>/share/results)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/results/maps, <TO>=<RUNPATH>/share/results)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/input/pem, <TO>=<RUNPATH>/sim2seis/input)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/input/seismic_forward, <TO>=<RUNPATH>/sim2seis/input)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/model, <TO>=<RUNPATH>/sim2seis)
--- FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../sim2seis/output/seismic_forward, <TO>=<RUNPATH>/sim2seis/output)
-FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/observations/maps, <TO>=<RUNPATH>/share/observations)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/fmuconfig/output, <TO>=<RUNPATH>/fmuconfig)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/share/results/cubes, <TO>=<RUNPATH>/share/results)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/share/results/grids, <TO>=<RUNPATH>/share/results)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/share/results/maps, <TO>=<RUNPATH>/share/results)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/sim2seis/input/pem, <TO>=<RUNPATH>/sim2seis/input)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/sim2seis/input/seismic_forward, <TO>=<RUNPATH>/sim2seis/input)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/sim2seis/model, <TO>=<RUNPATH>/sim2seis)
+-- FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/sim2seis/output/seismic_forward, <TO>=<RUNPATH>/sim2seis/output)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/share/observations/maps, <TO>=<RUNPATH>/share/observations)
 
 --Comment the two following lines if ert is re-run without deleting the realization directory
---FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/input/seismic_forward)
---FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/../../share/observations/cubes, <TO>=<RUNPATH>/share/observations)
-
--- Create start directory -
-FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/model)
+FORWARD_MODEL MAKE_DIRECTORY(<DIRECTORY> = <RUNPATH>/sim2seis/input/seismic_forward)
+FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/share/observations/cubes, <TO>=<RUNPATH>/share/observations)
 
 DEFINE <CONFIGDIR> <RUNPATH>/sim2seis/model
 DEFINE <PEM_CONFIG_FILE_NAME> pem_config_condensate.yml
-DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_config.yml
-DEFINE <GLOBAL_PATH> ../../fmuconfig/output
+DEFINE <SIM2SEIS_CONFIG_FILE_NAME> sim2seis_combined_config.yml
+DEFINE <GLOBAL_PATH> fmuconfig/output
 DEFINE <GLOBAL_CONFIG_FILE> global_variables.yml
 DEFINE <VERBOSE_OUTPUT> False
 DEFINE <OBS_PREFIX> HIST
 DEFINE <MOD_PREFIX> HIST 
 
 -- Run observed data processing
--- FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <OBS_DATE_PREFIX>=<OBS_PREFIX>, <VERBOSE>=<VERBOSE_OUTPUT>)
+FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <OBS_DATE_PREFIX>=<OBS_PREFIX>, <VERBOSE>=<VERBOSE_OUTPUT>)
 
 -- Run the PEM
 FORWARD_MODEL PEM(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<PEM_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <MOD_DATE_PREFIX>=<MOD_PREFIX>, <VERBOSE>=<VERBOSE_OUTPUT>)
 
--- Need to include seismic diff in FM_4D_SEISMIC to make this work
+-- All forward models in sim2seis, except cleanup
 FORWARD_MODEL SEISMIC_FORWARD(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <VERBOSE>=<VERBOSE_OUTPUT>, <MOD_DATE_PREFIX>=<MOD_PREFIX>)
 
 FORWARD_MODEL RELATIVE_INVERSION(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <VERBOSE>=<VERBOSE_OUTPUT>)
