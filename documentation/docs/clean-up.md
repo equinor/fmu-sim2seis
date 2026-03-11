@@ -9,7 +9,7 @@ unless the `-l` option of given, with which it is possible to select one or more
 The clean-up process can be executed via the command line:
 
 ```shell
-> sim2seis_cleanup -c ./sim2seis/model -f sim2seis_combined_config.yml -g ../../fmuconfig/output -o global_variables.yml -l relai
+> sim2seis_cleanup -c ./sim2seis/model -f sim2seis_combined_config.yml -l relai
 ```
 
 With the settings above, all pickle files are deleted. It is also possible to specify that only the pickle files from
@@ -23,7 +23,7 @@ To add this in an `ert` run, the following line must be added at the end of the 
 
 ```ert
 -- Define your variables:
-FORWARD_MODEL CLEANUP(<CONFIG_DIR>=<JOB_CONFIG_DIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <PREFIX_LIST>=relai)
+FORWARD_MODEL CLEANUP(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <PREFIX_LIST>=relai)
 ```
 
  All required parameters for an `ert` run are defined in [ert configuration](./ert-configuration.md).

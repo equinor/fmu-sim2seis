@@ -46,9 +46,9 @@ class RelativeInversion(ForwardModelStepPlugin):
             examples=(
                 "code-block:: console\n\n"
                 "FORWARD_MODEL RELATIVE_INVERSION("
-                "<CONFIG_DIR>=../../sim2seis/model, "
+                "<CONFIG_DIR>=<RUNPATH>/sim2seis/model, "
                 "<CONFIG_FILE>=sim2seis_combined_config.yml, "
-                "<GLOBAL_DIR>=../../fmuconfig/output, "
+                "<GLOBAL_DIR>=fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
                 "<VERBOSE>=true/false)"
             ),

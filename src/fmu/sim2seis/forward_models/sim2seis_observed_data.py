@@ -46,9 +46,9 @@ class ObservedData(ForwardModelStepPlugin):
             examples=(
                 "code-block:: console\n\n"
                 "FORWARD_MODEL OBSERVED_DATA("
-                "<CONFIG_DIR>=../../sim2seis/model, "
+                "<CONFIG_DIR>=<RUNPATH>/sim2seis/model, "
                 "<CONFIG_FILE>=sim2seis_combined_config.yml, "
-                "<GLOBAL_DIR>=../../fmuconfig/output, "
+                "<GLOBAL_DIR>=fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
                 "<OBS_DATE_PREFIX>=HIST, "
                 "<VERBOSE>=true/false)"
