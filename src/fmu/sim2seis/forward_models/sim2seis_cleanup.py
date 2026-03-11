@@ -42,7 +42,7 @@ class Cleanup(ForwardModelStepPlugin):
             examples=(
                 "code-block:: console\n\n"
                 "FORWARD_MODEL CLEANUP("
-                "<CONFIG_DIR>=../../sim2seis/model, "
+                "<CONFIG_DIR>=<RUNPATH>/sim2seis/model, "
                 "<CONFIG_FILE>=sim2seis_combined_config.yml, "
                 "<PREFIX_LIST>=relai)"
             ),
