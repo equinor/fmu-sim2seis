@@ -46,7 +46,7 @@ dependencies = [
     "fmu-tools >= 1.16.0",
     "fmu-config",
     "fmu-dataio",
-    "fmu-pem >= 0.2.0",
+    "fmu-pem >= 0.2.3",
     "pydantic",
     "ert",
     "seismic-forward",
