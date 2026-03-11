@@ -85,6 +85,12 @@ def main(arguments=None):
             dates=config.global_params.obs_dates,
             diff_dates=config.global_params.obs_diffdates,
         )
+        if not time_cubes:
+            raise ValueError(
+                f"no time cubes imported from {config.paths.preprocessed_seismic_dir} "
+                f"with prefix {config.depth_conversion.cube_prefix}, please check "
+                "settings"
+            )
 
         # Depth conversion is run in both cases
         depth_cubes = depth_convert_observed_data(
@@ -93,6 +99,12 @@ def main(arguments=None):
             depth_surfaces=depth_horizons,
             time_surfaces=time_horizons,
         )
+        if not depth_cubes:
+            raise ValueError(
+                f"no depth cubes imported from {config.paths.preprocessed_seismic_dir} "
+                f"with prefix {config.depth_conversion.cube_prefix}, please check "
+                "settings"
+            )
 
         # Extract attributes only in the case that the no_attributes flag is
         # not set, and when the workflow is not run from ERT

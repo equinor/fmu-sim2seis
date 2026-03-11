@@ -50,16 +50,6 @@ class SeismicForward(ForwardModelStepPlugin):
         # config-resident file checks and non-path validators (types, ranges,
         # etc.) still run normally.
 
-        # # Settings to include in script that is controlled by debug server
-        # #
-        # import debugpy
-
-        # debugpy.listen(("localhost", 5678))
-        # print("⏸ Waiting for debugger to attach on port 5678...")
-        # debugpy.wait_for_client()
-        # print("✓ Debugger attached!")
-        # debugpy.breakpoint()
-
         args = parse_arguments(
             arguments=fm_step_json["argList"],
             extra_arguments=[
@@ -74,7 +64,7 @@ class SeismicForward(ForwardModelStepPlugin):
         try:
             with restore_dir(args.model_dir):
                 _ = read_yaml_file(
-                    sim2seis_config_dir=args.config_dir,
+                    sim2seis_config_dir=args.model_dir,
                     sim2seis_config_file=args.config_file,
                     global_config_dir=args.global_dir,
                     global_config_file=args.global_file,

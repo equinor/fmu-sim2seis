@@ -46,8 +46,7 @@ class Sim2SeisPaths(BaseModel):
         default=Path("sim2seis/output/pem"),
         description="Folder for results from `fmu-pem`. All folder "
         "references in the FMU structure are relative to "
-        "./sim2seis/model, where '.' is the top folder in each "
-        "realization",
+        " the top folder in each realization",
     )
     modelled_seismic_dir: SkipJsonSchema[Path] = Field(
         default=Path("share/results/cubes"),
