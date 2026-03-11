@@ -54,6 +54,17 @@ def parse_arguments(
             required=True,
             help="Global configuration yaml file name (required)",
         )
+    if "model_dir" in extra_arguments:
+        parser.add_argument(
+            "-m",
+            "--model-dir",
+            type=Path,
+            required=False,
+            help=(
+                "Only required for ERT runs: pointer to the project area's "
+                "`sim2seis/model` folder"
+            ),
+        )
     if "obs_date_prefix" in extra_arguments:
         parser.add_argument(
             "-p",

@@ -25,6 +25,8 @@ class SeismicForward(ForwardModelStepPlugin):
                 "<GLOBAL_DIR>",
                 "--global-file",
                 "<GLOBAL_FILE>",
+                "--model-dir",
+                "<MODEL_DIR>",
                 "--mod-date-prefix",
                 "<MOD_DATE_PREFIX>",
                 "--verbose",
@@ -47,6 +49,17 @@ class SeismicForward(ForwardModelStepPlugin):
         # realization-specific filesystem validators are suppressed, while
         # config-resident file checks and non-path validators (types, ranges,
         # etc.) still run normally.
+
+        # # Settings to include in script that is controlled by debug server
+        # #
+        # import debugpy
+
+        # debugpy.listen(("localhost", 5678))
+        # print("⏸ Waiting for debugger to attach on port 5678...")
+        # debugpy.wait_for_client()
+        # print("✓ Debugger attached!")
+        # debugpy.breakpoint()
+
         args = parse_arguments(
             arguments=fm_step_json["argList"],
             extra_arguments=[
@@ -54,11 +67,12 @@ class SeismicForward(ForwardModelStepPlugin):
                 "global_dir",
                 "global_file",
                 "mod_date_prefix",
+                "model_dir",
             ],
         )
 
         try:
-            with restore_dir(args.config_dir):
+            with restore_dir(args.model_dir):
                 _ = read_yaml_file(
                     sim2seis_config_dir=args.config_dir,
                     sim2seis_config_file=args.config_file,
@@ -81,10 +95,11 @@ class SeismicForward(ForwardModelStepPlugin):
             examples=(
                 "code-block:: console\n\n"
                 "FORWARD_MODEL SEISMIC_FORWARD("
-                "<CONFIG_DIR>=../../sim2seis/model, "
+                "<CONFIG_DIR>=<RUNPATH>/sim2seis/model, "
                 "<CONFIG_FILE>=sim2seis_combined_config.yml, "
-                "<GLOBAL_DIR>=../../fmuconfig/output, "
+                "<GLOBAL_DIR>=fmuconfig/output, "
                 "<GLOBAL_FILE>=global_variables.yml, "
+                "<MODEL_DIR>=sim2seis/model"
                 "<MOD_DATE_PREFIX>=HIST, "
                 "<VERBOSE>=true/false)"
             ),
