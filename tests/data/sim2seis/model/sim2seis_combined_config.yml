@@ -25,8 +25,8 @@
 #   observed_horizon_dir: share/preprocessed/maps
 #   grid_dir: sim2seis/input/pem
 #   pickle_file_output_dir: share/results/pickle_files
-#   output_path_modelled_data: share/results/tables
-#   output_path_observed_data: ert/input/preprocessed/seismic
+#   output_dir_modelled_data: share/results/tables
+#   output_dir_observed_data: ert/input/preprocessed/seismic
 
 
 ########################################################################################################################

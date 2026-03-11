@@ -40,15 +40,6 @@ def main(arguments=None):
             "model_dir",
         ],
     )
-    # Settings to include in script that is controlled by debug server
-    #
-    # import debugpy
-
-    # debugpy.listen(("localhost", 5678))
-    # print("⏸ Waiting for debugger to attach on port 5678...", file=sys.stderr)
-    # debugpy.wait_for_client()
-    # print("✓ Debugger attached!", file=sys.stderr)
-    # debugpy.breakpoint()
 
     config_dir = check_startup_dir(args.config_dir)
     # Get configuration parameters
