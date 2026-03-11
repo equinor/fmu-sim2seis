@@ -37,6 +37,7 @@ def main(arguments=None):
             "global_dir",
             "global_file",
             "mod_date_prefix",
+            "model_dir",
         ],
     )
     # Settings to include in script that is controlled by debug server
