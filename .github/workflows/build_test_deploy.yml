@@ -6,24 +6,16 @@ on:
       - main
   pull_request:
 
-permissions: {}
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-
 jobs:
   test:
     name: "Test: Python ${{ matrix.python-version }}"
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           lfs: true
 
@@ -59,11 +51,9 @@ jobs:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -81,7 +71,7 @@ jobs:
           python -m build
 
       - name: Upload Package Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: fmu-sim2seis-dist
           path: dist/
@@ -95,15 +85,15 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/checkout@v6
         with:
-          python-version: "3.11"
+          fetch-depth: 0
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
+      - name: Set up Python 3.11, with uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: 3.11
+          enable_cache: true
 
       - name: Install Python Dependencies
         run: uv pip install --system .
