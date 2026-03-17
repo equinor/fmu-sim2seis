@@ -148,7 +148,7 @@ jobs:
       id-token: write # required for trusted publishing to PyPI
     steps:
       - name: Download Package Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: fmu-sim2seis-dist
           path: dist/
