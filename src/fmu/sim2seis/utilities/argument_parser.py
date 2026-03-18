@@ -119,8 +119,7 @@ def parse_arguments(
             type=str,
             help="(Optional) List of prefixes in result pickle files to remove.\n"
             "Possible values: \n"
-            "'observed_data', 'seis_4d', 'seis_4d_diff', 'relai', "
-            "'depth_convert', 'amplitude_maps', 'relai_maps')\n"
+            "'seismic_fwd', 'relai', 'amplitude_maps', 'relai_maps')\n"
             "If no prefixes are given, all pickle files will be removed",
         )
     return parser.parse_args(arguments)

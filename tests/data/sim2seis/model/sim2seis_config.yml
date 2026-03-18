@@ -31,7 +31,7 @@ seismic_fwd:
 #  twt_model: ../../sim2seis/model/model_file_twt.xml
 #  segy_depth: seismic_temp_seismic_depth_stack.segy
 #  segy_time: seismic_temp_seismic_timeshift_stack.segy  # <= not used anymore
-#  pickle_file_prefix: seis_4d
+#  pickle_file_prefix: seismic_fwd
 #endregion snip_seis_fwd
 
 #region depth_conversion
