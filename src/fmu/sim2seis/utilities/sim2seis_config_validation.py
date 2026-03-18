@@ -346,7 +346,7 @@ class WebvizMap(BaseModel):
             return Path(v), False  # no context — skip validation
         grid_dir = paths.grid_dir
         if not grid_dir.is_absolute():
-            grid_dir = (paths.config_dir_sim2seis / grid_dir).resolve()
+            grid_dir = (paths.fmu_rootpath / grid_dir).resolve()
         return grid_dir / v, True
 
     @field_validator("grid_file", mode="before")
