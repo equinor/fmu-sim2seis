@@ -333,14 +333,7 @@ class WebvizMap(BaseModel):
 
     @staticmethod
     def _resolve_grid_path(v: str, info: ValidationInfo) -> tuple[Path, bool]:
-        """Return (full_path, should_validate) for a grid file.
-
-        In both normal and pre_experiment mode the file is resolved against
-        ``paths.grid_dir``.  When ``config_dir_sim2seis`` is available, the
-        relative ``grid_dir`` is anchored to the config directory so that the
-        check works from the shared config location rather than the (not-yet-
-        created) realization runpath.
-        """
+        """Return (full_path, should_validate) for a grid file."""
         paths = info.context.get("paths") if info and info.context else None
         if not paths:
             return Path(v), False  # no context — skip validation
