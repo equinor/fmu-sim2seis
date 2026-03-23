@@ -102,6 +102,7 @@ webviz_map:
   # zone_file: simgrid--zone.roff
   # region_file: simgrid--region.roff
   attribute_error: 0.07
+  attribute_error_minimum: 0.005
 
 
 ########################################################################################################################

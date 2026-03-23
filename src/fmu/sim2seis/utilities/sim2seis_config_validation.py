@@ -330,6 +330,11 @@ class WebvizMap(BaseModel):
         "Modelled data are written without error.",
         default=0.0,
     )
+    attribute_error_minimum: float = Field(
+        description="A float value that will give the minimum error for observed data",
+        default=0.005,
+        gt=0.0,
+    )
 
     @staticmethod
     def _resolve_grid_path(v: str, info: ValidationInfo) -> tuple[Path, bool]:

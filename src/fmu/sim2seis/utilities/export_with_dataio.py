@@ -121,6 +121,7 @@ def attribute_export(
                     grid=simgrid,
                     attribute=value,
                     attribute_error=config_file.webviz_map.attribute_error,
+                    attribute_error_minimum=config_file.webviz_map.attribute_error_minimum,
                     region=region_def,
                     zone=zone_def,
                 )
