@@ -1,6 +1,3 @@
-> [!WARNING]
-> `fmu-sim2seis` is not yet qualified technology, and as of today only applicable for selected pilot test fields.
-
 **[📚 User documentation](https://equinor.github.io/fmu-sim2seis/)**
 
 ## What is fmu-sim2seis?
