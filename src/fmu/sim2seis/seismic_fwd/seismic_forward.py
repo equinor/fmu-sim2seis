@@ -2,7 +2,7 @@ from pathlib import Path
 from shutil import copy2, move as rename
 
 import xtgeo
-from seismic_forward.simulation import run_simulation
+from seismic_forward.simulation import SeismicForwardError, run_simulation
 
 from fmu.sim2seis.utilities import (
     SeismicDate,
@@ -41,12 +41,7 @@ def exe_seismic_forward(
         if date == config_file.global_params.mod_dates[0]:
             # Generate a twt framework for the initial conditions
             model_file = config_dir / "model_file_twt.xml"
-            result = run_simulation(model_file)
-            assert result["success"]  # Success == True
-            if verbose:
-                print(result["output"])
-                if result["error"]:
-                    print(result["error"])
+            call_seismic_forward(model_file=model_file, verbose=verbose)
 
         # Resolve the cubes directory once so subsequent path operations
         # are explicit and independent of the current working directory.
@@ -55,12 +50,8 @@ def exe_seismic_forward(
         ).resolve()
 
         for stack, model in config_file.seismic_fwd.stack_models.items():
-            result = run_simulation(config_dir / model)
-            assert result["success"]
-            if verbose:
-                print(result["output"])
-                if result["error"]:
-                    print(result["error"])
+            model_file = config_dir / model
+            call_seismic_forward(model_file=model_file, verbose=verbose)
 
             # Modify name of synthetic seismic segy files output
             s_depth_src = cubes_dir / config_file.seismic_fwd.segy_depth
@@ -120,3 +111,20 @@ def read_time_and_depth_horizons(
         depth_surfs[depth_name.name] = depth_surf
 
     return time_surfs, depth_surfs
+
+
+def call_seismic_forward(model_file: Path, verbose: bool) -> bool:
+    """
+    Helper function for running seismic forward and handling errors
+    """
+    try:
+        result = run_simulation(model_file)
+    except (SeismicForwardError, FileNotFoundError) as e:
+        raise ValueError(f"seismic forward failed for model file {model_file}") from e
+    except Exception as e:
+        raise ValueError("unexpected situation for seismic forward call") from e
+    if verbose:
+        print(result["output"])
+        if not result["success"] or result["error"]:
+            print(f"unexpected situation for seismic forward: {result['error']}")
+    return result["success"]
