@@ -43,6 +43,10 @@ def exe_seismic_forward(
             model_file = config_dir / "model_file_twt.xml"
             result = run_simulation(model_file)
             assert result["success"]  # Success == True
+            if verbose:
+                print(result["output"])
+                if result["error"]:
+                    print(result["error"])
 
         # Resolve the cubes directory once so subsequent path operations
         # are explicit and independent of the current working directory.
@@ -54,7 +58,9 @@ def exe_seismic_forward(
             result = run_simulation(config_dir / model)
             assert result["success"]
             if verbose:
-                print(result)
+                print(result["output"])
+                if result["error"]:
+                    print(result["error"])
 
             # Modify name of synthetic seismic segy files output
             s_depth_src = cubes_dir / config_file.seismic_fwd.segy_depth
