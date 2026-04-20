@@ -1,5 +1,8 @@
 #!/bin/sh
-# Script to run all simseis-connected commands
+# Script to run all sim2seis-connected commands
+
+# Stop script if error
+set -e
 
 ## PEM
 pem -c sim2seis/model -f pem_config.yml -g fmuconfig/output -o global_variables.yml -q HIST -m ./sim2seis/model/
