@@ -7,8 +7,9 @@ from si4ti import compute_impedance
 
 
 def run_by_si4ti():
-
-    os.chdir(r"/scratch/fmu/hfle/fmu_sim2seis_pem/realization-0/iter-0/sim2seis/output/seismic_forward")
+    os.chdir(
+        r"/scratch/fmu/hfle/fmu_sim2seis_pem/realization-0/iter-0/sim2seis/output/seismic_forward"
+    )
 
     start = time.time()
     cube1 = xtgeo.cube_from_file("seismic--amplitude_far_depth--19960701.segy")
