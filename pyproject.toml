@@ -49,7 +49,7 @@ dependencies = [
     "fmu-pem >= 0.2.3",
     "pydantic",
     "ert",
-    "seismic-forward",
+    "seismic-forward >= 4.5.1",
     "si4ti",
 ]
 
