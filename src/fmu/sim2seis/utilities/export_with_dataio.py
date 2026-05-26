@@ -126,6 +126,14 @@ def attribute_export(
                     zone=zone_def,
                 )
                 meta_data = Path(export_obj.export(attr_df))
+                # Probably a long-lived temporary fix: ExportData.export does not
+                # handle any kwarg for the DataFrame.to_csv method that is used in the
+                # end. For that reason a call to attr_df.to_csv is added to format the
+                # output. This will reduce the size of the .csv files from the default.
+                # Format is overridden for "REGION" from float to int
+                if "REGION" in attr_df.columns:
+                    attr_df["REGION"] = attr_df["REGION"].astype(int)
+                attr_df.to_csv(meta_data, float_format="%.3f", index=False)
                 with restore_dir(output_path):
                     # Construct file names for output to webviz and ert
                     ert_filename = meta_data.name.replace(".csv", ".txt")
