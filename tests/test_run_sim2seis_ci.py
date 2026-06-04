@@ -227,6 +227,28 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
         else:
             assert isclose(value, truth_value, atol=a_tol, rtol=r_tol)
 
+    # Parquet companion files are written next to the dataio CSVs.
+    parquet_files = [
+        Path(
+            "share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.parquet"
+        ),
+        Path(
+            "share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.parquet"
+        ),
+    ]
+    for parquet_file in parquet_files:
+        assert parquet_file.exists(), f"Missing parquet output: {parquet_file}"
+        pq_df = pd.read_parquet(parquet_file, engine="pyarrow")
+        csv_df = pd.read_csv(parquet_file.with_suffix(".csv"))
+        # All floating columns must be float32; integer columns must stay integer.
+        for col in pq_df.select_dtypes(include="floating").columns:
+            assert pq_df[col].dtype == "float32"
+        for col in csv_df.select_dtypes(include="integer").columns:
+            assert pd.api.types.is_integer_dtype(pq_df[col])
+        # Same shape and column set as the CSV.
+        assert list(pq_df.columns) == list(csv_df.columns)
+        assert len(pq_df) == len(csv_df)
+
 
 def test_pickle_cleanup_main_script(monkeypatch, data_dir):
     monkeypatch.chdir(data_dir)

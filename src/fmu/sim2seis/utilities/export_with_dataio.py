@@ -127,16 +127,26 @@ def attribute_export(
                 )
                 meta_data = Path(export_obj.export(attr_df))
                 with restore_dir(output_path):
-                    # Construct file names for output to webviz and ert
-                    ert_filename = meta_data.name.replace(".csv", ".txt")
-                    webviz_filename = "--".join(["meta", ert_filename])
-                    if Path(webviz_filename).exists():
+                    # Construct file names for output to webviz and ert.
+                    # These are bare basenames, written into the current
+                    # ``output_path`` cwd established by ``restore_dir`` above.
+                    # Using ``Path`` ensures only the suffix is replaced and
+                    # avoids accidentally rewriting an inner ``.csv`` substring.
+                    ert_filename = Path(meta_data.name).with_suffix(".txt")
+                    webviz_filename = ert_filename.with_name(
+                        "meta--" + ert_filename.name
+                    )
+                    parquet_filename = ert_filename.with_suffix(".parquet")
+                    # ``exists()`` follows symlinks, so a broken symlink would
+                    # be missed and the subsequent ``symlink`` call would then
+                    # fail with ``FileExistsError``; ``is_symlink`` catches that
+                    # case as well.
+                    if webviz_filename.exists() or webviz_filename.is_symlink():
                         try:  # noqa: SIM105
-                            unlink(Path(webviz_filename))
+                            unlink(webviz_filename)
                         except FileNotFoundError:
                             pass
-                    symlink(src=meta_data, dst=Path(webviz_filename))
-                    # attr_df.to_csv(webviz_filename, index=False)
+                    symlink(src=meta_data, dst=webviz_filename)
                     # Modelled data will not have observation error
                     columns = ["OBS", "OBS_ERROR"] if is_observed else ["OBS"]
                     attr_df.to_csv(
@@ -146,6 +156,18 @@ def attribute_export(
                         sep=" ",
                         float_format="%.6f",
                         columns=columns,
+                    )
+                    # Parquet copy of the same dataframe for downstream consumers.
+                    # Floats are downcast to float32 (~7 significant digits) to
+                    # cut file size; integer columns are preserved. UTM columns
+                    # fit comfortably as long as sub-decimetre precision is not
+                    # required.
+                    float_cols = attr_df.select_dtypes(include="floating").columns
+                    attr_df.astype(dict.fromkeys(float_cols, "float32")).to_parquet(
+                        parquet_filename,
+                        engine="pyarrow",
+                        compression="zstd",
+                        index=False,
                     )
 
 
