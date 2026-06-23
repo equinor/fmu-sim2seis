@@ -6,13 +6,13 @@ outside of `ert` via the command-line:
 
 ```shell
 # Normal run
-> sim2seis_observed_data -c <config_dir> -f <config_file> -g <global_dir> -o <global_file>
+> sim2seis_observed_data -f <config_file> -g <global_file>
 >
 # Run with verbose output
-> sim2seis_observed_data -c <config_dir> -f <config_file> -g <global_dir> -o <global_file> -v true
+> sim2seis_observed_data -f <config_file> -g <global_file> -v true
 >
 # Run without generating attributes - depth conversion only
-> sim2seis_observed_data -c <config_dir> -f <config_file> -g <global_dir> -o <global_file> -n true
+> sim2seis_observed_data -f <config_file> -g <global_file> -n true
 ```
 
 <span id="figure-1-command-line-run"><strong>Figure 1:</strong> Command line interface to observed data processing.</span>
@@ -105,7 +105,7 @@ observed and modelled data. All required parameters are defined in [ert configur
 
 ```ert
 -- Optional run of depth conversion of observed data:
-FORWARD_MODEL OBSERVED_DATA(<CONFIG_DIR>=<CONFIGDIR>, <CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_DIR>=<GLOBAL_PATH>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <OBS_DATE_PREFIX>=<OBS_PREFIX>, <VERBOSE>=<VERBOSE_OUTPUT>)
+FORWARD_MODEL OBSERVED_DATA(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <OBS_DATE_PREFIX>=<OBS_PREFIX>, <VERBOSE>=<VERBOSE_OUTPUT>)
 ```
 
 **Note** that when observed data processing is run from `ert`, only depth conversion is performed — attribute
