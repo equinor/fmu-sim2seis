@@ -15,12 +15,8 @@ class MapAttributes(ForwardModelStepPlugin):
             name="MAP_ATTRIBUTES",
             command=[
                 "sim2seis_map_attributes",
-                "--config-dir",
-                "<CONFIG_DIR>",
                 "--config-file",
                 "<CONFIG_FILE>",
-                "--global-dir",
-                "<GLOBAL_DIR>",
                 "--global-file",
                 "<GLOBAL_FILE>",
                 "--attribute",
@@ -46,10 +42,8 @@ class MapAttributes(ForwardModelStepPlugin):
             examples=(
                 "code-block:: console\n\n"
                 "FORWARD_MODEL MAP_ATTRIBUTES("
-                "<CONFIG_DIR>=<RUNPATH>/sim2seis/model, "
-                "<CONFIG_FILE>=sim2seis_combined_config.yml, "
-                "<GLOBAL_DIR>=fmuconfig/output, "
-                "<GLOBAL_FILE>=global_variables.yml, "
+                "<CONFIG_FILE>=<RUNPATH>/sim2seis/model/sim2seis_combined_config.yml, "
+                "<GLOBAL_FILE>=fmuconfig/output/global_variables.yml, "
                 "<ATTRIBUTE>=amplitude/relai)"
             ),
         )
