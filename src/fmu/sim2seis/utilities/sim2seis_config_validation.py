@@ -24,7 +24,7 @@ from .sim2seis_class_definitions import (
 # modify default values, and the class/property is therefore hidden from the
 # interface.
 
-# Directory fields that require existence checks when not in pre_experiment mode.
+# Directory fields that require existence checks
 _DIRECTORY_FIELDS = (
     "pem_output_dir",
     "modelled_seismic_dir",
@@ -109,14 +109,7 @@ class Sim2SeisPaths(BaseModel):
 
     @model_validator(mode="after")
     def check_directories_exist(self, info: ValidationInfo) -> Self:
-        """Validate that all directory paths exist on disk.
-
-        Skipped when ``pre_experiment=True`` is present in the validation
-        context (i.e. called from ERT's ``validate_pre_experiment`` hook
-        before realization directories have been created).
-        """
-        if info and info.context and info.context.get("pre_experiment"):
-            return self
+        """Validate that all directory paths exist on disk."""
         for field_name in _DIRECTORY_FIELDS:
             path: Path = getattr(self, field_name)
             if not path.is_dir():
@@ -178,12 +171,8 @@ class SeismicForward(BaseModel):
             return self
 
         base = paths.config_dir_sim2seis
-        pre_experiment = bool(
-            info and info.context and info.context.get("pre_experiment")
-        )
 
         # Stack model files live in sim2seis/model — validate against config dir
-        # both in normal runs and at pre_experiment time.
         resolved = {}
         for key, value in self.stack_models.items():
             path = (base / value).resolve()
@@ -199,11 +188,6 @@ class SeismicForward(BaseModel):
         if not twt_path.is_file():
             raise ValueError(f"twt_model: {twt_path!s} is not a file")
         self.twt_model = twt_path
-
-        if pre_experiment:
-            # Realization-specific paths (pem_output_dir, etc.) are not yet
-            # available; skip those checks.
-            return self
 
         if not paths.pem_output_dir.is_dir():
             raise ValueError(
@@ -468,12 +452,10 @@ class SeismicInversionConfig(BaseModel):
     def check_inversion_files(self, info: ValidationInfo) -> Self:
         """Validate that all seismic inversion input files exist on disk.
 
-        Skipped in pre_experiment mode and when no validation context is present
+        Skipped  when no validation context is present
         (e.g. when the model is instantiated via default_factory without context).
         """
         if not (info and info.context):
-            return self
-        if info.context.get("pre_experiment"):
             return self
         for field_name in ("d_syn_0", "d_syn_1", "rel_ai_0", "rel_ai_1"):
             path: Path = getattr(self, field_name)
@@ -522,17 +504,13 @@ class Sim2SeisConfig(BaseModel):
     @model_validator(mode="after")
     def check_sim2seis_config(self, info: ValidationInfo) -> Self:
         # attribute_map_definition_file lives in sim2seis/model — validate
-        # against config_dir_sim2seis in both normal and pre_experiment mode.
+        # against config_dir_sim2seis.
         config_dir = self.paths.config_dir_sim2seis
         attr_file = self.attribute_map_definition_file
         if not attr_file.is_file():
             resolved = config_dir / attr_file
             if not resolved.is_file():
                 raise ValueError(f"{attr_file} is not recognised as a file")
-
-        if info and info.context and info.context.get("pre_experiment"):
-            # Realization-specific checks are skipped at pre_experiment stage.
-            return self
 
         return self
 
