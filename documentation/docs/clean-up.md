@@ -23,7 +23,7 @@ To add this in an `ert` run, the following line must be added at the end of the 
 
 ```ert
 -- Define your variables:
-FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <PREFIX_LIST>=relai)
+FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <PREFIX_LIST>=relai)
 ```
 
  All required parameters for an `ert` run are defined in [ert configuration](./ert-configuration.md).

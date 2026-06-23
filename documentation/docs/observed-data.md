@@ -105,7 +105,7 @@ observed and modelled data. All required parameters are defined in [ert configur
 
 ```ert
 -- Optional run of depth conversion of observed data:
-FORWARD_MODEL OBSERVED_DATA(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE_NAME>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <OBS_DATE_PREFIX>=<OBS_PREFIX>, <VERBOSE>=<VERBOSE_OUTPUT>)
+FORWARD_MODEL OBSERVED_DATA(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <GLOBAL_FILE>=<GLOBAL_CONFIG_FILE>, <OBS_DATE_PREFIX>=<OBS_PREFIX>, <VERBOSE>=<VERBOSE_OUTPUT>)
 ```
 
 **Note** that when observed data processing is run from `ert`, only depth conversion is performed — attribute

@@ -38,7 +38,7 @@ def test_obs_data(monkeypatch, data_dir):
     run_obs_data(
         [
             "--config-file",
-            str(config_dir / fout_name),
+            str(fout_name),
             "--global-file",
             "fmuconfig/output/global_variables.yml",
             "--obs-date-prefix",

@@ -29,7 +29,7 @@ def parse_arguments(
         "--config-file",
         type=Path,
         required=True,
-        help="Configuration yaml file name",
+        help="Configuration yaml path name",
     )
     if "global_file" in extra_arguments:
         parser.add_argument(
@@ -37,7 +37,7 @@ def parse_arguments(
             "--global-file",
             type=Path,
             required=True,
-            help="Global configuration yaml file name (required)",
+            help="Global configuration yaml path name (required)",
         )
     if "obs_date_prefix" in extra_arguments:
         parser.add_argument(
@@ -99,11 +99,11 @@ def parse_arguments(
     args = parser.parse_args(arguments)
 
     # Split config and global file paths and file names
-    args.config_dir = args.config_file.parent
-    args.config_file = args.config_file.name
+    args.config_dir = Path(args.config_file.parent)
+    args.config_file = Path(args.config_file.name)
     if hasattr(args, "global_file"):
-        args.global_dir = args.global_file.parent
-        args.global_file = args.global_file.name
+        args.global_dir = Path(args.global_file.parent)
+        args.global_file = Path(args.global_file.name)
 
     return args
 
