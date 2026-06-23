@@ -108,7 +108,7 @@ class Sim2SeisPaths(BaseModel):
     )
 
     @model_validator(mode="after")
-    def check_directories_exist(self, info: ValidationInfo) -> Self:
+    def check_directories_exist(self) -> Self:
         """Validate that all directory paths exist on disk."""
         for field_name in _DIRECTORY_FIELDS:
             path: Path = getattr(self, field_name)
@@ -452,7 +452,7 @@ class SeismicInversionConfig(BaseModel):
     def check_inversion_files(self, info: ValidationInfo) -> Self:
         """Validate that all seismic inversion input files exist on disk.
 
-        Skipped  when no validation context is present
+        Skipped when no validation context is present
         (e.g. when the model is instantiated via default_factory without context).
         """
         if not (info and info.context):
@@ -502,7 +502,7 @@ class Sim2SeisConfig(BaseModel):
     webviz_map: SkipJsonSchema[WebvizMap]
 
     @model_validator(mode="after")
-    def check_sim2seis_config(self, info: ValidationInfo) -> Self:
+    def check_sim2seis_config(self) -> Self:
         # attribute_map_definition_file lives in sim2seis/model — validate
         # against config_dir_sim2seis.
         config_dir = self.paths.config_dir_sim2seis
