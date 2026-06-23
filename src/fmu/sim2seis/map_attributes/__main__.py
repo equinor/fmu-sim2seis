@@ -24,7 +24,6 @@ def main(arguments=None):
         extra_arguments=[
             "attribute",
             "verbose",
-            "global_dir",
             "global_file",
         ],
     )

@@ -7,11 +7,11 @@ added for this purpose. This can also be run from command line for interactive s
 
 Command line call:
 
-    sim2seis_cleanup --config-dir <...> --config-file <...>
-                     --prefix-list <...>
+    sim2seis_cleanup --config-file <...> --prefix-list <...>
 
-    --config-dir: should be in sim2seis/model in an fmu directory structure
-    --config-file: yaml-file with configuration parameters
+    --config-file: yaml-file with configuration parameters; the path is split into
+                  directory and file name automatically. The directory is expected
+                  to be `sim2seis/model` in an fmu directory structure.
     --prefix-list: (optional) list of prefixes for pickle files if only some of the
                   saved pickle
                   files are to be deleted. If it is not included, all pickle files are

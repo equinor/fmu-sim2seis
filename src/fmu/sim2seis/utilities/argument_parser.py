@@ -25,49 +25,23 @@ def parse_arguments(
     extra_arguments = extra_arguments or []
     parser = argparse.ArgumentParser(__file__)
     parser.add_argument(
-        "-c",
-        "--config-dir",
-        type=Path,
-        required=True,
-        help="Path to config directory (required), should end with 'sim2seis/model'",
-    )
-    parser.add_argument(
         "-f",
         "--config-file",
         type=Path,
         required=True,
         help="Configuration yaml file name",
     )
-    if "global_dir" in extra_arguments:
-        parser.add_argument(
-            "-g",
-            "--global-dir",
-            type=Path,
-            required=True,
-            help="Relative path to global config file (required)",
-        )
     if "global_file" in extra_arguments:
         parser.add_argument(
-            "-o",
+            "-g",
             "--global-file",
             type=Path,
             required=True,
             help="Global configuration yaml file name (required)",
         )
-    if "model_dir" in extra_arguments:
-        parser.add_argument(
-            "-m",
-            "--model-dir",
-            type=Path,
-            required=False,
-            help=(
-                "Only required for ERT runs: pointer to the project area's "
-                "`sim2seis/model` folder"
-            ),
-        )
     if "obs_date_prefix" in extra_arguments:
         parser.add_argument(
-            "-p",
+            "-o",
             "--obs-date-prefix",
             type=str,
             required=True,
@@ -75,7 +49,7 @@ def parse_arguments(
         )
     if "mod_date_prefix" in extra_arguments:
         parser.add_argument(
-            "-q",
+            "-m",
             "--mod-date-prefix",
             type=str,
             required=True,
@@ -122,7 +96,16 @@ def parse_arguments(
             "'seismic_fwd', 'relai', 'amplitude_maps', 'relai_maps')\n"
             "If no prefixes are given, all pickle files will be removed",
         )
-    return parser.parse_args(arguments)
+    args = parser.parse_args(arguments)
+
+    # Split config and global file paths and file names
+    args.config_dir = args.config_file.parent
+    args.config_file = args.config_file.name
+    if hasattr(args, "global_file"):
+        args.global_dir = args.global_file.parent
+        args.global_file = args.global_file.name
+
+    return args
 
 
 def check_startup_dir(cwd: Path) -> Path:
