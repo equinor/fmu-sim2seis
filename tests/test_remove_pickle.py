@@ -47,10 +47,8 @@ def test_pickle_cleanup_main_script(monkeypatch, data_dir):
     monkeypatch.chdir(data_dir)
     run_cleanup(
         [
-            "--config-dir",
-            "sim2seis/model",
             "--config-file",
-            "sim2seis_combined_config.yml",
+            "sim2seis/model/sim2seis_combined_config.yml",
         ],
     )
     assert not list(data_dir.joinpath("share", "results", "pickle_files").glob("*.pkl"))
