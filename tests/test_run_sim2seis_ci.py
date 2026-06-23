@@ -37,14 +37,10 @@ def test_obs_data(monkeypatch, data_dir):
 
     run_obs_data(
         [
-            "--config-dir",
-            str(config_dir),
             "--config-file",
-            str(fout_name),
-            "--global-dir",
-            "fmuconfig/output",
+            str(config_dir / fout_name),
             "--global-file",
-            "global_variables.yml",
+            "fmuconfig/output/global_variables.yml",
             "--obs-date-prefix",
             "HIST",
         ]
@@ -89,17 +85,14 @@ def test_sim2seis(monkeypatch, data_dir):
 
 
 def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
+    config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(data_dir)
     run_seismic_forward(
         [
-            "--config-dir",
-            "sim2seis/model",
             "--config-file",
-            str(sim2seis_config_file_name),
-            "--global-dir",
-            "fmuconfig/output",
+            str(config_dir / sim2seis_config_file_name),
             "--global-file",
-            "global_variables.yml",
+            "fmuconfig/output/global_variables.yml",
             "--mod-date-prefix",
             "HIST",
             "--verbose",
@@ -136,14 +129,10 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
     monkeypatch.chdir(data_dir)
     run_seismic_inversion(
         [
-            "--config-dir",
-            str(config_dir),
             "--config-file",
-            str(sim2seis_config_file_name),
-            "--global-dir",
-            "fmuconfig/output",
+            str(config_dir / sim2seis_config_file_name),
             "--global-file",
-            "global_variables.yml",
+            "fmuconfig/output/global_variables.yml",
             "--verbose",
             "False",
         ]
@@ -178,14 +167,10 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
         with restore_dir(config_dir):
             map_attributes(
                 [
-                    "--config-dir",
-                    str(config_dir),
                     "--config-file",
-                    str(sim2seis_config_file_name),
-                    "--global-dir",
-                    "fmuconfig/output",
+                    str(config_dir / sim2seis_config_file_name),
                     "--global-file",
-                    "global_variables.yml",
+                    "fmuconfig/output/global_variables.yml",
                     "--attribute",
                     attribute,
                 ]
