@@ -15,8 +15,9 @@ Key namespaces: `fmu.sim2seis.seismic_fwd`, `fmu.sim2seis.seismic_inversion`,
 - **Pydantic v2** for all configuration validation (`BaseModel`, `model_validator`,
   `field_validator`, `ValidationInfo`)
 - **ERT** (`ert.shared.plugins.plugin_manager`) for forward-model integration;
-  `ForwardModelStepPlugin` with `validate_pre_experiment` and
-  `validate_pre_realization_run` hooks
+  `ForwardModelStepPlugin` with `validate_pre_realization_run` hook.
+  (`validate_pre_experiment` is kept as a no-op stub on each step — see
+  *ERT validation lifecycle* below for historical context.)
 - **xtgeo** for grid and surface I/O
 - **fmu-pem**, **fmu-dataio**, **fmu-config**, **fmu-tools** as sibling FMU libraries
 - **seismic-forward** and **si4ti** as external seismic simulation tools
@@ -66,15 +67,17 @@ ERT calls two hooks before a run:
 | `validate_pre_experiment` | once, before any realization dirs are created | config dir only |
 | `validate_pre_realization_run` | per realization, after runpath is created | full runpath |
 
-Pass `pre_experiment=True` to `read_yaml_file` inside `validate_pre_experiment`.
-This causes all pydantic validators to skip **realization-specific** path checks
-(output dirs, PEM dirs, seismic cube dirs) while still validating files that live
-in the shared config tree:
-
-- `sim2seis/model/*.xml` (stack models, twt model) — resolved against `config_dir_sim2seis`
-- `sim2seis/model/<attribute_map_definition>.yml` — resolved against `config_dir_sim2seis`
-- `sim2seis/input/pem/*.roff` (WebvizMap grid files) — resolved via `grid_dir`
-  anchored to `config_dir_sim2seis`
+**Deprecated / historical.** `validate_pre_experiment` is **no longer used** by
+this package — each `ForwardModelStepPlugin` subclass keeps the method only as
+a no-op stub (`pass`). Earlier revisions called `read_yaml_file(...,
+pre_experiment=True)` from `SeismicForward.validate_pre_experiment` to catch
+configuration errors before realization directories existed, and the
+`pre_experiment` flag gated path-existence checks in the pydantic validators in
+`sim2seis_config_validation.py`. Both the flag and the gating have been
+removed; all validation now runs at `validate_pre_realization_run` time
+(implicitly, via `read_yaml_file` called from each step's CLI entry point).
+Do **not** reintroduce a `pre_experiment` parameter to `read_yaml_file` or a
+`pre_experiment` key in the pydantic validation context.
 
 ## Pre-commit checklist
 
@@ -112,10 +115,8 @@ Use atomic commits — one logical change per commit.
 
 - Test data is under `tests/data/`; use the `data_dir` / `testdata` fixtures
   from `conftest.py` to access it.
-- For `pre_experiment` tests: copy only the shared config tree to `tmp_path`
-  (model YAML + XML files, input grid roff files); do **not** create realization
-  output directories.
-- Assert both the positive case (`pre_experiment=True` succeeds) and the negative
-  case (`pre_experiment=False` raises).
-- After a `pre_experiment=True` call, assert that config-resident paths
-  (e.g. `stack_models` values, `twt_model`) are absolute and point to existing files.
+- *(Historical, no longer applicable):* earlier revisions had dedicated
+  `pre_experiment` tests that copied only the shared config tree to `tmp_path`
+  and asserted both the positive (`pre_experiment=True` succeeds) and negative
+  (`pre_experiment=False` raises) cases. These tests were removed together with
+  the `pre_experiment` parameter — see *ERT validation lifecycle* above.
