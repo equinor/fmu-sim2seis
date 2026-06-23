@@ -33,7 +33,6 @@ def main(arguments=None):
         extra_arguments=[
             "verbose",
             "no_attributes",
-            "global_dir",
             "global_file",
             "obs_date_prefix",
         ],
