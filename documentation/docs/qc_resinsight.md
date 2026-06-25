@@ -11,7 +11,7 @@ for attribute maps and horizons that are common to both `xtgeo` and ResInsight.
 It is possible to import grids and grid properties in `.roff` format. Grids and grid properties can be imported into a
 ResInsight project in one operation, or the grid properties can be added after the grid is imported.
 
-Reservoir simulator simulation runs can also be used to define the grid, and the results from `pem` can be added as properties. This
+Reservoir simulator runs can also be used to define the grid, and the results from `pem` can be added as properties. This
 enables cross-plotting of static and dynamic properties that are input to `pem` with `pem` results, allowing
 verification of their expected relationships.
 

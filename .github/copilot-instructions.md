@@ -111,6 +111,17 @@ Scope examples: `validation`, `ert`, `seismic_fwd`, `observed_data`.
 
 Use atomic commits — one logical change per commit.
 
+## Pull request summaries
+
+PR summaries (titles, descriptions, review comments) must be:
+
+- **Brief** — no filler, no recap of obvious diff content.
+- **Covering** — mention every user-visible change and any non-obvious
+  rationale, so a reviewer can grasp the scope without reading every hunk.
+- **Written in Markdown** — use fenced code blocks for commands, paths, and
+  identifiers; use short bullet lists for change inventories; use headings only
+  when the PR spans multiple distinct areas.
+
 ## Testing guidelines
 
 - Test data is under `tests/data/`; use the `data_dir` / `testdata` fixtures
