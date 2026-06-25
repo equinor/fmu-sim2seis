@@ -86,8 +86,8 @@ rel_dir_mod_grid = r"share/results/grids"
 
 # Grid property import from PEM. NB! Grid model must exist before import
 os.chdir(project_dir + os.path.sep + rel_dir_mod_grid)
-pem_grid_name = "Eclipsegrid_pem"
-pem_grid_prop_ai_name = "eclipsegrid_pem--airatio--20180701_20180101.roff"
+pem_grid_name = "simgrid"
+pem_grid_prop_ai_name = "simgrid--airatio--20180701_20180101.roff"
 pem_ai = xtgeo.gridproperty_from_file(pem_grid_prop_ai_name, fformat="roff")
 pem_ai.to_roxar(projectname=PRJ, gridname=pem_grid_name, propertyname=pem_grid_prop_ai_name[:-4])
 

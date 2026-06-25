@@ -11,7 +11,7 @@ for attribute maps and horizons that are common to both `xtgeo` and ResInsight.
 It is possible to import grids and grid properties in `.roff` format. Grids and grid properties can be imported into a
 ResInsight project in one operation, or the grid properties can be added after the grid is imported.
 
-Eclipse simulation runs can also be used to define the grid, and the results from `pem` can be added as properties. This
+Reservoir simulator simulation runs can also be used to define the grid, and the results from `pem` can be added as properties. This
 enables cross-plotting of static and dynamic properties that are input to `pem` with `pem` results, allowing
 verification of their expected relationships.
 
@@ -35,9 +35,9 @@ as colour legends, property filters, annotations, etc.
 ### Grid Analysis
 
 There are multiple options for grid analysis in ResInsight. Cross-plots between grid properties, i.e. results from `pem`
-can be combined with `eclipse` `init` or `unrst` (static or dynamic) properties. Cross-plots are part of the Plot
-Window options in ResInsight. Histogram of grids and cumulative histogram can be found in either the Plot Window, or
-as a right-click option in the 3D display background.
+can be combined with reservoir simulator `INIT` or `UNRST` (static or dynamic) properties. Cross-plots are part of the
+Plot Window options in ResInsight. Histogram of grids and cumulative histogram can be found in either the Plot Window,
+or as a right-click option in the 3D display background.
 
 ![Grid histogram](./images/Drogon_PEM_grid_3D_View_eclipse_ai_20180701_Statistics.png)
 <span id="figure-3-grid-histogram"></span>

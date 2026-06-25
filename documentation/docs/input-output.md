@@ -100,9 +100,9 @@ changed to `observations`.
 | ------------- | ----------- | ---- |
 | Global config | `./fmuconfig/output` | `global_variables.yml` / `global_variables_pred.yml` |
 | Configuration file | `./sim2seis/model` | `pem_config.yml` |
-| Eclipse grid definition | `./sim2seis/input/pem` | `ECLIPSE.EGRID` |
-| Eclipse init properties | `./sim2seis/input/pem` | `ECLIPSE.INIT` |
-| Eclipse restart properties | `./sim2seis/input/pem` | `ECLIPSE.UNRST` |
+| Reservoir simulator grid definition | `./sim2seis/input/pem` | `ECLIPSE.EGRID` |
+| Reservoir simulator init properties | `./sim2seis/input/pem` | `ECLIPSE.INIT` |
+| Reservoir simulator restart properties | `./sim2seis/input/pem` | `ECLIPSE.UNRST` |
 | NTG property – optional | `./sim2seis/input/pem` | `grid--ntg_pem.roff` |
 | Volume fraction grid definition | `./sim2seis/input/pem` | `export_grid.grdecl` |
 | Volume fraction sets | `./sim2seis/input/pem` | `export_prop.grdecl` |
