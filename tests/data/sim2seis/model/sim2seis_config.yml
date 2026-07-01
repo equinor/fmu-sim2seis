@@ -8,6 +8,29 @@
 #
 ########################################################################################################################
 
+#region paths
+########################################################################################################################
+#
+# Path settings
+#
+# As shown, all paths are relative, and they refer to the FMU directory structure, where all scripts will start in
+# ./sim2seis/model (2 steps under the top)
+#
+########################################################################################################################
+# paths:
+#   pem_output_dir: sim2seis/output/pem
+#   modelled_seismic_dir: share/results/cubes
+#   preprocessed_seismic_dir: share/preprocessed/cubes
+#   modelled_horizon_dir: share/results/maps
+#   observed_horizon_dir: share/preprocessed/maps
+#   grid_dir: sim2seis/input/pem
+#   webviz_map_dir: sim2seis/input/attribute_maps
+#   pickle_file_output_dir: share/results/pickle_files
+#   output_dir_modelled_data: share/results/tables
+#   output_dir_observed_data: ert/input/preprocessed/seismic
+########################################################################################################################
+#endregion paths
+
 ## For the main class
 #______________________________________________________________________________________________________________________#
 attribute_map_definition_file: modelled_data_intervals_drogon.yml
@@ -56,13 +79,11 @@ depth_conversion:
 # # Section for ert and webviz export
 #______________________________________________________________________________________________________________________#
 webviz_map:
-  # grid_file: simgrid.roff
-  # zone_file: simgrid--zone.roff
-  # region_file: simgrid--region.roff
+  # grid_file: simgrid_maps4ahm.roff
+  # zone_file: simgrid_maps4ahm--zone.roff
+  # region_file: simgrid_maps4ahmsimgrid--region.roff
   attribute_error: 0.07
   attribute_error_minimum: 0.005
-#  grid_path: ../../sim2seis/input/pem
-#  output_path: ../../ert/input/observations/seismic
 
 
 
