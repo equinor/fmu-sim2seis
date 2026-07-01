@@ -34,6 +34,7 @@ _DIRECTORY_FIELDS = (
     "depth_horizon_dir",
     "observed_horizon_dir",
     "grid_dir",
+    "webviz_map_dir",
     "pickle_file_output_dir",
     "output_dir_modelled_data",
     "output_dir_observed_data",
@@ -81,6 +82,10 @@ class Sim2SeisPaths(BaseModel):
     )
     grid_dir: SkipJsonSchema[Path] = Field(
         default=Path("sim2seis/input/pem"),
+        description="This directory is the standard place for grid definition files",
+    )
+    webviz_map_dir: SkipJsonSchema[Path] = Field(
+        default=Path("sim2seis/input/attribute_maps"),
         description="This directory is the standard place for grid definition files",
     )
     pickle_file_output_dir: SkipJsonSchema[Path] = Field(
@@ -291,17 +296,17 @@ class AmplitudeMapConfig(BaseModel):
 
 class WebvizMap(BaseModel):
     grid_file: Path = Field(
-        default=Path("simgrid.roff"),
+        default=Path("simgrid_maps4ahm.roff"),
         description="The file name for grid definition file, 'roff' format is normally "
         "used",
     )
     zone_file: Path = Field(
-        default=Path("simgrid--zone.roff"),
+        default=Path("simgrid_maps4ahm--zone.roff"),
         description="The file name for zone definition file, 'roff' format is normally "
         "used",
     )
     region_file: Path = Field(
-        default=Path("simgrid--region.roff"),
+        default=Path("simgrid_maps4ahm--region.roff"),
         description="The file name for region definition file, 'roff' format is "
         "normally used",
     )
@@ -326,10 +331,10 @@ class WebvizMap(BaseModel):
         paths = info.context.get("paths") if info and info.context else None
         if not paths:
             return Path(v), False  # no context — skip validation
-        grid_dir = paths.grid_dir
-        if not grid_dir.is_absolute():
-            grid_dir = (paths.fmu_rootpath / grid_dir).resolve()
-        return grid_dir / v, True
+        webviz_map_dir = paths.webviz_map_dir
+        if not webviz_map_dir.is_absolute():
+            webviz_map_dir = (paths.fmu_rootpath / webviz_map_dir).resolve()
+        return webviz_map_dir / v, True
 
     @field_validator("grid_file", mode="before")
     def grid_file_check(cls, v: str, info: ValidationInfo):
