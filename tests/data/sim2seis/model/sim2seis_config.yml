@@ -81,7 +81,7 @@ depth_conversion:
 webviz_map:
   # grid_file: simgrid_maps4ahm.roff
   # zone_file: simgrid_maps4ahm--zone.roff
-  # region_file: simgrid_maps4ahmsimgrid--region.roff
+  # region_file: simgrid_maps4ahm--region.roff
   attribute_error: 0.07
   attribute_error_minimum: 0.005
 
@@ -90,14 +90,14 @@ webviz_map:
 ## Section for seismic forward amplitude maps
 #______________________________________________________________________________________________________________________#
 # amplitude_map:
-#  attribute: *seismic_attribute
+#  attribute: amplitude
 #  pickle_file_prefix: amplitude_maps
 
 
 ## Section for seismic inversion relai maps
 #______________________________________________________________________________________________________________________#
 # inversion_map:
-#  attribute: *inversion_attribute
+#  attribute: relai
 #  pickle_file_prefix: relai_maps
 #endregion attr_map
 
