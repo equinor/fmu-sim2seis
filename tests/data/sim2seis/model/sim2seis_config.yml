@@ -81,7 +81,7 @@ depth_conversion:
 webviz_map:
   # grid_file: simgrid_maps4ahm.roff
   # zone_file: simgrid_maps4ahm--zone.roff
-  # region_file: simgrid_maps4ahmsimgrid--region.roff
+  # region_file: simgrid_maps4ahm--region.roff
   attribute_error: 0.07
   attribute_error_minimum: 0.005
 

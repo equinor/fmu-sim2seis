@@ -86,7 +86,8 @@ class Sim2SeisPaths(BaseModel):
     )
     webviz_map_dir: SkipJsonSchema[Path] = Field(
         default=Path("sim2seis/input/attribute_maps"),
-        description="This directory is the standard place for grid definition files",
+        description="This directory is the standard place for Webviz map grid, zone "
+        "and region files",
     )
     pickle_file_output_dir: SkipJsonSchema[Path] = Field(
         default=Path("share/results/pickle_files"),
