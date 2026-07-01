@@ -178,12 +178,14 @@ def _get_grid_info(
     # Import grid, zones, regions
     with restore_dir(root_dir):
         grid = xtgeo.grid_from_file(
-            config_file.paths.grid_dir.joinpath(config_file.webviz_map.grid_file)
+            config_file.paths.webviz_map_dir.joinpath(config_file.webviz_map.grid_file)
         )
         zones = xtgeo.gridproperty_from_file(
-            config_file.paths.grid_dir.joinpath(config_file.webviz_map.zone_file)
+            config_file.paths.webviz_map_dir.joinpath(config_file.webviz_map.zone_file)
         )
         regions = xtgeo.gridproperty_from_file(
-            config_file.paths.grid_dir.joinpath(config_file.webviz_map.region_file)
+            config_file.paths.webviz_map_dir.joinpath(
+                config_file.webviz_map.region_file
+            )
         )
         return grid, zones, regions
