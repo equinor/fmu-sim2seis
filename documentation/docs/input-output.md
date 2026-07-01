@@ -11,9 +11,9 @@ This page gives an overview of relevant input and output files, for the differen
 | Global config | `./fmuconfig/output` | `global_variables.yml` / `global_variables_pred.yml` |
 | Observed data, time domain * | `./share/preprocessed/cubes` | `seismic--<attribute>_<stack>_time--<date/date pair>.segy` |
 | Depth and time surfaces * | `./share/preprocessed/maps` | `<horizon>--depth.gri, <horizon>--time.gri` |
-| Grid definition | `./sim2seis/input/pem` | `simgrid.roff` |
-| Zone definition | `./sim2seis/input/pem` | `simgrid--zone.roff` |
-| Region definition | `./sim2seis/input/pem` | `simgrid--region.roff` |
+| Grid definition | `./sim2seis/input/attribute_maps` | `simgrid_maps4ahm.roff` |
+| Zone definition | `./sim2seis/input/attribute_maps` | `simgrid_maps4ahm--zone.roff` |
+| Region definition | `./sim2seis/input/attribute_maps` | `simgrid_maps4ahm--region.roff` |
 | Configuration file | `./sim2seis/model` | `sim2seis_combined_config.yml` |
 | Attribute interval definition file | `./sim2seis/model` | `observed_data_intervals_drogon.yml` |
 
@@ -80,6 +80,9 @@ changed to `observations`.
 | Description | Directory | File |
 | ------------- | ----------- | ---- |
 | Difference cubes | `./share/results/pickle_files` | `seis_4d_diff_.pkl` / `relai_diff_depth.pkl` |
+| Grid definition | `./sim2seis/input/attribute_maps` | `simgrid_maps4ahm.roff` |
+| Zone definition | `./sim2seis/input/attribute_maps` | `simgrid_maps4ahm--zone.roff` |
+| Region definition | `./sim2seis/input/attribute_maps` | `simgrid_maps4ahm--region.roff` |
 
 ### Output
 
