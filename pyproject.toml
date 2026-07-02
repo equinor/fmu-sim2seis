@@ -40,13 +40,13 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "numpy >= 1.24.3",
-    "pandas >= 2.0.2",
-    "xtgeo >= 3.7.1",
-    "fmu-tools >= 1.16.0",
+    "numpy >= 2.4.6",
+    "pandas >= 2.3.3",
+    "xtgeo >= 4.23.0",
+    "fmu-tools >= 1.32.0",
     "fmu-config",
     "fmu-dataio",
-    "fmu-pem >= 0.2.3",
+    "fmu-pem >= 0.2.5",
     "pydantic",
     "ert",
     "seismic-forward >= 4.5.1",
