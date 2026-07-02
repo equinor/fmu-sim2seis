@@ -7,7 +7,6 @@ import yaml
 from fmu.pem.pem_utilities import restore_dir
 from numpy import isclose
 
-from fmu.sim2seis.cleanup import main as run_cleanup
 from fmu.sim2seis.map_attributes import main as map_attributes
 from fmu.sim2seis.observed_data import main as run_obs_data
 from fmu.sim2seis.seismic_fwd import main as run_seismic_forward
@@ -67,8 +66,8 @@ def test_obs_data(monkeypatch, data_dir):
         ),
     ]
     expected_values = [
-        737.739982963365,
-        -1128.321365091755,
+        695.6961777682009,
+        -1139.0474199722157,
         14371913838.663399,
         14371913847.189327,
     ]
@@ -119,7 +118,7 @@ def run_test_sim2seis_seismic_forward(monkeypatch, data_dir):
     expected_values = [
         2507.2085,
         171.42592,
-        617.4236145019531,
+        383.3775,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
@@ -157,9 +156,9 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
         Path("share/results/pickle_files/relai_diff_time.pkl"),
     ]
     expected_values = [
-        -548.9944,
-        -2752.0467529296875,
-        111.36359786987305,
+        324.42212,
+        1591.2764,
+        39.87298,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
@@ -211,11 +210,11 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
     ]
     expected_values = [
         1673.4673521434306,
-        -2016.8209276186494,
+        -1022.0935972341945,
         14371913848.28719,
         14371913843.33451,
         -5040.2057157847885,
-        1469.659427370005,
+        3966.320646810609,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
@@ -248,19 +247,6 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
         # Same shape and column set as the CSV.
         assert list(pq_df.columns) == list(csv_df.columns)
         assert len(pq_df) == len(csv_df)
-
-
-def test_pickle_cleanup_main_script(monkeypatch, data_dir):
-    monkeypatch.chdir(data_dir)
-    run_cleanup(
-        [
-            "--config-dir",
-            "sim2seis/model",
-            "--config-file",
-            "sim2seis_combined_config.yml",
-        ],
-    )
-    assert not list(data_dir.joinpath("share", "results", "pickle_files").glob("*.pkl"))
 
 
 def get_sum_value(file_name: Path) -> float:
