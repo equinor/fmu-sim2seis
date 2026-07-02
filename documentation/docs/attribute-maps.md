@@ -8,33 +8,44 @@ for estimating attribute maps is controlled by a separate YAML file.
 Default values typically apply for attribute map generation in the `sim2seis` configuration file, as most information is
 derived from the dedicated interval definition file. [Figure 1](#figure-1-seismic-attributes-in-yaml) shows the relevant
 sections of the configuration file. `webviz_map` refers to export of attribute maps in formats that can be read by
-`webviz` and `ert` for visualisation and history matching. As all parameters are commented out, this indicates that
-the default settings are used. It is only the name of the attribute definition file in the `main class setting` that
-must be specified.
+`webviz` and `ert` for visualisation and history matching. As most parameters are commented out, this indicates that
+the default settings in most cases are used. It is only the name of the attribute definition file in the
+`main class setting` that must be specified. The settings for attribute error are used for [observed data](./observed-data.md).
 
 ```yaml
-########################################################################################################################
-#
-# Amplitude map and inversion map settings
-#
-# Best left with default values. The actual settings that define intervals and operators for attribute maps are 
-# placed in the `attribute_map_definition_file`, given in the main class
-#
-########################################################################################################################
+# # Section for ert and webviz export
+#______________________________________________________________________________________________________________________#
+webviz_map:
+  # grid_file: simgrid_maps4ahm.roff
+  # zone_file: simgrid_maps4ahm--zone.roff
+  # region_file: simgrid_maps4ahm--region.roff
+  attribute_error: 0.07
+  attribute_error_minimum: 0.005
+
+
+## Section for seismic forward amplitude maps
+#______________________________________________________________________________________________________________________#
 # amplitude_map:
-#  attribute: amplitude
+#  attribute: *seismic_attribute
+#  pickle_file_prefix: amplitude_maps
+
+
+## Section for seismic inversion relai maps
+#______________________________________________________________________________________________________________________#
 # inversion_map:
 #  attribute: *inversion_attribute
+#  pickle_file_prefix: relai_maps
+#
 
-########################################################################################################################
-#
-# Main class settings
-#
-# Note: The full `sim2seis` configuration requires multiple sections (e.g. `seismic_fwd`, `depth_conversion`,
-# `webviz_map`). The snippet below highlights the attribute-map-related main setting.
-# `test_run` is used in tests and should be `False` in real runs.
+
+## From the main class
 #______________________________________________________________________________________________________________________#
-attribute_map_definition_file: data_intervals_drogon.yml
+attribute_map_definition_file: modelled_data_intervals_drogon.yml
+
+
+## From path definitions:
+# paths:
+#   webviz_map_dir: sim2seis/input/attribute_maps
 ```
 
 <span id="figure-1-seismic-attributes-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to attribute maps.</span>

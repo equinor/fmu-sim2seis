@@ -24,6 +24,7 @@
 #   modelled_horizon_dir: share/results/maps
 #   observed_horizon_dir: share/preprocessed/maps
 #   grid_dir: sim2seis/input/pem
+#   webviz_map_dir: sim2seis/input/attribute_maps
 #   pickle_file_output_dir: share/results/pickle_files
 #   output_dir_modelled_data: share/results/tables
 #   output_dir_observed_data: ert/input/preprocessed/seismic
@@ -98,9 +99,9 @@ depth_conversion:
 #
 ########################################################################################################################
 webviz_map:
-  # grid_file: simgrid.roff
-  # zone_file: simgrid--zone.roff
-  # region_file: simgrid--region.roff
+  # grid_file: simgrid_maps4ahm.roff
+  # zone_file: simgrid_maps4ahm--zone.roff
+  # region_file: simgrid_maps4ahm--region.roff
   attribute_error: 0.07
   attribute_error_minimum: 0.005
 

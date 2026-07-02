@@ -33,6 +33,7 @@ def setup_sim2seis_test_data(testdata, tmp_path_factory):
         "./share/results/pickle_files",
         "./share/results/tables",
         "./sim2seis/output/pem",
+        "./sim2seis/input/pem",
     ]
     for make_dir in dirs_to_make:
         config_dir.joinpath(make_dir).mkdir(parents=True, exist_ok=True)
