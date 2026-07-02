@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from fmu.sim2seis.cleanup import main as run_cleanup
 from fmu.sim2seis.utilities import clear_result_objects
 
 
@@ -40,3 +41,16 @@ def test_pickle_cleanup_observed_data(monkeypatch, data_dir):
 
     clear_result_objects(output_path=pickle_dir)
     assert not list(pickle_dir.glob("*.pkl"))
+
+
+def test_pickle_cleanup_main_script(monkeypatch, data_dir):
+    monkeypatch.chdir(data_dir)
+    run_cleanup(
+        [
+            "--config-dir",
+            "sim2seis/model",
+            "--config-file",
+            "sim2seis_combined_config.yml",
+        ],
+    )
+    assert not list(data_dir.joinpath("share", "results", "pickle_files").glob("*.pkl"))
