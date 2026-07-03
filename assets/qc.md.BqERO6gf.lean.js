@@ -1,0 +1,1 @@
+import{_ as i,o as s,c as o,ae as t}from"./chunks/framework.xmna4E1W.js";const u=JSON.parse('{"title":"QC of sim2seis modelling","description":"","frontmatter":{},"headers":[],"relativePath":"qc.md","filePath":"qc.md"}'),a={name:"qc.md"};function r(n,e,l,d,c,p){return s(),o("div",null,e[0]||(e[0]=[t("",5)]))}const f=i(a,[["render",r]]);export{u as __pageData,f as default};
