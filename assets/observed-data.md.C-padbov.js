@@ -31,6 +31,7 @@ import{_ as i,o as a,c as n,ae as e}from"./chunks/framework.xmna4E1W.js";const o
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   modelled_horizon_dir: share/results/maps</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   observed_horizon_dir: share/preprocessed/maps</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   grid_dir: sim2seis/input/pem</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   webviz_map_dir: sim2seis/input/attribute_maps</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   pickle_file_output_dir: share/results/pickle_files</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   output_dir_modelled_data: share/results/tables</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   output_dir_observed_data: ert/input/preprocessed/seismic</span></span>
@@ -105,9 +106,9 @@ import{_ as i,o as a,c as n,ae as e}from"./chunks/framework.xmna4E1W.js";const o
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">########################################################################################################################</span></span>
 <span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">webviz_map</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # grid_file: simgrid.roff</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # zone_file: simgrid--zone.roff</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # region_file: simgrid--region.roff</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # grid_file: simgrid_maps4ahm.roff</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # zone_file: simgrid_maps4ahm--zone.roff</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # region_file: simgrid_maps4ahm--region.roff</span></span>
 <span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  attribute_error</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.07</span></span>
 <span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  attribute_error_minimum</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.005</span></span>
 <span class="line"></span>
@@ -147,7 +148,7 @@ import{_ as i,o as a,c as n,ae as e}from"./chunks/framework.xmna4E1W.js";const o
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># amplitude_map:</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  attribute: amplitude</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># inversion_map:</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  attribute: *inversion_attribute</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#  attribute: relai</span></span>
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">########################################################################################################################</span></span>
