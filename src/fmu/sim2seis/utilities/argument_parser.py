@@ -83,6 +83,25 @@ def parse_arguments(
             default=False,
             help="Skip generation of observed data attributes",
         )
+    if "seismic_cubes" in extra_arguments:
+        parser.add_argument(
+            "-s",
+            "--include-seismic",
+            type=_str2bool,
+            required=False,
+            default=True,
+            help="(Optional) Remove single date seismic cubes, default=True",
+        )
+    if "ensemble" in extra_arguments:
+        parser.add_argument(
+            "-i",
+            "--is_ensemble",
+            type=_str2bool,
+            required=False,
+            default=False,
+            help="(Optional) Remove intermediate files for all realizations, "
+            "default=False",
+        )
     args = parser.parse_args(arguments)
 
     # Split config and global file paths and file names
