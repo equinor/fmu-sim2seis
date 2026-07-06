@@ -1,11 +1,8 @@
-
-
 import sys
 from collections.abc import Iterator
 from datetime import datetime
 from pathlib import Path
 
-from fmu.pem.pem_utilities.debug_attach import wait_for_debugger
 from fmu.sim2seis.utilities import (
     SeismicDate,
     SeismicName,
@@ -18,22 +15,6 @@ from fmu.sim2seis.utilities import (
 _DATE_FORMAT = "%Y%m&d"
 _CUBE_GLOB = "share/*/cubes"
 _REALIZATION_GLOB = "realization-*/iter-*"
-
-
-def _count_dates(text: str) -> int:
-    """Count valid ``YYYYMMDD`` dates in an underscore-separated string.
-
-    Validation uses :func:`datetime.strptime`, so only real calendar dates are
-    counted rather than any run of eight digits.
-    """
-    dates = 0
-    for token in text.split("_"):
-        try:
-            datetime.strptime(token, _DATE_FORMAT)
-        except ValueError:
-            continue
-        dates += 1
-    return dates
 
 
 def crawl_ensemble(
@@ -66,8 +47,6 @@ def main(arguments=None):
         arguments=arguments,
         extra_arguments=["seismic_cubes", "ensemble"],
     )
-    wait_for_debugger()
-    # args may contain only an empty string in "prefixlist". If so, remove attribute
     config_dir = check_startup_dir(args.config_dir)
     config = read_yaml_file(
         sim2seis_config_dir=config_dir,
