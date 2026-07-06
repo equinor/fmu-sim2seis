@@ -17,7 +17,7 @@ class Cleanup(ForwardModelStepPlugin):
                 "sim2seis_cleanup",
                 "--config-file",
                 "<CONFIG_FILE>",
-                "--include_seismic",
+                "--include-seismic",
                 "<INCLUDE_SEISMIC>",
             ],
         )
@@ -38,7 +38,7 @@ class Cleanup(ForwardModelStepPlugin):
             source_function_name="Cleanup",
             description="",
             examples="""
-code-block:: console\n\n"
-                "<CONFIG_FILE>=<RUNPATH>/sim2seis/model/sim2seis_combined_config.yml, <INCLUDE_SEISMIC>=false
+code-block:: console\n\n
+    FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<RUNPATH>/sim2seis/model/sim2seis_combined_config.yml, <INCLUDE_SEISMIC>=false)
 """,  # noqa: E501
         )

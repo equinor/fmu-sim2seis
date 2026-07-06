@@ -23,7 +23,7 @@ def parse_arguments(
     Uses argparse to parse arguments as expected from command line invocation
     """
     extra_arguments = extra_arguments or []
-    parser = argparse.ArgumentParser(__file__)
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         "-f",
         "--config-file",
@@ -90,7 +90,8 @@ def parse_arguments(
             type=_str2bool,
             required=False,
             default=True,
-            help="(Optional) Remove single date seismic cubes, default=True",
+            help="(Optional) Include single date seismic cubes in the files to be "
+            "deleted, default=True",
         )
     if "ensemble" in extra_arguments:
         parser.add_argument(
