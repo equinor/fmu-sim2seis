@@ -1,6 +1,5 @@
 import sys
 from collections.abc import Iterator
-from datetime import datetime
 from pathlib import Path
 
 from fmu.sim2seis.utilities import (
@@ -12,20 +11,22 @@ from fmu.sim2seis.utilities import (
     read_yaml_file,
 )
 
-_DATE_FORMAT = "%Y%m&d"
 _CUBE_GLOB = "share/*/cubes"
 _REALIZATION_GLOB = "realization-*/iter-*"
 
 
-def crawl_ensemble(
+def crawl_structure(
     directory: Path,
     path_string: str,
 ) -> Iterator[Path]:
     """Yield the required subdirectories of every realisation/iteration.
 
-    ``directory_path`` MUST be the top of the ensemble, i.e. diS and Seismicrectly contain
-    ``realization-<n>/iter-<m>`` subdirectories (no upward or recursive search is
-    performed). Raises ``ValueError`` if it is not.
+    ``directory_path`` must be the top of the ensemble or fmu directory structure,
+        either containing the results from a single run or an `ert` ensemble with
+    ``realization-<n>/iter-<m>``.
+    ``path_string`` contains names for subdirectories that are searched for.
+        There is no upward or recursive search performed. Raises ``ValueError`` if no
+        subdirectories are found. ``path_string`` may contain wildcard characters.
     """
     directory_path = directory.resolve()
     sub_dirs = sorted(
@@ -33,8 +34,7 @@ def crawl_ensemble(
     )
     if not sub_dirs:
         raise ValueError(
-            f"cleanup: {directory} is not the top of an FMU ensemble; expected "
-            "'realization-*/iter-*' subdirectories below it"
+            f"cleanup: {directory} is not the top of an FMU directory structure"
         )
 
     yield from sub_dirs
@@ -57,38 +57,42 @@ def main(arguments=None):
     is_ensemble = hasattr(args, "is_ensemble") and args.is_ensemble
 
     if is_ensemble:
-        pickle_dirs: Iterator[Path] = crawl_ensemble(
-            directory=config.paths.fmu_rootpath,
+        # Start at current working directory
+        pickle_dirs: Iterator[Path] = crawl_structure(
+            directory=Path.cwd(),
             path_string=f"{_REALIZATION_GLOB}/{config.paths.pickle_file_output_dir}",
         )
-        seismic_dirs: Iterator[Path] = crawl_ensemble(
-            directory=config.paths.fmu_rootpath,
-            path_string=f"{_REALIZATION_GLOB}/{_CUBE_GLOB}",
-        )
+        if remove_seismic:
+            seismic_dirs: Iterator[Path] = crawl_structure(
+                directory=Path.cwd(),
+                path_string=f"{_REALIZATION_GLOB}/{_CUBE_GLOB}",
+            )
     else:
         pickle_dirs = iter(
             [config.paths.fmu_rootpath / config.paths.pickle_file_output_dir],
         )
-        seismic_dirs: Iterator[Path] = crawl_ensemble(
-            directory=config.paths.fmu_rootpath,
-            path_string=_CUBE_GLOB,
-        )
+        if remove_seismic:
+            seismic_dirs: Iterator[Path] = crawl_structure(
+                directory=config.paths.fmu_rootpath,
+                path_string=_CUBE_GLOB,
+            )
 
     # Remove pickle files
     for pickle_dir in pickle_dirs:
         clear_result_objects(output_path=pickle_dir)
+    not_deleted = []
     if remove_seismic:
         for seis_dir in seismic_dirs:
             # Go via the classes SeismicName and SeismicDate to validate that only
             # segy files with recognised names and a single date are selected. Initial
             # filtering is set to `segy` extension
-            not_deleted = []
             all_files = seis_dir.glob("*.segy")
             for file in all_files:
                 try:
                     accepted_name = SeismicName.parse_name(file.name)
                     accepted_date = SeismicDate(accepted_name.date)
-                    assert accepted_date.monitor_date is None
+                    if accepted_date.monitor_date is not None:
+                        raise ValueError("difference object - should not be deleted")
                     try:
                         file.unlink(missing_ok=True)
                     except OSError:

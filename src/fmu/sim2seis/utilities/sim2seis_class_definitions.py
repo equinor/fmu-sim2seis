@@ -161,7 +161,7 @@ class SeismicName(SeismicDate):
         attribute: AttributeDef,
         domain: DomainDef,
         date: SeismicDate | str,
-        stack: None | StackDef = None,
+        stack: StackDef | None = None,
         ext: str | None = None,
     ):
         super().__init__(date)
@@ -228,13 +228,13 @@ class SeismicName(SeismicDate):
         return self._domain
 
     @property
-    def stack(self) -> None | StackDef:
+    def stack(self) -> StackDef | None:
         if self._stack is None:
             return None
         return self._stack
 
     @property
-    def ext(self) -> None | str:
+    def ext(self) -> str | None:
         if self._ext is None:
             return None
         return self._ext

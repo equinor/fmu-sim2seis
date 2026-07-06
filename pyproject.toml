@@ -95,7 +95,11 @@ disable = "missing-module-docstring"
 
 [tool.ruff]
 line-length = 88
-extend-exclude = ["src/fmu/sim2seis/version.py"]
+# force-exclude makes the patterns below apply even when files are passed
+# explicitly on the command line (e.g. `ruff format <changed files>`), so that
+# Markdown docs are never parsed as Python source.
+force-exclude = true
+extend-exclude = ["src/fmu/sim2seis/version.py", "*.md"]
 
 [tool.ruff.lint]
 select = [

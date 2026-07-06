@@ -121,6 +121,10 @@ PR summaries (titles, descriptions, review comments) must be:
 - **Written in Markdown** — use fenced code blocks for commands, paths, and
   identifiers; use short bullet lists for change inventories; use headings only
   when the PR spans multiple distinct areas.
+- **Delivered as a Markdown code block** — output the entire PR summary wrapped
+  in a fenced ```markdown code block so it can be copied verbatim into the PR
+  description. Any fenced code blocks inside the summary must use a different
+  fence length (e.g. ````) so the outer block is not broken.
 
 ## Testing guidelines
 
