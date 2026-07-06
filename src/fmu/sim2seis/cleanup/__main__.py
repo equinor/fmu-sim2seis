@@ -39,7 +39,6 @@ def main(arguments=None):
         arguments = sys.argv[1:]
     args = parse_arguments(
         arguments=arguments,
-        extra_arguments=["cleanup"],
     )
     # args may contain only an empty string in "prefixlist". If so, remove attribute
     config_dir = check_startup_dir(args.config_dir)
