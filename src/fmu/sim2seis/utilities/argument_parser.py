@@ -83,19 +83,6 @@ def parse_arguments(
             default=False,
             help="Skip generation of observed data attributes",
         )
-    if "cleanup" in extra_arguments:
-        parser.add_argument(
-            "-l",
-            "--prefix-list",
-            required=False,
-            default=False,
-            nargs="+",
-            type=str,
-            help="(Optional) List of prefixes in result pickle files to remove.\n"
-            "Possible values: \n"
-            "'seismic_fwd', 'relai', 'amplitude_maps', 'relai_maps')\n"
-            "If no prefixes are given, all pickle files will be removed",
-        )
     args = parser.parse_args(arguments)
 
     # Split config and global file paths and file names
