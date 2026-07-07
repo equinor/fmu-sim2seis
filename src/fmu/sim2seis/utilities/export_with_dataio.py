@@ -111,7 +111,7 @@ def attribute_export(
                     ],
                     is_observation=is_observed,
                     preprocessed=is_preprocessed,
-                    name=attr.top_surface.name,
+                    name=attr.formation,
                     tagname=tag_str,
                     vertical_domain=attr.from_cube.cube_name.domain,
                     rep_include=False,
