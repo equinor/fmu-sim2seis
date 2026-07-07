@@ -21,6 +21,8 @@ class MapAttributes(ForwardModelStepPlugin):
                 "<GLOBAL_FILE>",
                 "--attribute",
                 "<ATTRIBUTE>",
+                "--verbose",
+                "<VERBOSE>",
             ],
         )
 
@@ -44,6 +46,7 @@ class MapAttributes(ForwardModelStepPlugin):
                 "FORWARD_MODEL MAP_ATTRIBUTES("
                 "<CONFIG_FILE>=<RUNPATH>/sim2seis/model/sim2seis_combined_config.yml, "
                 "<GLOBAL_FILE>=fmuconfig/output/global_variables.yml, "
-                "<ATTRIBUTE>=amplitude/relai)"
+                "<ATTRIBUTE>=amplitude/relai, "
+                "<VERBOSE>=true/false)"
             ),
         )
