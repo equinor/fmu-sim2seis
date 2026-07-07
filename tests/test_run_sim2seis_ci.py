@@ -49,16 +49,16 @@ def test_obs_data(monkeypatch, data_dir):
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path(
-            "share/preprocessed/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
+            "share/preprocessed/maps/volantis--amplitude_full_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "share/preprocessed/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
+            "share/preprocessed/maps/volantis--relai_full_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "share/preprocessed/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
+            "share/preprocessed/tables/volantis--amplitude_full_mean_depth--20200701_20180101.csv"
         ),
         Path(
-            "share/preprocessed/tables/topvolantis--relai_full_rms_depth--20200701_20180101.csv"
+            "share/preprocessed/tables/volantis--relai_full_rms_depth--20200701_20180101.csv"
         ),
     ]
     expected_values = [
@@ -179,16 +179,16 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
     # Check values in some of the resulting data files against truth values
     test_files = [
         Path(
-            "share/results/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
+            "share/results/maps/volantis--amplitude_full_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "share/results/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
+            "share/results/maps/volantis--relai_full_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
+            "share/results/tables/volantis--amplitude_full_mean_depth--20200701_20180101.csv"
         ),
         Path(
-            "share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.csv"
+            "share/results/tables/volantis--relai_full_mean_depth--20200701_20180101.csv"
         ),
         Path("share/results/pickle_files/amplitude_maps_depth_attributes.pkl"),
         Path("share/results/pickle_files/relai_maps_depth_attributes.pkl"),
@@ -214,10 +214,10 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
     # Parquet companion files are written next to the dataio CSVs.
     parquet_files = [
         Path(
-            "share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.parquet"
+            "share/results/tables/volantis--amplitude_full_mean_depth--20200701_20180101.parquet"
         ),
         Path(
-            "share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.parquet"
+            "share/results/tables/volantis--relai_full_mean_depth--20200701_20180101.parquet"
         ),
     ]
     for parquet_file in parquet_files:
