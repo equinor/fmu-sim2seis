@@ -4,6 +4,7 @@ from shutil import copy2, copytree
 import numpy as np
 import pytest
 import xtgeo
+from fmu.settings._drogon import create_drogon_fmu_dir
 
 from fmu.sim2seis.utilities.sim2seis_class_definitions import (
     DifferenceSeismic,
@@ -50,6 +51,8 @@ def setup_sim2seis_test_data(testdata, tmp_path_factory):
         copy2(
             Path(testdata) / filename, config_dir / filename.replace("test_data/", "")
         )
+    # Create required .fmu directory
+    create_drogon_fmu_dir(base_path=config_dir)
     return config_dir
 
 
