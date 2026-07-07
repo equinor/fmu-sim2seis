@@ -97,16 +97,16 @@ def test_sim2seis_ert(testdata, monkeypatch, data_dir):
         Path("share/results/pickle_files/relai_diff_depth.pkl"),
         Path("share/results/pickle_files/relai_diff_time.pkl"),
         Path(
-            "share/results/maps/topvolantis--amplitude_full_rms_depth--20200701_20180101.gri"
+            "share/results/maps/volantis--amplitude_full_rms_depth--20200701_20180101.gri"
         ),
         Path(
-            "share/results/maps/topvolantis--relai_full_min_depth--20200701_20180101.gri"
+            "share/results/maps/volantis--relai_full_min_depth--20200701_20180101.gri"
         ),
         Path(
-            "share/results/tables/topvolantis--amplitude_full_mean_depth--20200701_20180101.csv"
+            "share/results/tables/volantis--amplitude_full_mean_depth--20200701_20180101.csv"
         ),
         Path(
-            "share/results/tables/topvolantis--relai_full_mean_depth--20200701_20180101.csv"
+            "share/results/tables/volantis--relai_full_mean_depth--20200701_20180101.csv"
         ),
         Path("share/results/pickle_files/amplitude_maps_depth_attributes.pkl"),
         Path("share/results/pickle_files/relai_maps_depth_attributes.pkl"),

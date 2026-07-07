@@ -12,7 +12,7 @@
         {"include": "#entities"},
         {"include": "#endcomments"},
         {"include": "#numbers"},
-        {"include": "#symbols"},
+        {"include": "#symbols"}
     ],
     "repository": {
         "keywords": {
@@ -22,7 +22,7 @@
             "patterns": [
                 {
                     "name": "entity.name.function.ert",
-                    "match": "[A-Z0-9][._A-Z0-9]*(?=\\()",
+                    "match": "[A-Z0-9][._A-Z0-9]*(?=\\()"
                 }
             ]
         },
@@ -30,7 +30,7 @@
             "patterns": [
                 {
                     "name": "variable.parameter.ert",
-                    "match": "\\s[$A-Z][_A-Z0-9]*(?=\\s)",
+                    "match": "\\s[$A-Z][_A-Z0-9]*(?=\\s)"
                 }
             ]
         },
@@ -38,7 +38,7 @@
             "patterns": [
                 {
                     "name": "support.type.property-name.json",
-                    "match": "<RUNPATH>|<CONFIG_PATH>",
+                    "match": "<RUNPATH>|<CONFIG_PATH>"
                 }
             ]
         },
@@ -47,9 +47,9 @@
         },
         "strings": {
             "name": "string.quoted.double.ert",
-            "begin": '"',
-            "end": '"',
-            "patterns": [{"name": "constant.character.escape.ert", "match": "\\\\."}],
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [{"name": "constant.character.escape.ert", "match": "\\\\."}]
         },
         "linecomments": {
             "patterns": [{"name": "comment.line.double-dash.ert", "match": "^--.*$"}]
@@ -67,14 +67,14 @@
                         "3": {"name": "meta.delimiter.decimal.period.ert"},
                         "4": {"name": "meta.delimiter.decimal.period.ert"},
                         "5": {"name": "meta.delimiter.decimal.period.ert"},
-                        "6": {"name": "meta.delimiter.decimal.period.ert"},
-                    },
+                        "6": {"name": "meta.delimiter.decimal.period.ert"}
+                    }
                 }
             ]
         },
         "symbols": {
             "patterns": [{"match": "=|\/|\\(|\\)|,", "name": "storage.type.ert"}]
-        },
+        }
     },
-    "scopeName": "source.ert",
+    "scopeName": "source.ert"
 }
