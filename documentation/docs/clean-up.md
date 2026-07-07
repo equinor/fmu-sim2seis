@@ -39,19 +39,19 @@ options:
 
 ```shell
 > # Remove pickle files, let seismic cubes remain.  
-> cd /project/<myproject>/resmod/ff/users/26.0.0
+> cd <project>
 > sim2seis_cleanup -f ./sim2seis/model/sim2seis_combined_config.yml -s false
 ```
 
 ```shell
 > # Cleanup of all pickle files and and single date seismic cubes
-> cd /project/<myproject>/resmod/ff/users/26.0.0
+> cd <project>
 > sim2seis_cleanup -f ./sim2seis/model/sim2seis_combined_config.yml 
 ```
 
 ```shell
 > # Go to top of ensemble structure to remove all intermediate files
-> cd /scratch/fmu/<user>/<case>
+> cd <scratch>
 > sim2seis_cleanup -f ./realization-0/iter-0/sim2seis/model/sim2seis_combined_config.yml -i true
 ```
 

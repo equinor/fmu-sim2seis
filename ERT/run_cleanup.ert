@@ -2,7 +2,7 @@
 DEFINE <USER> $USER
 DEFINE <SCRATCH> /scratch/fmu
 DEFINE <MODEL_NAME> dev
-DEFINE <CONFIG_PATH> /project/fmu/tutorial/drogon/resmod/ff/users/<USER>/<MODEL_NAME>
+DEFINE <CONFIG_PATH> <project>/<USER>/<MODEL_NAME>
 
 NUM_REALIZATIONS 1
 RUNPATH     <SCRATCH>/<USER>/fmu_sim2seis/realization-<IENS>/iter-<ITER>

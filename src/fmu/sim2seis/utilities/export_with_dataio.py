@@ -25,7 +25,6 @@ def cube_export(
     override_folder: str = "",
 ) -> None:
     """Output depth cube via fmu.dataio"""
-    global_variables = config_file.global_params.global_config
     fmu_rootpath = config_file.paths.fmu_rootpath
 
     with restore_dir(fmu_rootpath):
@@ -39,7 +38,6 @@ def cube_export(
             else:
                 tag_str = key.attribute + "_" + key.domain
             export_obj = dataio.ExportData(
-                config=global_variables,
                 content="seismic",
                 content_metadata={"attribute": key.attribute},
                 timedata=time_data,
@@ -61,7 +59,6 @@ def attribute_export(
     is_preprocessed: bool = False,
 ) -> None:
     """Output attribute map via fmu.dataio"""
-    global_variables = config_file.global_params.global_config
     fmu_rootpath = config_file.paths.fmu_rootpath
 
     # prepare for ert/webviz export
@@ -96,7 +93,6 @@ def attribute_export(
                 else:
                     tag_str = key.attribute + "_" + calc + "_" + key.domain
                 export_obj = dataio.ExportData(
-                    config=global_variables,
                     content="seismic",
                     content_metadata={
                         "attribute": attr.from_cube.cube_name.attribute,
