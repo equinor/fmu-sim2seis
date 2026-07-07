@@ -6,6 +6,8 @@ Based on script by JRIV
 import subprocess
 from pathlib import Path
 
+from .run_log import s2s_log
+
 
 def make_folders(list_of_input_paths: list[Path | str]) -> None:
     """Make folders if they do not exist."""
@@ -71,10 +73,10 @@ def make_symlink(
             f"The result folder does exist, broken link?: {source} -> {link_name}"
         )
     if verbose:
-        print("\nOK")
+        s2s_log("OK")
 
     if verbose:
-        print(
+        s2s_log(
             f"Seen from folder [{target_folder}]: "
             f"symlinked {source_type} [{source}] to "
             f"[{link_name.name}]"

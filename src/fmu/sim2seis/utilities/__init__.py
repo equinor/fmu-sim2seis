@@ -13,6 +13,14 @@ from .link_and_folder_utils import (
     make_folders,
     make_symlink,
 )
+from .run_log import (
+    log_step,
+    s2s_log,
+    s2s_log_once,
+    sim2seis_logger,
+    start_s2s_run_log,
+    stop_s2s_run_log,
+)
 from .sim2seis_class_definitions import (
     AttributeDef,
     DifferenceSeismic,
@@ -43,6 +51,7 @@ __all__ = [
     "clear_result_objects",
     "cube_export",
     "dump_result_objects",
+    "log_step",
     "make_folders",
     "make_symlink",
     "parse_arguments",
@@ -51,4 +60,9 @@ __all__ = [
     "read_surfaces",
     "read_yaml_file",
     "retrieve_result_objects",
+    "s2s_log",
+    "s2s_log_once",
+    "sim2seis_logger",
+    "start_s2s_run_log",
+    "stop_s2s_run_log",
 ]
