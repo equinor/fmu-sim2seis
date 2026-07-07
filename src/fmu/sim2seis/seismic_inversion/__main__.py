@@ -14,9 +14,13 @@ from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.utilities import (
     check_startup_dir,
     cube_export,
+    log_step,
     parse_arguments,
     read_yaml_file,
     retrieve_result_objects,
+    s2s_log,
+    start_s2s_run_log,
+    stop_s2s_run_log,
 )
 
 from ._dump_results import _dump_results
@@ -37,50 +41,58 @@ def main(arguments=None):
     )
 
     config_dir = check_startup_dir(args.config_dir)
-    conf = read_yaml_file(
-        sim2seis_config_dir=args.config_dir,
-        sim2seis_config_file=args.config_file,
-        global_config_dir=args.global_dir,
-        global_config_file=args.global_file,
-    )
-    with restore_dir(conf.paths.fmu_rootpath):
-        # Retrieve the seismic time cubes from seismic forward modelling
-        seismic_time_cubes = retrieve_seismic_forward_results(config=conf)
-
-        # Use python interface to relative seismic inversion
-        rel_ai_time_dict = run_relative_inversion_si4ti(
-            time_cubes=seismic_time_cubes,
-            config=conf,
-            config_dir=config_dir,
+    if args.verbose:
+        start_s2s_run_log()
+    try:
+        s2s_log("seismic inversion: started")
+        conf = read_yaml_file(
+            sim2seis_config_dir=args.config_dir,
+            sim2seis_config_file=args.config_file,
+            global_config_dir=args.global_dir,
+            global_config_file=args.global_file,
         )
+        with restore_dir(conf.paths.fmu_rootpath):
+            # Retrieve the seismic time cubes from seismic forward modelling
+            seismic_time_cubes = retrieve_seismic_forward_results(config=conf)
 
-        # Depth conversion, as the inversion is run in time domain
-        velocity_model = retrieve_result_objects(
-            input_path=conf.paths.pickle_file_output_dir,
-            file_name=conf.pickle_file_prefix.seismic_forward + "_velocity_model.pkl",
-        )
-        rel_ai_depth_dict = depth_convert_ai(
-            velocity_model=velocity_model,
-            config=conf,
-            difference_cubes=rel_ai_time_dict,
-        )
+            # Use python interface to relative seismic inversion
+            with log_step("relative seismic inversion (si4ti)"):
+                rel_ai_time_dict = run_relative_inversion_si4ti(
+                    time_cubes=seismic_time_cubes,
+                    config=conf,
+                    config_dir=config_dir,
+                )
 
-        # Dump all resulting objects to pickle files
-        _dump_results(
-            config=conf,
-            time_object=rel_ai_time_dict,
-            depth_object=rel_ai_depth_dict,
-        )
+            # Depth conversion, as the inversion is run in time domain
+            velocity_model = retrieve_result_objects(
+                input_path=conf.paths.pickle_file_output_dir,
+                file_name=conf.pickle_file_prefix.seismic_forward
+                + "_velocity_model.pkl",
+            )
+            with log_step("depth conversion of inverted cubes"):
+                rel_ai_depth_dict = depth_convert_ai(
+                    velocity_model=velocity_model,
+                    config=conf,
+                    difference_cubes=rel_ai_time_dict,
+                )
 
-        # Export inverted depth converted cubes in segy format
-        cube_export(
-            config_file=conf,
-            export_cubes=rel_ai_depth_dict,
-            is_observed=False,
-        )
+            # Dump all resulting objects to pickle files
+            _dump_results(
+                config=conf,
+                time_object=rel_ai_time_dict,
+                depth_object=rel_ai_depth_dict,
+            )
 
-        if args.verbose:
-            print("Finished running seismic inversion")
+            # Export inverted depth converted cubes in segy format
+            cube_export(
+                config_file=conf,
+                export_cubes=rel_ai_depth_dict,
+                is_observed=False,
+            )
+
+        s2s_log("seismic inversion: finished")
+    finally:
+        stop_s2s_run_log()
 
 
 if __name__ == "__main__":

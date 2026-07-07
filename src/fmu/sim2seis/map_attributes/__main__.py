@@ -4,9 +4,13 @@ from fmu.pem.pem_utilities import restore_dir
 from fmu.sim2seis.utilities import (
     attribute_export,
     check_startup_dir,
+    log_step,
     parse_arguments,
     populate_seismic_attributes,
     read_yaml_file,
+    s2s_log,
+    start_s2s_run_log,
+    stop_s2s_run_log,
 )
 
 from ._dump_results import _dump_map_results
@@ -29,57 +33,64 @@ def main(arguments=None):
     )
     # Check that the config directory follows the standard
     config_dir = check_startup_dir(args.config_dir)
-    # Read configuration file
-    config = read_yaml_file(
-        sim2seis_config_dir=args.config_dir,
-        sim2seis_config_file=args.config_file,
-        global_config_dir=args.global_dir,
-        global_config_file=args.global_file,
-    )
-    # All path references should be relative to the top directory of the FMU
-    # file structure
-    with restore_dir(config.paths.fmu_rootpath):
-        # Determine if the attributes are from seismic amplitude or inverted
-        # seismic data to read the correct set of input cubes
-        if args.attribute == config.amplitude_map.attribute:  # 'amplitude'
-            depth_cubes, depth_surfaces = retrieve_seismic_forward_results(
-                config=config
-            )
-        elif args.attribute == config.inversion_map.attribute:  # 'relai'
-            depth_cubes, depth_surfaces = retrieve_inversion_results(config=config)
-        else:
-            raise ValueError(
-                f"{__file__}: unknown attribute for map generation: {args.attribute}"
-            )
-
-        # Generate attributes
-        attr_list = populate_seismic_attributes(
-            config=read_yaml_file(
-                sim2seis_config_dir=config_dir,
-                sim2seis_config_file=config.attribute_map_definition_file,
-                parse_inputs=False,
-            ),
-            cubes=depth_cubes,
-            surfaces=depth_surfaces,
-        )
-
-        # Dump results
-        _dump_map_results(
-            config=config,
-            depth_surfaces=depth_surfaces,
-            attributes=attr_list,
-            attribute_type=args.attribute,
-        )
-
-        # Export with dataio
-        attribute_export(
-            config_file=config,
-            export_attributes=attr_list,
-            is_observed=False,
-        )
-
     if args.verbose:
-        print("Finished generating maps")
+        start_s2s_run_log()
+    try:
+        s2s_log(f"map attributes ({args.attribute}): started")
+        # Read configuration file
+        config = read_yaml_file(
+            sim2seis_config_dir=args.config_dir,
+            sim2seis_config_file=args.config_file,
+            global_config_dir=args.global_dir,
+            global_config_file=args.global_file,
+        )
+        # All path references should be relative to the top directory of the FMU
+        # file structure
+        with restore_dir(config.paths.fmu_rootpath):
+            # Determine if the attributes are from seismic amplitude or inverted
+            # seismic data to read the correct set of input cubes
+            if args.attribute == config.amplitude_map.attribute:  # 'amplitude'
+                depth_cubes, depth_surfaces = retrieve_seismic_forward_results(
+                    config=config
+                )
+            elif args.attribute == config.inversion_map.attribute:  # 'relai'
+                depth_cubes, depth_surfaces = retrieve_inversion_results(config=config)
+            else:
+                raise ValueError(
+                    f"{__file__}: unknown attribute for map generation: "
+                    f"{args.attribute}"
+                )
+
+            # Generate attributes
+            with log_step(f"{args.attribute} attribute extraction"):
+                attr_list = populate_seismic_attributes(
+                    config=read_yaml_file(
+                        sim2seis_config_dir=config_dir,
+                        sim2seis_config_file=config.attribute_map_definition_file,
+                        parse_inputs=False,
+                    ),
+                    cubes=depth_cubes,
+                    surfaces=depth_surfaces,
+                )
+
+            # Dump results
+            _dump_map_results(
+                config=config,
+                depth_surfaces=depth_surfaces,
+                attributes=attr_list,
+                attribute_type=args.attribute,
+            )
+
+            # Export with dataio
+            attribute_export(
+                config_file=config,
+                export_attributes=attr_list,
+                is_observed=False,
+            )
+
+        s2s_log(f"map attributes ({args.attribute}): finished")
+    finally:
+        stop_s2s_run_log()
 
 
 if __name__ == "__main__":

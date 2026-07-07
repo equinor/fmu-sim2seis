@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from shutil import copy2, move as rename
 
@@ -9,6 +10,7 @@ from fmu.sim2seis.utilities import (
     SeismicName,
     Sim2SeisConfig,
     SingleSeismic,
+    s2s_log,
 )
 from fmu.tools import DomainConversion
 
@@ -124,7 +126,10 @@ def call_seismic_forward(model_file: Path, verbose: bool) -> bool:
     except Exception as e:
         raise ValueError("unexpected situation for seismic forward call") from e
     if verbose:
-        print(result["output"])
+        s2s_log(result["output"])
         if not result["success"] or result["error"]:
-            print(f"unexpected situation for seismic forward: {result['error']}")
+            s2s_log(
+                f"unexpected situation for seismic forward: {result['error']}",
+                level=logging.WARNING,
+            )
     return result["success"]
