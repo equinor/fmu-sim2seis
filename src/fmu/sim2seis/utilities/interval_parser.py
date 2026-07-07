@@ -288,6 +288,7 @@ def _create_seismic_attribute(
     global_config: GlobalConfig,
     cube_info: CubeConfig,
     cube: SeismicCube,
+    formation_name: str,
     error: ErrorConfig | None = None,
 ) -> SeismicAttribute:
     """Create a single SeismicAttribute object for a given interval configuration."""
@@ -321,6 +322,7 @@ def _create_seismic_attribute(
         bottom_surface=attr_bottom_surface,
         top_surface_shift=interval_config.top_surface_shift,
         bottom_surface_shift=interval_config.bottom_surface_shift,
+        formation=formation_name,
         info=cube_info,
         error=error,
     )
@@ -341,6 +343,7 @@ def _create_formation_attributes(
     cubes: CubeDict,
     surfaces: SurfaceDict,
     global_config: GlobalConfig,
+    formation_name: str,
     error: ErrorConfig | None = None,
 ) -> list[SeismicAttribute]:
     """Create SeismicAttribute objects for each interval group and matching cube."""
@@ -355,6 +358,7 @@ def _create_formation_attributes(
                 global_config=global_config,
                 cube_info=cube_info,
                 cube=seismic_cube,
+                formation_name=formation_name,
                 error=error,
             )
             formation_attributes.append(attribute)
@@ -400,6 +404,7 @@ def _process_formation(
         cubes=cubes,
         surfaces=surfaces,
         global_config=global_config,
+        formation_name=formation_name,
         error=error,
     )
 

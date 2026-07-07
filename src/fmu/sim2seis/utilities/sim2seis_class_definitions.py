@@ -399,6 +399,7 @@ class SeismicAttribute:
     bottom_surface: xtgeo.RegularSurface | None = None
     top_surface_shift: float = 0.0  # Use signed values for shift
     bottom_surface_shift: float = 0.0  # Use signed values for shift
+    formation: str | None = None
     info: CubeConfig | None = None
     error: ErrorConfig | None = None
 
