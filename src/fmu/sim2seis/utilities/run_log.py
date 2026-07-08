@@ -26,10 +26,12 @@ import sys
 import time
 from collections.abc import Generator
 from contextlib import contextmanager
+from dataclasses import dataclass
 
 _LABEL = "SIM2SEIS"
 
 
+@dataclass
 class _RunState:
     """Mutable holder for the active run log state.
 
@@ -53,9 +55,21 @@ class _ElapsedFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         level = "" if record.levelno == logging.INFO else f" {record.levelname}"
         if _state.start_time is None:
-            return f"{_LABEL}{level}: {record.getMessage()}"
-        elapsed = time.monotonic() - _state.start_time
-        return f"{_LABEL} [{_format_elapsed(elapsed)}]{level}: {record.getMessage()}"
+            message = f"{_LABEL}{level}: {record.getMessage()}"
+        else:
+            elapsed = time.monotonic() - _state.start_time
+            message = (
+                f"{_LABEL} [{_format_elapsed(elapsed)}]{level}: {record.getMessage()}"
+            )
+        # Preserve any traceback / stack information attached to the record, so
+        # ``logger.exception(...)`` and ``exc_info=True`` are not silently dropped.
+        if record.exc_info and not record.exc_text:
+            record.exc_text = self.formatException(record.exc_info)
+        if record.exc_text:
+            message = f"{message}\n{record.exc_text}"
+        if record.stack_info:
+            message = f"{message}\n{self.formatStack(record.stack_info)}"
+        return message
 
 
 _S2S_FORMATTER = _ElapsedFormatter()
