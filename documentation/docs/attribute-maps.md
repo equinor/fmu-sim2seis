@@ -10,7 +10,8 @@ derived from the dedicated interval definition file. [Figure 1](#figure-1-seismi
 sections of the configuration file. `webviz_map` refers to export of attribute maps in formats that can be read by
 `webviz` and `ert` for visualisation and history matching. As most parameters are commented out, this indicates that
 the default settings in most cases are used. It is only the name of the attribute definition file in the
-`main class setting` that must be specified. The settings for attribute error are used for [observed data](./observed-data.md).
+`main class setting` that must be specified. The settings for the observation error are given in the
+[interval definition file](#error-settings) and apply to [observed data](./observed-data.md) only.
 
 ```yaml
 # # Section for ert and webviz export
@@ -19,8 +20,6 @@ webviz_map:
   # grid_file: simgrid_maps4ahm.roff
   # zone_file: simgrid_maps4ahm--zone.roff
   # region_file: simgrid_maps4ahm--region.roff
-  attribute_error: 0.07
-  attribute_error_minimum: 0.005
 
 
 ## Section for seismic forward amplitude maps
@@ -73,6 +72,45 @@ The `global` section defines parameters that apply to all interval definitions u
 - Attributes: Select attributes to highlight important features in the 4D seismic.
 - Scale factor: Used to match values in similar attributes from observed seismic data.
 - Metadata fields: Used in `fmu-dataio`.
+- Error settings: `error` and `error_path` define the observation error, see [Error settings](#error-settings).
+
+### Error settings
+
+The observation error is written as an `OBS_ERROR` column in the exported CSV files and applies to
+[observed data](./observed-data.md) only. It is defined by an `error` block with the following fields:
+
+- `type`: `relative` (a fraction of the attribute value) or `absolute` (the error itself).
+- `value`: a single scalar error, or
+- `error_surface`: the name of a spatially varying error map, resolved against the global `error_path`. The file is
+  read with `xtgeo` and must have the same geometry as the attribute maps. Exactly one of `value` or `error_surface`
+  must be given.
+- `minimum`: an absolute floor applied after the error is computed (default `0.0`).
+
+All four combinations of `type` and source (scalar `value` or `error_surface`) are supported. The `error_path`
+directory is set once, in the `global` section only.
+
+The `error` block can be given at the `global`, cube, or formation level. A block at a more specific level fully
+replaces the one at the level above it (whole-block replacement); individual fields are not merged. For example:
+
+```yaml
+global:
+  error_path: share/results/maps
+  error:
+    type: relative
+    value: 0.07
+    minimum: 0.005
+cubes:
+  relai_depth:
+    error: # replaces the global error for this cube
+      type: absolute
+      error_surface: relai_error.gri
+      minimum: 0.005
+    formations:
+      volantis:
+        error: # replaces the cube/global error for this formation
+          type: relative
+          value: 0.05
+```
 
 ### Cube Section
 
