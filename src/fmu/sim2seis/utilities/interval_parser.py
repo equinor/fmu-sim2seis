@@ -93,7 +93,7 @@ class RootConfig(BaseModel):
             )
 
         for error in surface_errors:
-            full_path = self.global_config.error_path / error.error_surface
+            full_path = (self.global_config.error_path / error.error_surface).resolve()
             if not full_path.is_file():
                 raise ValueError(f"Error surface file not found: {full_path}")
             # ErrorConfig is frozen; normalise the field to the absolute path.
