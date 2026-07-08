@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Self, get_args
 
-import xtgeo
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -311,20 +310,6 @@ class WebvizMap(BaseModel):
         description="The file name for region definition file, 'roff' format is "
         "normally used",
     )
-    attribute_error: float | Path = Field(
-        description="Attribute error is normally given as a fractional number, "
-        "but it can also be given as a surface with polygon information "
-        "where each polygon has its own attribute error. Full path and "
-        "name to the surface file must be given, and the file format "
-        "must be recognised by xtgeo. NB! This only applies to observed data. "
-        "Modelled data are written without error.",
-        default=0.0,
-    )
-    attribute_error_minimum: float = Field(
-        description="A float value that will give the minimum error for observed data",
-        default=0.005,
-        gt=0.0,
-    )
 
     @staticmethod
     def _resolve_grid_path(v: str, info: ValidationInfo) -> tuple[Path, bool]:
@@ -357,19 +342,6 @@ class WebvizMap(BaseModel):
         if should_validate and not full_name.is_file():
             raise ValueError(f"WebvizMap: {full_name!s} is not a file")
         return Path(v)
-
-    @field_validator("attribute_error", mode="before")
-    def attribute_error_check(cls, v: float | Path):
-        if isinstance(v, float):
-            assert v >= 0.0
-            assert v <= 1.0
-            return v
-        assert v.is_file()
-        try:
-            _ = xtgeo.surface_from_file(v)
-        except ValueError:
-            raise ValueError(f"attribute error surface file not recognised: {v}")
-        return v
 
 
 class InversionParameters(BaseModel):
@@ -505,7 +477,14 @@ class Sim2SeisConfig(BaseModel):
     seismic_inversion: SkipJsonSchema[SeismicInversionConfig] = Field(
         default_factory=SeismicInversionConfig,
     )
-    webviz_map: SkipJsonSchema[WebvizMap]
+    webviz_map: SkipJsonSchema[WebvizMap] = Field(default_factory=WebvizMap)
+
+    @field_validator("webviz_map", mode="before")
+    @classmethod
+    def _default_webviz_map(cls, v):
+        # An empty ``webviz_map:`` block in the YAML parses to ``None``; fall
+        # back to the default WebvizMap in that case.
+        return {} if v is None else v
 
     @model_validator(mode="after")
     def check_sim2seis_config(self) -> Self:

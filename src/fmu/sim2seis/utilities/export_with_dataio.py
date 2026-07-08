@@ -1,6 +1,7 @@
 from os import symlink, unlink
 from pathlib import Path
 
+import numpy as np
 import xtgeo
 
 from fmu import dataio, tools
@@ -8,6 +9,7 @@ from fmu.pem.pem_utilities import restore_dir
 
 from .sim2seis_class_definitions import (
     DifferenceSeismic,
+    ErrorConfig,
     SeismicAttribute,
     SeismicName,
     SingleSeismic,
@@ -116,12 +118,21 @@ def attribute_export(
                     table_index=["REGION"],
                 )
                 export_obj.export(value)  # type: ignore
-                # Make ert/webviz dataframe
+                # Make ert/webviz dataframe. Observation error only applies to
+                # observed data; modelled data are written without error.
+                if is_observed and attr.error is not None:
+                    attribute_error: xtgeo.RegularSurface | float = (
+                        _build_error_surface(value, attr.error)
+                    )
+                    attribute_error_minimum = attr.error.minimum or None
+                else:
+                    attribute_error = 0.0
+                    attribute_error_minimum = None
                 attr_df = tools.sample_attributes_for_sim2seis(
                     grid=simgrid,
                     attribute=value,
-                    attribute_error=config_file.webviz_map.attribute_error,
-                    attribute_error_minimum=config_file.webviz_map.attribute_error_minimum,
+                    attribute_error=attribute_error,
+                    attribute_error_minimum=attribute_error_minimum,
                     region=region_def,
                     zone=zone_def,
                 )
@@ -169,6 +180,35 @@ def attribute_export(
                         compression="zstd",
                         index=False,
                     )
+
+
+def _build_error_surface(
+    attribute_map: xtgeo.RegularSurface,
+    error: ErrorConfig,
+) -> xtgeo.RegularSurface:
+    """Build an absolute observation-error surface for an attribute map.
+
+    Supports the four combinations of {relative, absolute} error given either
+    as a single scalar ``value`` or as a spatially varying ``error_surface``.
+    A relative error is multiplied by the attribute values; an absolute error
+    is used directly. The error surface is imported with xtgeo and must share
+    the geometry of the attribute maps.
+    """
+    if error.error_surface is not None:
+        err = xtgeo.surface_from_file(error.error_surface)
+        if not err.compare_topology(attribute_map):
+            raise ValueError(
+                f"Error surface '{error.error_surface}' does not have the same "
+                "geometry as the attribute maps."
+            )
+    else:
+        err = attribute_map.copy()
+        err.values = error.value
+
+    if error.type == "relative":
+        err.values = attribute_map.values * err.values
+    err.values = np.abs(err.values)
+    return err
 
 
 def _get_grid_info(

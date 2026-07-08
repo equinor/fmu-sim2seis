@@ -18,6 +18,7 @@ from typing import (
 
 import numpy as np
 import xtgeo
+from pydantic import BaseModel, ConfigDict, model_validator
 
 if TYPE_CHECKING:
     from .interval_parser import CubeConfig
@@ -45,6 +46,47 @@ KnownAttributes = Literal[
     "upper",
     "lower",
 ]
+
+ErrorType = Literal["relative", "absolute"]
+
+
+class ErrorConfig(BaseModel):
+    """Observation error settings for observed-data attribute maps.
+
+    The error is either a single scalar ``value`` or a spatially varying
+    ``error_surface`` (a file readable by xtgeo, with the same geometry as the
+    attribute maps). ``type`` decides whether the error is interpreted as a
+    fraction of the attribute value (``relative``) or as the error itself
+    (``absolute``). ``minimum`` is an absolute floor applied after the error is
+    computed.
+
+    ``error_surface`` is given in the interval definition file as a plain file
+    name relative to the global ``error_path``. It is resolved to an absolute
+    path (and its existence verified) during validation of the whole
+    configuration, in ``interval_parser.RootConfig.resolve_error_surfaces``.
+    By the time an ``ErrorConfig`` reaches the attribute-export code the field
+    therefore holds an absolute path.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    type: ErrorType
+    value: float | None = None
+    error_surface: Path | None = None
+    minimum: float = 0.0
+
+    @model_validator(mode="after")
+    def validate_source(self) -> ErrorConfig:
+        if (self.value is None) == (self.error_surface is None):
+            raise ValueError(
+                "Error configuration requires exactly one of 'value' or "
+                "'error_surface' to be set."
+            )
+        if self.value is not None and self.value < 0:
+            raise ValueError("Error 'value' must be a non-negative number.")
+        if self.minimum < 0:
+            raise ValueError("Error 'minimum' must be a non-negative number.")
+        return self
 
 
 class SeismicDate:
@@ -358,6 +400,7 @@ class SeismicAttribute:
     top_surface_shift: float = 0.0  # Use signed values for shift
     bottom_surface_shift: float = 0.0  # Use signed values for shift
     info: CubeConfig | None = None
+    error: ErrorConfig | None = None
 
     def __post_init__(self):
         # Need to verify that either a base surface or a window length is defined
