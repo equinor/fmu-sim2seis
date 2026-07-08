@@ -6,9 +6,19 @@ global:
     - min
   scale_factor: 1.02
   surface_postfix: --depth.gri
+  error_path: share/results/maps # directory for error surface files (global only)
+  error: # observation error for observed-data attribute maps (observed data only)
+    type: relative # 'relative' (fraction of attribute) or 'absolute'
+    value: 0.07 # single scalar; use 'error_surface' instead for a spatially varying error
+    minimum: 0.005 # absolute floor applied after the error is computed
 cubes: # Setup for the cubes for which maps will be generated
   relai_depth: # arbitrary name of cube
     cube_prefix: seismic--relai_full_depth-- # start of observed cube name
+    # A cube- or formation-level 'error' block fully replaces the global one, e.g.:
+    # error:
+    #   type: absolute
+    #   error_surface: relai_error.gri # resolved against global 'error_path'
+    #   minimum: 0.005
     formations: # settings for each formation maps will be generated for
       volantis:
         top_horizon: topvolantis # Horizon used as top of the formation. ".gri" assumed as extension

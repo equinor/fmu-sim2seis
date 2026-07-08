@@ -22,6 +22,7 @@ from pydantic_core import PydanticCustomError
 
 from .sim2seis_class_definitions import (
     DifferenceSeismic,
+    ErrorConfig,
     KnownAttributes,
     SeismicAttribute,
     SeismicName,
@@ -50,6 +51,8 @@ class GlobalConfig(BaseModel):
     attributes: list[KnownAttributes]
     surface_postfix: str
     scale_factor: float
+    error: ErrorConfig | None = None
+    error_path: DirectoryPath | None = None
 
 
 class RootConfig(BaseModel):
@@ -57,6 +60,45 @@ class RootConfig(BaseModel):
 
     global_config: GlobalConfig = Field(alias="global")
     cubes: dict[str, CubeConfig] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def resolve_error_surfaces(self) -> RootConfig:
+        """Validate and resolve every ``error_surface`` in the configuration.
+
+        Error blocks may appear at the global, cube, and formation level. Any
+        ``error_surface`` name is resolved against the single global
+        ``error_path`` and its existence is verified. The resolved absolute
+        path is stored back on the error block so consumers do not need the
+        directory.
+        """
+        error_blocks = [self.global_config.error]
+        for cube in self.cubes.values():
+            error_blocks.append(cube.error)
+            error_blocks.extend(
+                formation.error for formation in cube.formations.values()
+            )
+
+        surface_errors = [
+            error
+            for error in error_blocks
+            if error is not None and error.error_surface is not None
+        ]
+        if not surface_errors:
+            return self
+
+        if self.global_config.error_path is None:
+            raise ValueError(
+                "An 'error_surface' is configured but 'error_path' is not set "
+                "in the global section of the interval definition file."
+            )
+
+        for error in surface_errors:
+            full_path = self.global_config.error_path / error.error_surface
+            if not full_path.is_file():
+                raise ValueError(f"Error surface file not found: {full_path}")
+            # ErrorConfig is frozen; normalise the field to the absolute path.
+            object.__setattr__(error, "error_surface", full_path)
+        return self
 
 
 class FormationSettings(BaseModel):
@@ -68,6 +110,7 @@ class FormationSettings(BaseModel):
     top_surface_shift: float = 0
     bottom_surface_shift: float = 0
     window_length: float | None = None
+    error: ErrorConfig | None = None
 
     attribute_overrides: dict[KnownAttributes, dict[str, Any]] = Field(
         default_factory=dict, exclude=True
@@ -120,6 +163,7 @@ class CubeConfig(BaseModel):
 
     cube_prefix: str
     formations: dict[str, FormationSettings]
+    error: ErrorConfig | None = None
 
 
 class IntervalConfig(BaseModel):
@@ -244,6 +288,7 @@ def _create_seismic_attribute(
     global_config: GlobalConfig,
     cube_info: CubeConfig,
     cube: SeismicCube,
+    error: ErrorConfig | None = None,
 ) -> SeismicAttribute:
     """Create a single SeismicAttribute object for a given interval configuration."""
     # Pydantic validation in IntervalConfig ensures top_horizon is always set
@@ -277,6 +322,7 @@ def _create_seismic_attribute(
         top_surface_shift=interval_config.top_surface_shift,
         bottom_surface_shift=interval_config.bottom_surface_shift,
         info=cube_info,
+        error=error,
     )
 
 
@@ -295,6 +341,7 @@ def _create_formation_attributes(
     cubes: CubeDict,
     surfaces: SurfaceDict,
     global_config: GlobalConfig,
+    error: ErrorConfig | None = None,
 ) -> list[SeismicAttribute]:
     """Create SeismicAttribute objects for each interval group and matching cube."""
     formation_attributes = []
@@ -308,9 +355,25 @@ def _create_formation_attributes(
                 global_config=global_config,
                 cube_info=cube_info,
                 cube=seismic_cube,
+                error=error,
             )
             formation_attributes.append(attribute)
     return formation_attributes
+
+
+def _resolve_error_block(
+    global_config: GlobalConfig,
+    cube_info: CubeConfig,
+    formation_settings: FormationSettings,
+) -> ErrorConfig | None:
+    """Select the observation error for a formation.
+
+    The most specific error block wins (whole-block replacement): formation
+    overrides cube, which overrides the global setting. ``error_surface`` paths
+    have already been validated and resolved to absolute paths by
+    ``RootConfig.resolve_error_surfaces``.
+    """
+    return formation_settings.error or cube_info.error or global_config.error
 
 
 def _process_formation(
@@ -330,12 +393,14 @@ def _process_formation(
         formation_name=formation_name,
         cube_name=cube_name,
     )
+    error = _resolve_error_block(global_config, cube_info, formation_settings)
     return _create_formation_attributes(
         interval_groups=interval_groups,
         cube_info=cube_info,
         cubes=cubes,
         surfaces=surfaces,
         global_config=global_config,
+        error=error,
     )
 
 
