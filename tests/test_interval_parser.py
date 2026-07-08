@@ -3,15 +3,20 @@ from unittest.mock import Mock, patch
 
 import pytest
 import xtgeo
+from pydantic import ValidationError
 
 from fmu.sim2seis.utilities import SeismicName, SingleSeismic
 from fmu.sim2seis.utilities.interval_parser import (
+    CubeConfig,
     FormationSettings,
     GlobalConfig,
+    RootConfig,
     _get_matching_cubes,
     _group_attributes_by_interval,
+    _resolve_error_block,
     populate_seismic_attributes,
 )
+from fmu.sim2seis.utilities.sim2seis_class_definitions import ErrorConfig
 
 
 @pytest.fixture
@@ -843,3 +848,151 @@ def test_attribute_with_window_length_override(
     assert len(rms_attrs) == 1
     assert mean_attrs[0].window_length == 50.0
     assert rms_attrs[0].window_length is None
+
+
+# ---------------------------------------------------------------------------
+# Observation error configuration
+# ---------------------------------------------------------------------------
+
+
+def test_error_config_requires_exactly_one_source():
+    with pytest.raises(ValidationError):
+        ErrorConfig(type="relative")  # neither value nor error_surface
+    with pytest.raises(ValidationError):
+        ErrorConfig(type="relative", value=0.1, error_surface=Path("err.gri"))
+
+
+def test_error_config_rejects_negative_values():
+    with pytest.raises(ValidationError):
+        ErrorConfig(type="relative", value=-0.1)
+    with pytest.raises(ValidationError):
+        ErrorConfig(type="absolute", value=0.1, minimum=-0.1)
+
+
+def test_error_config_rejects_unknown_type():
+    with pytest.raises(ValidationError):
+        ErrorConfig(type="bogus", value=0.1)
+
+
+def _global_config(tmp_path, **error_kwargs):
+    grid_path = tmp_path / "maps"
+    grid_path.mkdir(exist_ok=True)
+    return GlobalConfig(
+        gridhorizon_path=str(grid_path),
+        attributes=["rms"],
+        scale_factor=1.0,
+        surface_postfix="--depth.gri",
+        **error_kwargs,
+    )
+
+
+def _root_config_dict(tmp_path, error, error_path=None):
+    grid_path = tmp_path / "maps"
+    grid_path.mkdir(exist_ok=True)
+    global_section = {
+        "gridhorizon_path": str(grid_path),
+        "attributes": ["rms"],
+        "scale_factor": 1.0,
+        "surface_postfix": "--depth.gri",
+        "error": error,
+    }
+    if error_path is not None:
+        global_section["error_path"] = str(error_path)
+    return {
+        "global": global_section,
+        "cubes": {
+            "amp_depth": {
+                "cube_prefix": "seismic--amplitude_depth--",
+                "formations": {
+                    "beta": {"top_horizon": "topbeta", "bottom_horizon": "basebeta"}
+                },
+            }
+        },
+    }
+
+
+def test_error_override_precedence(tmp_path):
+    global_config = _global_config(tmp_path, error={"type": "relative", "value": 0.07})
+    cube_with_error = CubeConfig(
+        cube_prefix="x", formations={}, error={"type": "absolute", "value": 0.1}
+    )
+    cube_without_error = CubeConfig(cube_prefix="x", formations={})
+    formation_with_error = FormationSettings(
+        top_horizon="t", bottom_horizon="b", error={"type": "relative", "value": 0.2}
+    )
+    formation_without_error = FormationSettings(top_horizon="t", bottom_horizon="b")
+
+    # Formation wins over cube and global
+    resolved = _resolve_error_block(
+        global_config, cube_with_error, formation_with_error
+    )
+    assert resolved.value == 0.2
+
+    # Cube wins over global when formation has no error
+    resolved = _resolve_error_block(
+        global_config, cube_with_error, formation_without_error
+    )
+    assert resolved.value == 0.1
+
+    # Global applies when neither cube nor formation set an error
+    resolved = _resolve_error_block(
+        global_config, cube_without_error, formation_without_error
+    )
+    assert resolved.value == 0.07
+
+    # No error anywhere resolves to None
+    resolved = _resolve_error_block(
+        _global_config(tmp_path), cube_without_error, formation_without_error
+    )
+    assert resolved is None
+
+
+def test_error_surface_resolved_against_error_path(tmp_path):
+    error_dir = tmp_path / "errors"
+    error_dir.mkdir()
+    error_file = error_dir / "err.gri"
+    error_file.write_bytes(b"x")
+
+    config = _root_config_dict(
+        tmp_path,
+        error={"type": "absolute", "error_surface": "err.gri"},
+        error_path=error_dir,
+    )
+    root = RootConfig.model_validate(config)
+    assert root.global_config.error.error_surface == error_file
+
+
+def test_error_surface_missing_file_raises(tmp_path):
+    error_dir = tmp_path / "errors"
+    error_dir.mkdir()
+    config = _root_config_dict(
+        tmp_path,
+        error={"type": "absolute", "error_surface": "missing.gri"},
+        error_path=error_dir,
+    )
+    with pytest.raises(ValidationError, match="Error surface file not found"):
+        RootConfig.model_validate(config)
+
+
+def test_error_surface_without_error_path_raises(tmp_path):
+    config = _root_config_dict(
+        tmp_path, error={"type": "absolute", "error_surface": "err.gri"}
+    )
+    with pytest.raises(ValidationError, match="error_path"):
+        RootConfig.model_validate(config)
+
+
+def test_error_propagated_to_seismic_attribute(
+    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
+):
+    real_yaml_config["global"]["error"] = {
+        "type": "relative",
+        "value": 0.07,
+        "minimum": 0.005,
+    }
+    attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
+    assert attrs
+    assert all(a.error is not None for a in attrs)
+    assert all(a.error.type == "relative" for a in attrs)
+    assert all(a.error.value == 0.07 for a in attrs)
+    assert all(a.error.minimum == 0.005 for a in attrs)
