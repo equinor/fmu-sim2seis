@@ -959,7 +959,7 @@ def test_error_surface_resolved_against_error_path(tmp_path):
         error_path=error_dir,
     )
     root = RootConfig.model_validate(config)
-    assert root.global_config.error.error_surface == error_file
+    assert root.global_config.error.error_surface == error_file.resolve()
 
 
 def test_error_surface_missing_file_raises(tmp_path):
