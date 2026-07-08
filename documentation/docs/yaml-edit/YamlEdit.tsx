@@ -140,7 +140,7 @@ export const YamlEdit = () => {
         </Dialog>
         <Switch label="Populate with default values" onChange={(e) => setPopulateDefault(e.target.checked)} />
 
-      </div> 
+      </div>
       <div className="flex justify-center my-20">
         <div className="p-10 shadow-lg rounded bg-slate-50 border-2 border-slate-50" style={{minWidth: 800}}>
           <Form

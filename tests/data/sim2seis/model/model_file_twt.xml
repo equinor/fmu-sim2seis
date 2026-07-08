@@ -17,7 +17,7 @@
      </default-values>
 
      # names of parameters to use from .grdecl file:
-     <parameter-names> 
+     <parameter-names>
        <vp>VP</vp>
        <vs>VS</vs>
        <rho>DENSITY</rho>
@@ -51,22 +51,22 @@
 
    # Wavelet used for modelling (here a Ricker is used)
    # A wavelet extrected from real seismic can be used, see user manual
-   <wavelet> 
+   <wavelet>
      <ricker>
        <peak-frequency>30</peak-frequency>
      </ricker>
      <scale>1</scale>
    </wavelet>
 
-   # Add white noise. 
+   # Add white noise.
    # Note that the noise is added to the inputgrid, and not to the seismic grid
    # This means that the noise will vary depending on the grid. This is not ideal
 #   <white-noise>
 #        <standard-deviation>0.0015</standard-deviation>
 #   </white-noise>
 
-   # Definition of output grid. 
-   # A timesurface for top of the grid is needed to create seismic in time. Else, use a constant 
+   # Definition of output grid.
+   # A timesurface for top of the grid is needed to create seismic in time. Else, use a constant
    # A segy cube can be used as areal layout.
    <output-grid>
      <top-time>

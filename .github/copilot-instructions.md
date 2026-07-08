@@ -11,7 +11,7 @@ Key namespaces: `fmu.sim2seis.seismic_fwd`, `fmu.sim2seis.seismic_inversion`,
 
 ## Technology stack
 
-- **Python ≥ 3.11**; supports 3.11, 3.12, 3.13
+- **Python ≥ 3.11**; supports 3.11, 3.12, 3.13, 3.14
 - **Pydantic v2** for all configuration validation (`BaseModel`, `model_validator`,
   `field_validator`, `ValidationInfo`)
 - **ERT** (`ert.shared.plugins.plugin_manager`) for forward-model integration;
