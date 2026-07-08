@@ -54,4 +54,3 @@ If relative acoustic impedance is also included, the sequence becomes:
 5. Relai maps
 
 A set-up file for an `ert` job is shown in [`ert` configuration](./ert-configuration.md).
-

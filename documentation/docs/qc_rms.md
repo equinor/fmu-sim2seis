@@ -89,7 +89,9 @@ os.chdir(project_dir + os.path.sep + rel_dir_mod_grid)
 pem_grid_name = "simgrid"
 pem_grid_prop_ai_name = "simgrid--airatio--20180701_20180101.roff"
 pem_ai = xtgeo.gridproperty_from_file(pem_grid_prop_ai_name, fformat="roff")
-pem_ai.to_roxar(projectname=PRJ, gridname=pem_grid_name, propertyname=pem_grid_prop_ai_name[:-4])
+pem_ai.to_roxar(
+    projectname=PRJ, gridname=pem_grid_name, propertyname=pem_grid_prop_ai_name[:-4]
+)
 
 # Cube import
 os.chdir(project_dir + os.path.sep + rel_dir_mod_cubes)
@@ -97,10 +99,12 @@ mod_amp_cube = "seismic--amplitude_full_depth--20180701_20180101.segy"
 cube_amp = xtgeo.cube.cube_from_file(mod_amp_cube)
 cube_amp.to_roxar(project=PRJ, name=mod_amp_cube[:-4], domain="depth")
 
-# Map import example. NB! Note that both name and category must be defined in 
+# Map import example. NB! Note that both name and category must be defined in
 # the RMS project prior to importing the map
 os.chdir(project_dir + os.path.sep + rel_dir_obs_maps)
 obs_relai_map = "topvolantis--relai_mean_depth--20180701_20180101.gri"
-srf_ai = xtgeo.surface.surface_from_file(obs_relai_map, fformat='irap_binary')
-srf_ai.to_roxar(project=PRJ, name="TopVolantis--relai--20180701-20180101", category="RelAi")
+srf_ai = xtgeo.surface.surface_from_file(obs_relai_map, fformat="irap_binary")
+srf_ai.to_roxar(
+    project=PRJ, name="TopVolantis--relai--20180701-20180101", category="RelAi"
+)
 ```

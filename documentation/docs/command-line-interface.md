@@ -7,12 +7,12 @@ comments. In this example, we run `sim2seis` on a copy of the Drogon test data s
 ```shell
 > # Go to top of the project structure
 > cd /project/fmu/tutorial/drogon/resmod/ff/users/hfle/dev
-> # The PEM is the first required step. It has its own YAML parameter file. Note that the path to the global config 
+> # The PEM is the first required step. It has its own YAML parameter file. Note that the path to the global config
 > # directory is given as a relative path from the FMU top directory
 > pem --help
 > pem -c ./sim2seis/model -f new_pem_config.yml -g fmuconfig/output -o global_variables.yml -m HIST
-> 
-> # Processing observed data is done once, unless there is structural uncertainty in the model, see section on 
+>
+> # Processing observed data is done once, unless there is structural uncertainty in the model, see section on
 > # observed data. Optional -v argument for 'verbose'
 > sim2seis_observed_data --help
 > sim2seis_observed_data -f ./sim2seis/model/sim2seis_combined_config.yml -g fmuconfig/output/global_variables.yml -o HIST
@@ -34,7 +34,7 @@ comments. In this example, we run `sim2seis` on a copy of the Drogon test data s
 > sim2seis_map_attributes -f ./sim2seis/model/sim2seis_combined_config.yml -g fmuconfig/output/global_variables.yml -a relai
 >
 > # As one step in the sim2seis workflow requires the previous ones to be run, data I/O are handled by intermediate
-> # files, which can have significant size. When everything is complete, the intermediate files can be removed by a 
+> # files, which can have significant size. When everything is complete, the intermediate files can be removed by a
 > # clean-up
 > sim2seis_cleanup --help
 > sim2seis_cleanup -f ./sim2seis/model/sim2seis_combined_config.yml -l relai

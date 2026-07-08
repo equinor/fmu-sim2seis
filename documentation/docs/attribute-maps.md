@@ -50,7 +50,7 @@ attribute_map_definition_file: modelled_data_intervals_drogon.yml
 
 <span id="figure-1-seismic-attributes-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to attribute maps.</span>
 
-In addition, the file name for the interval definition file is specified in the main part of the configuration YAML  
+In addition, the file name for the interval definition file is specified in the main part of the configuration YAML
 file:
 
 ```yaml
@@ -98,4 +98,3 @@ For example:
 - For `amplitude_depth` cubes:
   - `mean` has a separate interval definition from `rms` and `min`.
   - `min` has a different scaling factor than the others.
-  
