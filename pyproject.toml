@@ -34,7 +34,7 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Natural Language :: English",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
@@ -144,4 +144,3 @@ max-args = 10
 
 [tool.ruff.format]
 skip-magic-trailing-comma = false
-
