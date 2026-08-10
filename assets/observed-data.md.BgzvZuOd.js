@@ -109,8 +109,6 @@ import{_ as i,o as a,c as n,ae as e}from"./chunks/framework.xmna4E1W.js";const o
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # grid_file: simgrid_maps4ahm.roff</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # zone_file: simgrid_maps4ahm--zone.roff</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # region_file: simgrid_maps4ahm--region.roff</span></span>
-<span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  attribute_error</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.07</span></span>
-<span class="line"><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  attribute_error_minimum</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.005</span></span>
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">########################################################################################################################</span></span>
