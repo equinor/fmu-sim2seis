@@ -5,7 +5,7 @@
 set -e
 
 ## PEM
-pem -c sim2seis/model -f pem_config.yml -g fmuconfig/output -o global_variables.yml -q HIST -m ./sim2seis/model/
+pem -f sim2seis/model/pem_config.yml -g fmuconfig/output/global_variables.yml -m HIST -v true
 
 ## Seismic forward modelling and map attributes
 sim2seis_seismic_forward -f sim2seis/model/sim2seis_config.yml -g fmuconfig/output/global_variables.yml -m HIST
