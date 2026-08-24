@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "version": "1.1.1.dev6+g4fc4796dc",
+  "created_at": "2026-08-24T06:33:55.360478Z",
+  "created_by": "hfle",
+  "last_modified_at": "2026-08-24T06:33:55.360553Z",
+  "last_modified_by": "hfle",
+  "masterdata": null,
+  "model": null,
+  "access": null,
+  "cache_max_revisions": 10,
+  "rms": null,
+  "validation": {
+    "masterdata_smda": null,
+    "rms_project": null
+  }
+}
