@@ -77,6 +77,8 @@ src/fmu/sim2seis/version.py
 /src/fmu/sim2seis/.ert_runpath_list
 /src/fmu/sim2seis/logs/
 /src/fmu/sim2seis/storage/
+/tests/data/.fmu/cache/
+/tests/data/.fmu/logs/
 
 # npm and node relevant build files
 node_modules
