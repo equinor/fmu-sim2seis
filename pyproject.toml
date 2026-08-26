@@ -43,6 +43,7 @@ dependencies = [
     "numpy >= 2.4.6",
     "pandas >= 2.3.3",
     "xtgeo >= 4.23.0",
+    "fmu-settings-cli >= 1.1.1",
     "fmu-tools >= 1.32.0",
     "fmu-config",
     "fmu-dataio",
