@@ -26,12 +26,12 @@ comments. In this example, we run `sim2seis` on a copy of the Drogon test data s
 > sim2seis_relative_ai --help
 > sim2seis_relative_ai -f ./sim2seis/model/sim2seis_combined_config.yml -g fmuconfig/output/global_variables.yml -v true
 >
-> # Generate attribute maps from modelled seismic data
+> # Generate attribute maps from modelled seismic data, global parameters are not needed
 > sim2seis_map_attributes --help
-> sim2seis_map_attributes -f ./sim2seis/model/sim2seis_combined_config.yml -g fmuconfig/output/global_variables.yml -a amplitude -v true
+> sim2seis_map_attributes -f ./sim2seis/model/sim2seis_combined_config.yml -a amplitude -v true
 >
 > # In case seismic inversion is run
-> sim2seis_map_attributes -f ./sim2seis/model/sim2seis_combined_config.yml -g fmuconfig/output/global_variables.yml -a relai -v true
+> sim2seis_map_attributes -f ./sim2seis/model/sim2seis_combined_config.yml -a relai -v true
 >
 > # As one step in the sim2seis workflow requires the previous ones to be run, data I/O are handled by intermediate
 > # files, which can have significant size. When everything is complete, the intermediate files can be removed by a

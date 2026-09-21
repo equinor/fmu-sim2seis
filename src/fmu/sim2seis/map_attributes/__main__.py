@@ -28,7 +28,6 @@ def main(arguments=None):
         extra_arguments=[
             "attribute",
             "verbose",
-            "global_file",
         ],
     )
     # Check that the config directory follows the standard
@@ -41,8 +40,6 @@ def main(arguments=None):
         config = read_yaml_file(
             sim2seis_config_dir=args.config_dir,
             sim2seis_config_file=args.config_file,
-            global_config_dir=args.global_dir,
-            global_config_file=args.global_file,
         )
         # All path references should be relative to the top directory of the FMU
         # file structure
