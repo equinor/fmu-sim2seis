@@ -27,15 +27,18 @@ from .sim2seis_class_definitions import (
 _DIRECTORY_FIELDS = (
     "pem_output_dir",
     "modelled_seismic_dir",
-    "preprocessed_seismic_dir",
     "modelled_horizon_dir",
     "time_horizon_dir",
     "depth_horizon_dir",
-    "observed_horizon_dir",
     "grid_dir",
     "webviz_map_dir",
     "pickle_file_output_dir",
     "output_dir_modelled_data",
+)
+
+_OBSERVED_DATA_DIRS = (
+    "preprocessed_seismic_dir",
+    "observed_horizon_dir",
     "output_dir_observed_data",
 )
 
@@ -114,11 +117,16 @@ class Sim2SeisPaths(BaseModel):
 
     @model_validator(mode="after")
     def check_directories_exist(self) -> Self:
-        """Validate that all directory paths exist on disk."""
+        """Validate that all directory paths exist on disk. Directories connected to
+        observed data can be created if they don't already exist."""
         for field_name in _DIRECTORY_FIELDS:
             path: Path = getattr(self, field_name)
             if not path.is_dir():
                 raise ValueError(f"{field_name}: '{path}' is not an existing directory")
+        for field_name in _OBSERVED_DATA_DIRS:
+            path: Path = getattr(self, field_name)
+            if not path.is_dir():
+                path.mkdir(parents=True, exist_ok=True)
         return self
 
 
