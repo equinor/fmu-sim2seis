@@ -426,23 +426,6 @@ class SeismicInversionConfig(BaseModel):
         default_factory=InversionParameters
     )
 
-    @model_validator(mode="after")
-    def check_inversion_files(self, info: ValidationInfo) -> Self:
-        """Validate that all seismic inversion input files exist on disk.
-
-        Skipped when no validation context is present
-        (e.g. when the model is instantiated via default_factory without context).
-        """
-        if not (info and info.context):
-            return self
-        for field_name in ("d_syn_0", "d_syn_1", "rel_ai_0", "rel_ai_1"):
-            path: Path = getattr(self, field_name)
-            if not path.is_file():
-                raise ValueError(
-                    f"seismic_inversion.{field_name}: '{path}' is not an existing file"
-                )
-        return self
-
 
 class Sim2SeisConfig(BaseModel):
     model_config = ConfigDict(
