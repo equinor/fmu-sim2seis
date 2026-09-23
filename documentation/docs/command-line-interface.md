@@ -24,7 +24,7 @@ comments. In this example, we run `sim2seis` on a copy of the Drogon test data s
 >
 > # Optionally run seismic inversion
 > sim2seis_relative_ai --help
-> sim2seis_relative_ai -f ./sim2seis/model/sim2seis_combined_config.yml -g fmuconfig/output/global_variables.yml -v true
+> sim2seis_relative_ai -f ./sim2seis/model/sim2seis_combined_config.yml -v true
 >
 > # Generate attribute maps from modelled seismic data, global parameters are not needed
 > sim2seis_map_attributes --help

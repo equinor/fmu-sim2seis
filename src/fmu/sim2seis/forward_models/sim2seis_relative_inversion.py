@@ -17,8 +17,6 @@ class RelativeInversion(ForwardModelStepPlugin):
                 "sim2seis_relative_ai",
                 "--config-file",
                 "<CONFIG_FILE>",
-                "--global-file",
-                "<GLOBAL_FILE>",
                 "--verbose",
                 "<VERBOSE>",
             ],
@@ -43,7 +41,6 @@ class RelativeInversion(ForwardModelStepPlugin):
                 "code-block:: console\n\n"
                 "FORWARD_MODEL RELATIVE_INVERSION("
                 "<CONFIG_FILE>=<RUNPATH>/sim2seis/model/sim2seis_combined_config.yml, "
-                "<GLOBAL_FILE>=fmuconfig/output/global_variables.yml, "
                 "<VERBOSE>=true/false)"
             ),
         )
