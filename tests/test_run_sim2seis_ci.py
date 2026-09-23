@@ -131,8 +131,6 @@ def run_test_sim2seis_seismic_inversion(monkeypatch, data_dir):
         [
             "--config-file",
             str(config_dir / sim2seis_config_file_name),
-            "--global-file",
-            "fmuconfig/output/global_variables.yml",
             "--verbose",
             "False",
         ]

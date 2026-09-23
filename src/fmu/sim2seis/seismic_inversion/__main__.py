@@ -36,7 +36,6 @@ def main(arguments=None):
         arguments=arguments,
         extra_arguments=[
             "verbose",
-            "global_file",
         ],
     )
 
@@ -48,8 +47,6 @@ def main(arguments=None):
         conf = read_yaml_file(
             sim2seis_config_dir=args.config_dir,
             sim2seis_config_file=args.config_file,
-            global_config_dir=args.global_dir,
-            global_config_file=args.global_file,
         )
         with restore_dir(conf.paths.fmu_rootpath):
             # Retrieve the seismic time cubes from seismic forward modelling
