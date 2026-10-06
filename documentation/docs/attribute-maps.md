@@ -39,7 +39,7 @@ webviz_map:
 
 ## From the main class
 #______________________________________________________________________________________________________________________#
-attribute_map_definition_file: modelled_data_intervals_drogon.yml
+attribute_map_definition_file: data_intervals_drogon.yml
 
 
 ## From path definitions:
@@ -53,7 +53,7 @@ In addition, the file name for the interval definition file is specified in the 
 file:
 
 ```yaml
-attribute_map_definition_file: modelled_data_intervals_drogon.yml
+attribute_map_definition_file: data_intervals_drogon.yml
 ```
 
 ## Interval Definition YAML File
@@ -61,7 +61,7 @@ attribute_map_definition_file: modelled_data_intervals_drogon.yml
 The interval definition file provides flexibility in defining intervals, resulting in a complex structure.
 [Figure 2](#figure-2-interval-definition-in-yaml) illustrates the structure of the interval definition YAML file.
 
-<<< ../../tests/data/sim2seis/model/modelled_data_intervals_drogon.yml{yml}
+<<< ../../tests/data/sim2seis/model/data_intervals_drogon.yml{yml}
 <span id="figure-2-interval-definition-in-yaml"><strong>Figure 2:</strong> Parameters to define intervals for attribute map estimation.</span>
 
 ### Global Section
@@ -127,6 +127,12 @@ Several formations can be defined under each cube. Interval settings apply to al
 1. **Top and Base Horizon**: Specify the top and base horizons, with optional shifts for each.
 2. **Top Horizon and Interval Length**: Specify the top horizon and the interval length, with an optional shift of the
    top horizon.
+
+In addition, each formation controls which grid cells the attribute is sampled from when combining it with the
+region parameter:
+
+- `zone`: name of the grid zone to sample within. Default is empty (`""`), which uses the full grid interval.
+- `position`: vertical sampling position within that zone, one of `top`, `center`, or `base`. Default is `center`.
 
 For example:
 
