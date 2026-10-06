@@ -64,8 +64,8 @@ def test_obs_data(monkeypatch, data_dir):
     expected_values = [
         695.6961777682009,
         -1139.0474199722157,
-        14371913838.663399,
-        14371913847.189327,
+        21288020461.31066,
+        21288020474.837944,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
@@ -192,9 +192,9 @@ def run_test_sim2seis_map(monkeypatch, data_dir):
     expected_values = [
         1673.4673521434306,
         -1022.0935972341945,
-        14371913848.28719,
-        14371913843.33451,
-        -5040.2057157847885,
+        21288142264.44741,
+        21288142266.474922,
+        -5039.580232266145,
         3966.320646810609,
     ]
     for test_file, truth_value in zip(test_files, expected_values):

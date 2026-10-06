@@ -1,11 +1,16 @@
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 import xtgeo
 from pydantic import ValidationError
 
-from fmu.sim2seis.utilities import SeismicName, SingleSeismic
+from fmu.sim2seis.utilities import (
+    SeismicAttribute,
+    SeismicName,
+    SingleSeismic,
+    export_with_dataio,
+)
 from fmu.sim2seis.utilities.interval_parser import (
     CubeConfig,
     FormationSettings,
@@ -996,3 +1001,163 @@ def test_error_propagated_to_seismic_attribute(
     assert all(a.error.type == "relative" for a in attrs)
     assert all(a.error.value == 0.07 for a in attrs)
     assert all(a.error.minimum == 0.005 for a in attrs)
+
+
+# ---------------------------------------------------------------------------
+# Zone / vertical sampling position configuration
+# ---------------------------------------------------------------------------
+
+
+def test_zone_position_default_when_omitted(
+    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
+):
+    """When zone/position are omitted, attributes get the documented defaults."""
+    attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
+    assert attrs
+    assert all(a.zone == "" for a in attrs)
+    assert all(a.position == "center" for a in attrs)
+
+
+def test_formation_zone_position_propagate_to_attribute(
+    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
+):
+    """Formation-level zone/position propagate to every attribute of that
+    formation, including attributes that override other interval settings."""
+    for cube in real_yaml_config["cubes"].values():
+        cube["formations"]["volantis"]["zone"] = "Valysar"
+        cube["formations"]["volantis"]["position"] = "top"
+
+    attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
+    assert attrs
+    assert all(a.zone == "Valysar" for a in attrs)
+    assert all(a.position == "top" for a in attrs)
+
+
+@pytest.mark.parametrize("position", ["top", "center", "base"])
+def test_all_positions_are_accepted(
+    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader, position
+):
+    for cube in real_yaml_config["cubes"].values():
+        cube["formations"]["volantis"]["position"] = position
+
+    attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
+    assert attrs
+    assert all(a.position == position for a in attrs)
+
+
+def test_invalid_position_is_rejected(
+    real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
+):
+    real_yaml_config["cubes"]["relai_depth"]["formations"]["volantis"]["position"] = (
+        "middle"
+    )
+    with pytest.raises(ValidationError):
+        populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
+
+
+def test_position_override_creates_separate_interval_group(patch_directory_validation):
+    """An attribute that overrides only `position` must not be grouped with the
+    formation default, and each group keeps its own position."""
+    global_config = GlobalConfig(
+        gridhorizon_path="/grids",
+        attributes=["rms", "mean"],
+        surface_postfix="--depth.gri",
+        scale_factor=1.0,
+    )
+    formation_settings = FormationSettings(
+        top_horizon="top",
+        bottom_horizon="base",
+        top_surface_shift=0.0,
+        bottom_surface_shift=0.0,
+        window_length=None,
+        position="center",
+        mean={"position": "base"},
+    )
+    result = _group_attributes_by_interval(
+        formation_settings=formation_settings,
+        global_config=global_config,
+        formation_name="my_formation",
+        cube_name="my_cube",
+    )
+    assert len(result) == 2
+    position_by_attr = {
+        attr: key.position for key, attrs in result.items() for attr in attrs
+    }
+    assert position_by_attr == {"rms": "center", "mean": "base"}
+
+
+def test_zone_override_creates_separate_interval_group(patch_directory_validation):
+    """An attribute that overrides only `zone` must not be grouped with the
+    formation default, and each group keeps its own zone."""
+    global_config = GlobalConfig(
+        gridhorizon_path="/grids",
+        attributes=["rms", "mean"],
+        surface_postfix="--depth.gri",
+        scale_factor=1.0,
+    )
+    formation_settings = FormationSettings(
+        top_horizon="top",
+        bottom_horizon="base",
+        top_surface_shift=0.0,
+        bottom_surface_shift=0.0,
+        window_length=None,
+        zone="Valysar",
+        mean={"zone": "Therys"},
+    )
+    result = _group_attributes_by_interval(
+        formation_settings=formation_settings,
+        global_config=global_config,
+        formation_name="my_formation",
+        cube_name="my_cube",
+    )
+    assert len(result) == 2
+    zone_by_attr = {attr: key.zone for key, attrs in result.items() for attr in attrs}
+    assert zone_by_attr == {"rms": "Valysar", "mean": "Therys"}
+
+
+def test_attribute_export_forwards_zone_position_tuple():
+    """`attribute_export` must forward each attribute's (zone, position) as the
+    `position` tuple into `sample_attributes_for_sim2seis`."""
+    attr = Mock(spec=SeismicAttribute)
+    attr.zone = "Valysar"
+    attr.position = "top"
+    attr.calc_types = ["rms"]
+    attr.value = [Mock(spec=xtgeo.RegularSurface)]
+    attr.error = None
+    attr.from_cube = MagicMock()
+    attr.from_cube.cube_name.attribute = "amplitude"
+    attr.from_cube.cube_name.stack = "full"
+    attr.from_cube.cube_name.domain = "depth"
+    attr.from_cube.monitor_date = "20200701"
+    attr.from_cube.base_date = "20180101"
+
+    config = MagicMock()
+    captured = {}
+
+    class _Stop(Exception):
+        """Sentinel to halt export right after the forwarded sample call."""
+
+    def fake_sample(**kwargs):
+        captured["position"] = kwargs["position"]
+        raise _Stop
+
+    with (
+        patch.object(export_with_dataio, "restore_dir"),
+        patch.object(
+            export_with_dataio, "_get_grid_info", return_value=(Mock(), Mock(), Mock())
+        ),
+        patch.object(export_with_dataio, "dataio"),
+        patch.object(
+            export_with_dataio.tools,
+            "sample_attributes_for_sim2seis",
+            side_effect=fake_sample,
+        ),
+        pytest.raises(_Stop),
+    ):
+        export_with_dataio.attribute_export(
+            config_file=config,
+            export_attributes=[attr],
+            is_observed=False,
+        )
+
+    assert captured["position"] == ("Valysar", "top")

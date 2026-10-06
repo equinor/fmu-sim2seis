@@ -25,6 +25,8 @@ cubes: # Setup for the cubes for which maps will be generated
         bottom_horizon: basevolantis # Horizon used as base of the formation ".gri" assumed as extension
         top_surface_shift: -5 # Extension of the window upwards from top surface
         bottom_surface_shift: 10 # Extension of the window downwards from bottom surface
+        zone: Valysar
+        position: top
         rms: # Special requirements for 'rms' attribute
           top_horizon: topvolantis
           bottom_horizon: basevolantis
@@ -38,6 +40,8 @@ cubes: # Setup for the cubes for which maps will be generated
         bottom_horizon: basevolantis # Horizon used as base of the formation ".gri" assumed as extension
         top_surface_shift: -17 # Extension of the window upwards from top surface
         bottom_surface_shift: -2
+        zone: Valysar
+        position: top
         mean: # Special requirements for 'mean' attribute
           top_horizon: topvolantis
           bottom_horizon: basevolantis
