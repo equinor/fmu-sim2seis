@@ -131,6 +131,7 @@ def attribute_export(
                     attribute_error_minimum=attribute_error_minimum,
                     region=region_def,
                     zone=zone_def,
+                    position=(attr.zone, attr.position),
                 )
                 meta_data = Path(export_obj.export(attr_df))
                 with restore_dir(output_path):
