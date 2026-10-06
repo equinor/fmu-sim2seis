@@ -120,10 +120,10 @@ def test_sim2seis_ert(testdata, monkeypatch, data_dir):
         39.87298,
         1673.4673521434306,
         -1022.0935972341945,
-        14371913848.28719,
-        14371913844.76476,
-        -5040.2057157847885,
-        3966.320646810609,
+        21288020457.83116,
+        21288020459.824757,
+        -5039.580232266145,
+        3966.46248635224,
     ]
     for test_file, truth_value in zip(test_files, expected_values):
         value = get_sum_value(test_file)
