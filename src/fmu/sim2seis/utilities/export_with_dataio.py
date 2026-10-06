@@ -66,6 +66,18 @@ def attribute_export(
         config_file=config_file,
         root_dir=fmu_rootpath,
     )
+    # Validate requested zones against the zone file up front, so a missing or
+    # misspelt zone fails before any maps are written rather than mid-loop inside
+    # sample_attributes_for_sim2seis. An empty zone means "use the full grid".
+    available_zones = set(zone_def.codes.values())
+    missing_zones = {attr.zone for attr in export_attributes if attr.zone} - (
+        available_zones
+    )
+    if missing_zones:
+        raise ValueError(
+            f"Requested zone(s) {sorted(missing_zones)} not found in the zone file. "
+            f"Available zones: {sorted(available_zones)}."
+        )
     # Resolve the absolute output path against fmu_rootpath, so it does not
     # depend on the current working directory at call time.
     if is_observed:
