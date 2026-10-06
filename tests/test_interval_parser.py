@@ -1141,10 +1141,14 @@ def test_attribute_export_forwards_zone_position_tuple():
         captured["position"] = kwargs["position"]
         raise _Stop
 
+    zone_def = Mock()
+    zone_def.codes = {1: "Valysar"}
     with (
         patch.object(export_with_dataio, "restore_dir"),
         patch.object(
-            export_with_dataio, "_get_grid_info", return_value=(Mock(), Mock(), Mock())
+            export_with_dataio,
+            "_get_grid_info",
+            return_value=(Mock(), zone_def, Mock()),
         ),
         patch.object(export_with_dataio, "dataio"),
         patch.object(
@@ -1161,3 +1165,36 @@ def test_attribute_export_forwards_zone_position_tuple():
         )
 
     assert captured["position"] == ("Valysar", "top")
+
+
+def test_attribute_export_rejects_unknown_zone():
+    """A requested zone absent from the zone file fails fast with a clear error,
+    before any sampling is attempted."""
+    attr = Mock(spec=SeismicAttribute)
+    attr.zone = "Nonexistent"
+    attr.position = "top"
+
+    zone_def = Mock()
+    zone_def.codes = {1: "Valysar", 2: "Therys"}
+    sample = Mock()
+    with (
+        patch.object(export_with_dataio, "restore_dir"),
+        patch.object(
+            export_with_dataio,
+            "_get_grid_info",
+            return_value=(Mock(), zone_def, Mock()),
+        ),
+        patch.object(export_with_dataio, "dataio"),
+        patch.object(
+            export_with_dataio.tools,
+            "sample_attributes_for_sim2seis",
+            sample,
+        ),
+        pytest.raises(ValueError, match="Nonexistent"),
+    ):
+        export_with_dataio.attribute_export(
+            config_file=MagicMock(),
+            export_attributes=[attr],
+            is_observed=False,
+        )
+    sample.assert_not_called()
