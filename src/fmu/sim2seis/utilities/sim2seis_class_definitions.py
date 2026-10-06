@@ -49,6 +49,8 @@ KnownAttributes = Literal[
 
 ErrorType = Literal["relative", "absolute"]
 
+PositionType = Literal["top", "center", "base"]
+
 
 class ErrorConfig(BaseModel):
     """Observation error settings for observed-data attribute maps.
@@ -402,6 +404,8 @@ class SeismicAttribute:
     formation: str | None = None
     info: CubeConfig | None = None
     error: ErrorConfig | None = None
+    zone: str = ""
+    position: PositionType = "center"
 
     def __post_init__(self):
         # Need to verify that either a base surface or a window length is defined

@@ -24,6 +24,7 @@ from .sim2seis_class_definitions import (
     DifferenceSeismic,
     ErrorConfig,
     KnownAttributes,
+    PositionType,
     SeismicAttribute,
     SeismicName,
     SingleSeismic,
@@ -111,6 +112,8 @@ class FormationSettings(BaseModel):
     bottom_surface_shift: float = 0
     window_length: float | None = None
     error: ErrorConfig | None = None
+    zone: str = ""
+    position: PositionType = "center"
 
     attribute_overrides: dict[KnownAttributes, dict[str, Any]] = Field(
         default_factory=dict, exclude=True
@@ -143,6 +146,8 @@ class FormationSettings(BaseModel):
             "bottom_surface_shift": self.bottom_surface_shift,
             "window_length": self.window_length,
             "scale_factor": global_scale_factor,
+            "zone": self.zone,
+            "position": self.position,
         }
 
         if attribute in self.attribute_overrides:
@@ -188,6 +193,8 @@ class IntervalConfig(BaseModel):
     bottom_surface_shift: float
     window_length: float | None = None
     scale_factor: float
+    zone: str
+    position: PositionType
 
     @model_validator(mode="after")
     def validate_horizon_requirements(self, info: ValidationInfo) -> IntervalConfig:
@@ -325,6 +332,8 @@ def _create_seismic_attribute(
         formation=formation_name,
         info=cube_info,
         error=error,
+        zone=interval_config.zone,
+        position=interval_config.position,
     )
 
 
