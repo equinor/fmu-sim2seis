@@ -135,3 +135,31 @@ PR summaries (titles, descriptions, review comments) must be:
   and asserted both the positive (`pre_experiment=True` succeeds) and negative
   (`pre_experiment=False` raises) cases. These tests were removed together with
   the `pre_experiment` parameter — see *ERT validation lifecycle* above.
+
+
+## Code review guidance
+
+In principle, it should not be necessary to have several iterations on code review
+unless the suggested fixes also include weak or erroneous code.
+
+When performing a code review:
+
+- Review all changed files systematically before reporting findings. Check correctness, 
+  error handling, boundary conditions, security, compatibility, and regression-test 
+  coverage.
+- Inspect relevant callers, callees, and tests before claiming that changed code is 
+  incorrect.
+- Report actionable defects with a concrete failure scenario and explain the impact. 
+  Avoid speculative issues and stylistic preferences unless they violate an explicit 
+  repository convention.
+- Validate suggested fixes against the surrounding implementation. Do not propose a 
+  fix that introduces another defect or contradicts the documented requirements.
+- Respect intentional design decisions documented in this repository. If a decision 
+  is unsafe, explain the specific failure rather than merely recommending a different 
+  approach.
+- Consolidate findings with the same root cause rather than reporting multiple symptoms 
+  separately.
+- Compare comments with earlier comments for the same code. If an earlier suggestion
+  opposes the present one, a very thorough evaluation for its need has to be done
+- Read user's comments to learn from earlier suggestions that for some reason is
+  downvoted
