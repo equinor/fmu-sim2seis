@@ -136,7 +136,6 @@ PR summaries (titles, descriptions, review comments) must be:
   (`pre_experiment=False` raises) cases. These tests were removed together with
   the `pre_experiment` parameter — see *ERT validation lifecycle* above.
 
-
 ## Code review guidance
 
 In principle, it should not be necessary to have several iterations on code review
@@ -157,9 +156,7 @@ When performing a code review:
 - Respect intentional design decisions documented in this repository. If a decision 
   is unsafe, explain the specific failure rather than merely recommending a different 
   approach.
-- Consolidate findings with the same root cause rather than reporting multiple symptoms 
-  separately.
-- Compare comments with earlier comments for the same code. If an earlier suggestion
-  opposes the present one, a very thorough evaluation for its need has to be done
-- Read user's comments to learn from earlier suggestions that for some reason is
-  downvoted
+- Consolidate findings with the same root cause rather than reporting multiple symptoms separately.
+- Compare new comments with earlier comments on the same code. If an earlier suggestion 
+  conflicts with the current one, thoroughly evaluate whether the new suggestion is needed.
+- Review user feedback on earlier suggestions, especially suggestions that were downvoted.
