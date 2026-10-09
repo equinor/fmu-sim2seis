@@ -5,7 +5,7 @@ NUM_REALIZATIONS 1
 
 -- SIM2SEIS and PEM settings
 DEFINE <JOB_CONFIG_DIR> <CONFIG_PATH>/../../sim2seis/model
-DEFINE <SIM2SEIS_CONFIG_FILE> <JOB_CONFIG_DIR>/sim2seis_combined_config.yml
+DEFINE <SIM2SEIS_CONFIG_FILE> <JOB_CONFIG_DIR>/sim2seis_config.yml
 RUNPATH <CONFIG_PATH>/../..
 DEFINE <GLOBAL_PATH> fmuconfig/output
 DEFINE <GLOBAL_CONFIG_FILE> <GLOBAL_PATH>/global_variables.yml

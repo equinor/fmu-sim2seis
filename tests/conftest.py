@@ -4,6 +4,7 @@ from shutil import copy2, copytree
 import numpy as np
 import pytest
 import xtgeo
+import yaml
 from fmu.settings._drogon import create_drogon_fmu_dir
 
 from fmu.sim2seis.utilities.sim2seis_class_definitions import (
@@ -48,6 +49,16 @@ def setup_sim2seis_test_data(testdata, tmp_path_factory):
         copy2(
             Path(testdata) / filename, config_dir / filename.replace("test_data/", "")
         )
+    # The shipped sim2seis_config.yml is a clean template, where test_run stays at
+    # its default (False) for real runs. Enable it in the copied test tree so
+    # OBSERVED_DATA uses the copied observed cubes instead of symlinking the real
+    # /scratch seismic data, which is absent in the fixture.
+    config_file = config_dir / "sim2seis" / "model" / "sim2seis_config.yml"
+    with open(config_file) as fin:
+        config_data = yaml.safe_load(fin)
+    config_data["test_run"] = True
+    with open(config_file, "w") as fout:
+        yaml.safe_dump(config_data, fout)
     # Create required .fmu directory
     create_drogon_fmu_dir(base_path=config_dir)
     return config_dir
