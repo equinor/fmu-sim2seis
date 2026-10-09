@@ -28,8 +28,8 @@ the `seismic-forward`-part of the `sim2seis` configuration file.
 #
 # Seismic forward modelling settings
 #
-# Pickle files are used to transfer class objects between the different parts of the sim2seis workflow.Neither their
-# prefix names or the directory (in paths) will need to be modified, that will only lead to likely errors
+# Pickle files are used to transfer class objects between the different parts of the sim2seis workflow. Neither their
+# prefix names nor the directory (in paths) should be modified; changing them will only lead to likely errors.
 #
 ########################################################################################################################
 #region seis_fwd
