@@ -45,7 +45,7 @@ FORWARD_MODEL COPY_DIRECTORY(<FROM>=<CONFIG_PATH>/share/observations/cubes, <TO>
 
 DEFINE <CONFIGDIR> <RUNPATH>/sim2seis/model
 DEFINE <PEM_CONFIG_FILE> pem_config_condensate.yml
-DEFINE <SIM2SEIS_CONFIG_FILE> <CONFIGDIR>/sim2seis_combined_config.yml
+DEFINE <SIM2SEIS_CONFIG_FILE> <CONFIGDIR>/sim2seis_config.yml
 DEFINE <GLOBAL_PATH> fmuconfig/output
 DEFINE <GLOBAL_CONFIG_FILE> <GLOBAL_PATH>/global_variables.yml
 DEFINE <MODEL_PATH> <CONFIG_PATH>/sim2seis/model

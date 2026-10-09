@@ -63,9 +63,7 @@ The `global` section defines parameters that apply to all interval definitions u
 
 - Horizon path: Controlled by `fmu-dataio`, default value shown.
 - Attributes: Select attributes to highlight important features in the 4D seismic.
-- Scale factor: Applied to **modelled** attributes only, to match their level to the observed seismic attributes.
-  Observed-data attributes define the reference level and are never scaled, so the factor cancels in any
-  modelled-versus-observed comparison unless it is applied to the modelled side alone.
+- Scale factor: Applied to **modelled** attributes only, to match their level to the observed seismic attributes. Observed-data attributes define the reference level and are never scaled.
 - Surface postfix: File-name postfix appended to each horizon name when reading the surface files (e.g. `--depth.gri`).
 - Metadata fields: (**Obsolete**) This is removed, as all metadata-related matters are handled by `fmu-dataio`.
 - Error settings: `error` and `error_path` define the observation error, see [Error settings](#error-settings).
@@ -104,7 +102,7 @@ global:
     minimum: 0.005 # absolute floor applied after the error is computed
 cubes: # Setup for the cubes for which maps will be generated
   relai_depth: # arbitrary name of cube
-    cube_prefix: seismic--relai_full_depth-- # start of observed cube name
+    cube_prefix: seismic--relai_full_depth-- # start of cube name
     # A cube- or formation-level 'error' block fully replaces the global one, e.g.:
     # error:
     #   type: absolute
@@ -176,7 +174,7 @@ This is how the example in [Figure 2](#figure-2-interval-definition-in-yaml) sho
 - For `relai_depth` cubes:
   - a single formation (or interval) is selected, named `volantis`
   - the gridding is set to the zone `Valysar`, with the coordinates from the top layer
-  - `min` and `mean` attributes are calculated from `Top Volantis` shifted 5 m up, to `Base Volantis` shifted 10 ms down.
+  - `min` and `mean` attributes are calculated from `Top Volantis` shifted 5 m up, to `Base Volantis` shifted 10 m down.
   - `rms` attribute is calculated from `Top Volantis` shifted 15 m up, to `Base Volantis` shifted 10 m down (the base
     shift is inherited from the formation). The standard scaling factor for `rms` attribute is modified to 1.05
 - For `amplitude_depth` cubes:

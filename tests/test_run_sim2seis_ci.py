@@ -13,7 +13,7 @@ from fmu.sim2seis.seismic_fwd import main as run_seismic_forward
 from fmu.sim2seis.seismic_inversion import main as run_seismic_inversion
 from fmu.sim2seis.utilities import DifferenceSeismic, SeismicAttribute, SingleSeismic
 
-sim2seis_config_file_name = Path("sim2seis_combined_config.yml")
+sim2seis_config_file_name = Path("sim2seis_config.yml")
 
 # If there is a need to re-calibrate the test, set CALIBRATE to True
 CALIBRATE = False
