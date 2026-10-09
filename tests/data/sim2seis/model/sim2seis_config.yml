@@ -31,11 +31,26 @@
 ########################################################################################################################
 #endregion paths
 
+########################################################################################################################
+#
+# Pickle file settings
+#
+# Pickle files are used to transfer class objects between the different parts of the sim2seis workflow. Neither their
+# prefix names nor the directory (in paths) should be modified; changing them will only lead to likely errors.
+#
+########################################################################################################################
+# pickle_file_prefix:
+#     observed_data: observed_data
+#     seismic_forward: seismic_fwd
+#     seismic_diff: seismic_fwd_diff
+#     relai_maps: relai_maps
+#     amplitude_maps: amplitude_maps
+#     relai_diff: relai_diff
+
 ## For the main class
 #______________________________________________________________________________________________________________________#
 attribute_map_definition_file: data_intervals_drogon.yml
 #rel_path_global_config: ../../fmuconfig/output
-#pickle_file_output_path: ../../share/results/pickle_files
 
 #region snip_seis_fwd
 ## Section for seismic forward 4D
@@ -54,7 +69,6 @@ seismic_fwd:
 #  twt_model: ../../sim2seis/model/model_file_twt.xml
 #  segy_depth: seismic_temp_seismic_depth_stack.segy
 #  segy_time: seismic_temp_seismic_timeshift_stack.segy  # <= not used anymore
-#  pickle_file_prefix: seismic_fwd
 #endregion snip_seis_fwd
 
 #region depth_conversion
@@ -89,20 +103,17 @@ webviz_map:
 #______________________________________________________________________________________________________________________#
 # amplitude_map:
 #  attribute: amplitude
-#  pickle_file_prefix: amplitude_maps
 
 
 ## Section for seismic inversion relai maps
 #______________________________________________________________________________________________________________________#
 # inversion_map:
 #  attribute: relai
-#  pickle_file_prefix: relai_maps
 #endregion attr_map
 
 ## Section for difference of seismic cubes
 #______________________________________________________________________________________________________________________#
 # seismic_diff:
-#  pickle_file_prefix: seis_4d_diff
 
 #region seismic_inversion
 ## Section for relative seismic inversion
@@ -123,7 +134,6 @@ webviz_map:
 #      lateral_smoothing_3d:  0.01
 #      max_iter: 100
 #      segments: 1
-#  pickle_file_prefix: relai_diff
 #endregion seismic_inversion
 
 ########################################################################################################################
