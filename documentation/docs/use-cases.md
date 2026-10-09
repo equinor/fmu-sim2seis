@@ -17,12 +17,10 @@ The following steps are typically undertaken when calculating synthetic seismic 
    relative seismic inversion.
 4. Optional: [relative seismic inversion](./relative-seismic-inversion.md) is applied to the time-converted synthetic
    seismic cubes.
-5. Time shift estimation is conducted based on the synthetic seismic differences.
-6. Various results can then be extracted, such as:
+5. Various results can then be extracted, such as:
     * [attribute maps](./attribute-maps.md) from the synthetic seismic and relative seismic inversion. The list of
       possible attributes can be found
       in [xtgeo.cubes](https://xtgeo.readthedocs.io/en/stable/api-cubes.html#xtgeo.Cube.compute_attributes_in_window).
-    * time shift change maps
 
 `sim2seis` settings are read from a `YAML` file. The section links above discuss the parts of the YAML file that control
 the matching aspect of the `sim2seis` workflow. Lines in the configuration YAML file that are commented indicate default

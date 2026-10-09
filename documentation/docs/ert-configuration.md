@@ -28,11 +28,11 @@ FORWARD_MODEL MAP_ATTRIBUTES(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <ATTRIBUTE>=a
 
 FORWARD_MODEL MAP_ATTRIBUTES(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <ATTRIBUTE>=relai, <VERBOSE>=<VERBOSE_OUTPUT>)
 
--- Optional run of data cleanup, all `pickle` files are removed:
-FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>)
+-- Optional run of data cleanup, removing `pickle` files and the single-date seismic cubes:
+FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <INCLUDE_SEISMIC>=true)
 
--- Optional run of data cleanup limited to removing attribute map `pickle`-files:
-FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <PREFIX_LIST>=<CLEANUP_PREFIX>)
+-- Optional run of data cleanup, removing `pickle` files but keeping the single-date seismic cubes:
+FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <INCLUDE_SEISMIC>=false)
 ```
 
 On the next page you will get help setting up your `sim2seis_combined_config.yml`.

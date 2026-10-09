@@ -59,6 +59,15 @@ tests/
   user-facing JSON schema (default-only or internal fields).
 
 
+## Language
+
+- The default languagage is British English. This includes:
+  - chat
+  - PR summary
+  - code comments
+  - documentation
+
+
 ## Python Library Standards
 
 - **Public API Protection:** Ensure changes to public modules, classes, and functions maintain backward compatibility. Verify that internal-only helpers use a leading underscore (`_`).
@@ -126,6 +135,9 @@ PR summaries (titles, descriptions, review comments) must be:
 - **Brief** — no filler, no recap of obvious diff content.
 - **Covering** — mention every user-visible change and any non-obvious
   rationale, so a reviewer can grasp the scope without reading every hunk.
+- **Written in clear prose** — normal paragraphs must be complete grammatical
+  sentences with an explicit subject and verb. Bullet items may be abbreviated
+  (e.g. imperative or noun phrases) as long as they remain clear.
 - **Written in Markdown** — use fenced code blocks for commands, paths, and
   identifiers; use short bullet lists for change inventories; use headings only
   when the PR spans multiple distinct areas.
