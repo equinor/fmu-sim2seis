@@ -34,23 +34,6 @@
 
 ########################################################################################################################
 #
-# Pickle file settings
-#
-# Pickle files are used to transfer class objects between the different parts of the sim2seis workflow. Neither their
-# prefix names or the directory (in paths) will need to be modified, that will only lead to likely errors
-#
-########################################################################################################################
-# pickle_file_prefix:
-#     observed_data: observed_data
-#     seismic_forward: seismic_fwd
-#     seismic_diff: seismic_fwd_diff
-#     relai_maps: relai_maps
-#     amplitude_maps: amplitude_maps
-#     relai_diff: relai_diff
-
-
-########################################################################################################################
-#
 # Seismic forward modelling settings
 #
 # Pickle files are used to transfer class objects between the different parts of the sim2seis workflow.Neither their
@@ -114,20 +97,20 @@ webviz_map:
 # the inversion parameter settings should be modified
 #
 ########################################################################################################################
-seismic_inversion:
- attribute: relai
- domain: time
- d_syn_0: sim2seis/output/seismic_forward/seismic--d_syn0.sgy
- rel_ai_0: sim2seis/output/seismic_forward/seismic--relai_0.sgy
- d_syn_1: sim2seis/output/seismic_forward/seismic--d_syn1.sgy
- rel_ai_1: sim2seis/output/seismic_forward/seismic--relai_1.sgy
- inversion_parameters:
-     lateral_smoothing_4d: 0.05
-     damping_3d: 0.001
-     damping_4d: 0.001
-     lateral_smoothing_3d:  0.01
-     max_iter: 100
-     segments: 1
+# seismic_inversion:
+#  attribute: relai
+#  domain: time
+#  d_syn_0: sim2seis/output/seismic_forward/seismic--d_syn0.sgy
+#  rel_ai_0: sim2seis/output/seismic_forward/seismic--relai_0.sgy
+#  d_syn_1: sim2seis/output/seismic_forward/seismic--d_syn1.sgy
+#  rel_ai_1: sim2seis/output/seismic_forward/seismic--relai_1.sgy
+#  inversion_parameters:
+#      lateral_smoothing_4d: 0.05
+#      damping_3d: 0.001
+#      damping_4d: 0.001
+#      lateral_smoothing_3d:  0.01
+#      max_iter: 100
+#      segments: 1
 
 
 ########################################################################################################################
