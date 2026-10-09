@@ -10,7 +10,7 @@ Another group of intermediate files are seismic cubes for single dates, from whi
 As these files are not required after a `sim2seis`run, they are removed by default. To keep the files, give the
 option `-s` or `--include-seismic` `false` to `sim2seis_cleanup`.
 
-For removal of pickle files seismic cubes, the present directory must be set to the top of the FMU directory structure.
+For removal of pickle files and seismic cubes, the present directory must be set to the top of the FMU directory structure.
 The subdirectory for cleanup of pickle files is set in the configuration files that `sim2seis_cleanup` reads.  Seismic
 cubes are placed in sub-directories `./share/results/cubes`, `./share/preprocessed/cubes` or
 `./share/observations/cubes`. See examples below.
@@ -44,7 +44,7 @@ options:
 ```
 
 ```shell
-> # Cleanup of all pickle files and and single date seismic cubes
+> # Cleanup of all pickle files and single date seismic cubes
 > cd <project>
 > sim2seis_cleanup -f ./sim2seis/model/sim2seis_combined_config.yml 
 ```
@@ -55,7 +55,7 @@ options:
 > sim2seis_cleanup -f ./realization-0/iter-0/sim2seis/model/sim2seis_combined_config.yml -i true
 ```
 
-With the settings above, all pickle files are deleted for all realizations in an ensemble.v
+With the settings above, all pickle files are deleted for all realizations in an ensemble.
 To add this in an `ert` run, the following lines must be added at the end of the `sim2seis` job file:
 
 ```ert
