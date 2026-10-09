@@ -34,7 +34,6 @@ webviz_map:
 #______________________________________________________________________________________________________________________#
 # inversion_map:
 #  attribute: relai
-#  pickle_file_prefix: relai_maps
 #
 
 
@@ -148,7 +147,7 @@ cubes: # Setup for the cubes for which maps will be generated
 ### Cube Section
 
 - Cube names: Arbitrary values.
-- `cube_prefix`: Concatenated with the seismic difference dates defined in the global configuration file to match the cube names.
+- `cube_prefix`: The leading, date-independent part of the cube name (e.g. `seismic--relai_full_depth--`). It is matched against each available cube name after the date component has been stripped, and thereby selects which cubes maps are generated for. The seismic dates themselves are resolved separately, when the cubes are imported and differenced.
 - `error`: Optional observation-error block that overrides the global one for all formations of this cube (observed data only); see [Error settings](#error-settings).
 
 ### Formations Section
