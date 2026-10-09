@@ -23,7 +23,7 @@ As part of the `sim2seis` workflow, the processing of observed data is controlle
 is one common parameter file, shown in [Figure 2](#figure-2-example-yaml-file), and one common interval definition file
 for generating attribute maps. The interval definition file follows the format described in [attribute maps](./attribute-maps.md).
 
-<<< ../../tests/data/sim2seis/model/sim2seis_combined_config.yml{yml}
+<<< ../../tests/data/sim2seis/model/sim2seis_config.yml{yml}
 <span id="figure-2-example-yaml-file"><strong>Figure 2:</strong> Example YAML configuration file for sim2seis, including observed data.</span>
 
 ## Symlink to observed seismic cubes

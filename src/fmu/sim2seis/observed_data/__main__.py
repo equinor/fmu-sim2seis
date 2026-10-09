@@ -128,6 +128,7 @@ def main(arguments=None):
                         ),
                         cubes=depth_cubes,
                         surfaces=depth_horizons,
+                        is_observed=True,
                     )
                     attribute_export(
                         config_file=config,

@@ -43,7 +43,7 @@ class GlobalConfig(BaseModel):
         gridhorizon_path: Path to directory containing surface files
         attributes: List of attribute types to calculate (e.g., ['rms', 'mean'])
         surface_postfix: Postfix to append to surface names
-        scale_factor: Global scaling factor applied to all values
+        scale_factor: Global scaling factor applied to all modelled values
     """
 
     model_config = ConfigDict(frozen=True)
@@ -297,6 +297,7 @@ def _create_seismic_attribute(
     cube: SeismicCube,
     formation_name: str,
     error: ErrorConfig | None = None,
+    is_observed: bool = False,
 ) -> SeismicAttribute:
     """Create a single SeismicAttribute object for a given interval configuration."""
     # Pydantic validation in IntervalConfig ensures top_horizon is always set
@@ -323,7 +324,9 @@ def _create_seismic_attribute(
     return SeismicAttribute(
         top_surface=attr_top_surface,
         calc_types=attributes,
-        scale_factor=interval_config.scale_factor,
+        # Observed data defines the reference level and must not be scaled; only
+        # modelled attributes are scaled to match it.
+        scale_factor=1.0 if is_observed else interval_config.scale_factor,
         from_cube=cube,
         window_length=interval_config.window_length,
         bottom_surface=attr_bottom_surface,
@@ -354,6 +357,7 @@ def _create_formation_attributes(
     global_config: GlobalConfig,
     formation_name: str,
     error: ErrorConfig | None = None,
+    is_observed: bool = False,
 ) -> list[SeismicAttribute]:
     """Create SeismicAttribute objects for each interval group and matching cube."""
     formation_attributes = []
@@ -369,6 +373,7 @@ def _create_formation_attributes(
                 cube=seismic_cube,
                 formation_name=formation_name,
                 error=error,
+                is_observed=is_observed,
             )
             formation_attributes.append(attribute)
     return formation_attributes
@@ -397,6 +402,7 @@ def _process_formation(
     cubes: CubeDict,
     surfaces: SurfaceDict,
     global_config: GlobalConfig,
+    is_observed: bool = False,
 ) -> list[SeismicAttribute]:
     """Process a single formation and create its SeismicAttribute objects."""
 
@@ -415,6 +421,7 @@ def _process_formation(
         global_config=global_config,
         formation_name=formation_name,
         error=error,
+        is_observed=is_observed,
     )
 
 
@@ -422,6 +429,7 @@ def populate_seismic_attributes(
     config: dict[str, Any],
     cubes: CubeDict,
     surfaces: SurfaceDict,
+    is_observed: bool = False,
 ) -> list[SeismicAttribute]:
     """Create SeismicAttribute objects for each unique interval configuration.
 
@@ -430,6 +438,9 @@ def populate_seismic_attributes(
             cube name prefixes and window definition for each attribute
         cubes: Available seismic cubes indexed by their SeismicName
         surfaces: Available surfaces indexed by their names
+        is_observed: When True the attributes are for observed data, which
+            defines the reference level and is therefore left unscaled;
+            ``scale_factor`` is applied to modelled attributes only.
 
     Returns:
         List of SeismicAttribute objects, one for each unique interval configuration
@@ -450,6 +461,7 @@ def populate_seismic_attributes(
                 cubes=cubes,
                 surfaces=surfaces,
                 global_config=root_config.global_config,
+                is_observed=is_observed,
             )
             seismic_attributes.extend(formation_attributes)
 

@@ -3,7 +3,7 @@ from pathlib import Path
 from fmu.sim2seis.cleanup import main as run_cleanup
 from fmu.sim2seis.utilities import clear_result_objects
 
-CONFIG_FILE = "sim2seis/model/sim2seis_combined_config.yml"
+CONFIG_FILE = "sim2seis/model/sim2seis_config.yml"
 
 # A single-date cube is an intermediate file and should be removed by the
 # cleanup, while a difference (two-date) cube is a final product and is kept.

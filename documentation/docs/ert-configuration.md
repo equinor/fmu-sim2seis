@@ -6,7 +6,7 @@ You can include `sim2seis` in your ERT set-up by including the following snippet
 -- Define your variables:
 DEFINE <CONFIGDIR> <RUNPATH>/sim2seis/model
 DEFINE <PEM_CONFIG_FILE> <CONFIGDIR>/pem_config_condensate.yml
-DEFINE <SIM2SEIS_CONFIG_FILE> <CONFIGDIR>/sim2seis_combined_config.yml
+DEFINE <SIM2SEIS_CONFIG_FILE> <CONFIGDIR>/sim2seis_config.yml
 DEFINE <GLOBAL_PATH> fmuconfig/output
 DEFINE <GLOBAL_CONFIG_FILE> <GLOBAL_PATH>/global_variables.yml
 DEFINE <VERBOSE_OUTPUT> False
@@ -28,13 +28,13 @@ FORWARD_MODEL MAP_ATTRIBUTES(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <ATTRIBUTE>=a
 
 FORWARD_MODEL MAP_ATTRIBUTES(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <ATTRIBUTE>=relai, <VERBOSE>=<VERBOSE_OUTPUT>)
 
--- Optional run of data cleanup, all `pickle` files are removed:
-FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>)
+-- Optional run of data cleanup, removing `pickle` files and the single-date seismic cubes:
+FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <INCLUDE_SEISMIC>=true)
 
--- Optional run of data cleanup limited to removing attribute map `pickle`-files:
-FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <PREFIX_LIST>=<CLEANUP_PREFIX>)
+-- Optional run of data cleanup, removing `pickle` files but keeping the single-date seismic cubes:
+FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <INCLUDE_SEISMIC>=false)
 ```
 
-On the next page you will get help setting up your `sim2seis_combined_config.yml`.
+On the next page you will get help setting up your `sim2seis_config.yml`.
 
 For details on how to configure your `pem_config.yml`, see corresponding [FMU PEM](https://equinor.github.io/fmu-pem/) documentation.

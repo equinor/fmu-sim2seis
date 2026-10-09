@@ -8,7 +8,7 @@
 #
 ########################################################################################################################
 
-#region paths
+
 ########################################################################################################################
 #
 # Path settings
@@ -22,22 +22,25 @@
 #   modelled_seismic_dir: share/results/cubes
 #   preprocessed_seismic_dir: share/preprocessed/cubes
 #   modelled_horizon_dir: share/results/maps
+#   time_horizon_dir: share/results/maps
+#   depth_horizon_dir: share/results/maps
 #   observed_horizon_dir: share/preprocessed/maps
 #   grid_dir: sim2seis/input/pem
 #   webviz_map_dir: sim2seis/input/attribute_maps
 #   pickle_file_output_dir: share/results/pickle_files
 #   output_dir_modelled_data: share/results/tables
 #   output_dir_observed_data: ert/input/preprocessed/seismic
+
+
 ########################################################################################################################
-#endregion paths
-
-## For the main class
-#______________________________________________________________________________________________________________________#
-attribute_map_definition_file: data_intervals_drogon.yml
-#rel_path_global_config: ../../fmuconfig/output
-#pickle_file_output_path: ../../share/results/pickle_files
-
-#region snip_seis_fwd
+#
+# Seismic forward modelling settings
+#
+# Define which stacks (full/near/far) to model and the seismic-forward model file for each. At least one stack must be
+# present; the remaining, less frequently changed settings use validated default values
+#
+########################################################################################################################
+#region seis_fwd
 ## Section for seismic forward 4D
 #______________________________________________________________________________________________________________________#
 seismic_fwd:
@@ -47,19 +50,19 @@ seismic_fwd:
     full: model_file.xml
 #    near: model_file_near.xml
 #    far: model_file_far.xml
-#  stack_model_path: ../../sim2seis/model
-#  attribute: &seismic_attribute amplitude
-#  pem_output_dir: ../../sim2seis/output/pem
-#  seismic_output_dir: ../../share/results/cubes
+#  attribute: amplitude
 #  twt_model: ../../sim2seis/model/model_file_twt.xml
 #  segy_depth: seismic_temp_seismic_depth_stack.segy
-#  segy_time: seismic_temp_seismic_timeshift_stack.segy  # <= not used anymore
-#  pickle_file_prefix: seismic_fwd
-#endregion snip_seis_fwd
 
-#region depth_conversion
-## Section for depth conversion
-#______________________________________________________________________________________________________________________#
+
+########################################################################################################################
+#
+# Time/depth conversion settings
+#
+# Required settings are horizon names (required in both time and depth domain), and extent and resolution for
+# time and depth cubes
+#
+########################################################################################################################
 depth_conversion:
   horizon_names: [MSL, TopVolantis, BaseVolantis, BaseVelmodel]
   min_depth: 1500.0
@@ -68,54 +71,36 @@ depth_conversion:
   min_time: 1500.0
   max_time: 2000.0
   t_inc: 4.0
-#  time_cube_dir: ../../share/results/cubes
-#  depth_cube_dir: ../../share/results/cubes
-#  horizon_dir: ../../share/results/maps
 #  depth_suffix: --depth.gri
 #  time_suffix: --time.gri
-#endregion depth_conversion
 
-#region attr_map
-# # Section for ert and webviz export
-#______________________________________________________________________________________________________________________#
+
+########################################################################################################################
+#
+# Webviz map settings
+#
+########################################################################################################################
 webviz_map:
   # grid_file: simgrid_maps4ahm.roff
   # zone_file: simgrid_maps4ahm--zone.roff
   # region_file: simgrid_maps4ahm--region.roff
 
 
-
-## Section for seismic forward amplitude maps
-#______________________________________________________________________________________________________________________#
-# amplitude_map:
-#  attribute: amplitude
-#  pickle_file_prefix: amplitude_maps
-
-
-## Section for seismic inversion relai maps
-#______________________________________________________________________________________________________________________#
-# inversion_map:
-#  attribute: relai
-#  pickle_file_prefix: relai_maps
-#endregion attr_map
-
-## Section for difference of seismic cubes
-#______________________________________________________________________________________________________________________#
-# seismic_diff:
-#  pickle_file_prefix: seis_4d_diff
-
-#region seismic_inversion
-## Section for relative seismic inversion
-#______________________________________________________________________________________________________________________#
+########################################################################################################################
+#
+# Seismic inversion settings
+#
+# It is possible to run seismic inversion by using the default values, but for better match to observed data inversion,
+# the inversion parameter settings should be modified
+#
+########################################################################################################################
 # seismic_inversion:
-#  attribute: &inversion_attribute relai
-#  path: &rel_ai_path ../../share/results/cubes
-#  domain: [time]
-#  d_syn_0: ../../sim2seis/output/seismic_forward/seismic--d_syn0.sgy
-#  rel_ai_0: ../../sim2seis/output/seismic_forward/seismic--relai_0.sgy
-#  d_syn_1: ../../sim2seis/output/seismic_forward/seismic--d_syn1.sgy
-#  rel_ai_1: ../../sim2seis/output/seismic_forward/seismic--relai_1.sgy
-#  remove_unused_files: True
+#  attribute: relai
+#  domain: time
+#  d_syn_0: sim2seis/output/seismic_forward/seismic--d_syn0.sgy
+#  rel_ai_0: sim2seis/output/seismic_forward/seismic--relai_0.sgy
+#  d_syn_1: sim2seis/output/seismic_forward/seismic--d_syn1.sgy
+#  rel_ai_1: sim2seis/output/seismic_forward/seismic--relai_1.sgy
 #  inversion_parameters:
 #      lateral_smoothing_4d: 0.05
 #      damping_3d: 0.001
@@ -123,8 +108,31 @@ webviz_map:
 #      lateral_smoothing_3d:  0.01
 #      max_iter: 100
 #      segments: 1
-#  pickle_file_prefix: relai_diff
-#endregion seismic_inversion
+
+
+########################################################################################################################
+#
+# Amplitude map and inversion map settings
+#
+# Best left with default values. The actual settings that define intervals and operators for attribute maps are
+# placed in the `attribute_map_definition_file`, given in the main class
+#
+########################################################################################################################
+# amplitude_map:
+#  attribute: amplitude
+# inversion_map:
+#  attribute: relai
+
+
+########################################################################################################################
+#
+# Main class settings
+#
+# For the main class, there is only one required parameter. 
+#
+########################################################################################################################
+attribute_map_definition_file: data_intervals_drogon.yml
+
 
 ########################################################################################################################
 #

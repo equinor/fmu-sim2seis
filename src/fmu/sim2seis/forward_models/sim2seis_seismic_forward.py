@@ -44,7 +44,7 @@ class SeismicForward(ForwardModelStepPlugin):
             examples=(
                 "code-block:: console\n\n"
                 "FORWARD_MODEL SEISMIC_FORWARD("
-                "<CONFIG_FILE>=<RUNPATH>/sim2seis/model/sim2seis_combined_config.yml, "
+                "<CONFIG_FILE>=<RUNPATH>/sim2seis/model/sim2seis_config.yml, "
                 "<GLOBAL_FILE>=<RUNPATH>/fmuconfig/output/global_variables.yml, "
                 "<MOD_DATE_PREFIX>=HIST, "
                 "<VERBOSE>=true/false)"

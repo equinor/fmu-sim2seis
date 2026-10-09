@@ -59,6 +59,15 @@ tests/
   user-facing JSON schema (default-only or internal fields).
 
 
+## Language
+
+- The default language is British English. This includes:
+  - chat
+  - PR summary
+  - code comments
+  - documentation
+
+
 ## Python Library Standards
 
 - **Public API Protection:** Ensure changes to public modules, classes, and functions maintain backward compatibility. Verify that internal-only helpers use a leading underscore (`_`).
@@ -126,6 +135,9 @@ PR summaries (titles, descriptions, review comments) must be:
 - **Brief** — no filler, no recap of obvious diff content.
 - **Covering** — mention every user-visible change and any non-obvious
   rationale, so a reviewer can grasp the scope without reading every hunk.
+- **Written in clear prose** — normal paragraphs must be complete grammatical
+  sentences with an explicit subject and verb. Bullet items may be abbreviated
+  (e.g. imperative or noun phrases) as long as they remain clear.
 - **Written in Markdown** — use fenced code blocks for commands, paths, and
   identifiers; use short bullet lists for change inventories; use headings only
   when the PR spans multiple distinct areas.
@@ -169,3 +181,27 @@ When performing a code review:
   conflicts with the current one, thoroughly evaluate whether the new suggestion is needed.
 - Review user feedback on earlier suggestions, especially suggestions that were downvoted.
 - Check review summary, ensure that there are no "```" added, which disables rendering.
+
+## Review completeness and stability
+
+When reviewing a pull request, produce the most complete set of findings you can on the first pass.
+
+- Treat each review as a comprehensive review of the current diff, not as a progressive discovery process.
+- Surface all material findings that are observable from the changed code and immediately relevant surrounding context in the first review.
+- Do not intentionally withhold findings for later iterations.
+- On subsequent review rounds, only add new findings when they are caused by:
+  - newly changed code,
+  - newly added context, or
+  - a prior finding being resolved in a way that introduces a different issue.
+- Do not raise net-new findings on unchanged code if those findings were already discoverable in an earlier round.
+- If a finding is deferred because it depends on missing context, say that explicitly.
+
+In other words:
+
+- first review: comprehensive findings for the PR's current state
+- later reviews: deltas only
+
+The goal is a stable review experience where authors can trust that unchanged code will not accumulate avoidable new findings across iterations.
+
+In fact:
+- Missing an earlier-discoverable issue and surfacing it only in a later review on unchanged code should be treated as a review quality failure.
