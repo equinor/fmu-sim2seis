@@ -40,19 +40,19 @@ options:
 ```shell
 > # Remove pickle files, let seismic cubes remain.  
 > cd <project>
-> sim2seis_cleanup -f ./sim2seis/model/sim2seis_combined_config.yml -s false
+> sim2seis_cleanup -f ./sim2seis/model/sim2seis_config.yml -s false
 ```
 
 ```shell
 > # Cleanup of all pickle files and single date seismic cubes
 > cd <project>
-> sim2seis_cleanup -f ./sim2seis/model/sim2seis_combined_config.yml 
+> sim2seis_cleanup -f ./sim2seis/model/sim2seis_config.yml 
 ```
 
 ```shell
 > # Go to top of ensemble structure to remove all intermediate files
 > cd <scratch>
-> sim2seis_cleanup -f ./realization-0/iter-0/sim2seis/model/sim2seis_combined_config.yml -i true
+> sim2seis_cleanup -f ./realization-0/iter-0/sim2seis/model/sim2seis_config.yml -i true
 ```
 
 With the settings above, all pickle files are deleted for all realizations in an ensemble.
@@ -60,7 +60,7 @@ To add this in an `ert` run, the following lines must be added at the end of the
 
 ```ert
 -- Define your variables:
-DEFINE <SIM2SEIS_CONFIG_FILE> ./sim2seis/model/sim2seis_combined_config.yml
+DEFINE <SIM2SEIS_CONFIG_FILE> ./sim2seis/model/sim2seis_config.yml
 DEFINE <DELETE_SEISMIC> true
 FORWARD_MODEL CLEANUP(<CONFIG_FILE>=<SIM2SEIS_CONFIG_FILE>, <INCLUDE_SEISMIC>=<DELETE_SEISMIC>)
 ```

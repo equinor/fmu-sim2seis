@@ -61,7 +61,7 @@ tests/
 
 ## Language
 
-- The default languagage is British English. This includes:
+- The default language is British English. This includes:
   - chat
   - PR summary
   - code comments

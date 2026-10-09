@@ -36,8 +36,8 @@
 #
 # Seismic forward modelling settings
 #
-# Pickle files are used to transfer class objects between the different parts of the sim2seis workflow.Neither their
-# prefix names or the directory (in paths) will need to be modified, that will only lead to likely errors
+# Define which stacks (full/near/far) to model and the seismic-forward model file for each. At least one stack must be
+# present; the remaining, less frequently changed settings use validated default values
 #
 ########################################################################################################################
 #region seis_fwd
@@ -78,9 +78,6 @@ depth_conversion:
 ########################################################################################################################
 #
 # Webviz map settings
-#
-# Attribute error is required for the observed data attributes. It can either be a fixed ratio, or else a 2D map
-# with values varying over the modelled grid
 #
 ########################################################################################################################
 webviz_map:
@@ -131,11 +128,11 @@ webviz_map:
 #
 # Main class settings
 #
-# For the main class, there are only two required parameters. `test_run` is used in tests, and should be False in
-# real runs
-#______________________________________________________________________________________________________________________#
+# For the main class, there is only one required parameter. 
+#
+########################################################################################################################
 attribute_map_definition_file: data_intervals_drogon.yml
-test_run: True
+
 
 ########################################################################################################################
 #
