@@ -22,6 +22,8 @@
 #   modelled_seismic_dir: share/results/cubes
 #   preprocessed_seismic_dir: share/preprocessed/cubes
 #   modelled_horizon_dir: share/results/maps
+#   time_horizon_dir: share/results/maps
+#   depth_horizon_dir: share/results/maps
 #   observed_horizon_dir: share/preprocessed/maps
 #   grid_dir: sim2seis/input/pem
 #   webviz_map_dir: sim2seis/input/attribute_maps
