@@ -413,6 +413,69 @@ def test_value_property_applies_shifts_and_scale(patch_directory_validation):
     cube_obj.compute_attributes_in_window.assert_called_once()
 
 
+def test_observed_data_attributes_are_not_scaled(patch_directory_validation):
+    """Observed data defines the reference level, so scale_factor must not be
+    applied to it even when the configuration sets one; only modelled attributes
+    are scaled."""
+    config = {
+        "global": {
+            "gridhorizon_path": "/grids",
+            "attributes": ["rms"],
+            "scale_factor": 2.5,
+            "surface_postfix": "--depth.gri",
+        },
+        "cubes": {
+            "amp_depth": {
+                "cube_prefix": "seismic--amplitude_depth--",
+                "formations": {
+                    "gamma": {
+                        "top_horizon": "topgamma",
+                        "bottom_horizon": "basegamma",
+                        "top_surface_shift": -3.0,
+                        "bottom_surface_shift": 7.0,
+                    }
+                },
+            }
+        },
+    }
+
+    top = Mock(spec=xtgeo.RegularSurface)
+    bottom = Mock(spec=xtgeo.RegularSurface)
+    top.__add__ = Mock(side_effect=lambda x: top)
+    bottom.__add__ = Mock(side_effect=lambda x: bottom)
+
+    surfaces = {
+        "topgamma--depth.gri": top,
+        "basegamma--depth.gri": bottom,
+    }
+
+    cube_obj = Mock()
+    cube_obj.compute_attributes_in_window = Mock(return_value={"rms": 4.0})
+    seismic = Mock(spec=SingleSeismic)
+    seismic.cube = cube_obj
+
+    cubes = {
+        SeismicName(
+            process="seismic", attribute="amplitude", domain="depth", date="20200101"
+        ): seismic
+    }
+
+    with patch(
+        "fmu.sim2seis.utilities.interval_parser.xtgeo.surface_from_file",
+        side_effect=lambda path: surfaces[path.split("/")[-1]],
+    ):
+        modelled = populate_seismic_attributes(config, cubes, surfaces)
+        observed = populate_seismic_attributes(
+            config, cubes, surfaces, is_observed=True
+        )
+
+    assert modelled[0].scale_factor == 2.5
+    assert observed[0].scale_factor == 1.0
+    # Modelled attributes are scaled (2.5 * 4.0), observed are left unscaled (4.0)
+    assert modelled[0].value == [10.0]
+    assert observed[0].value == [4.0]
+
+
 def test_missing_surface_raises_value_error(patch_directory_validation):
     config = {
         "global": {

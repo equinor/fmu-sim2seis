@@ -45,8 +45,6 @@ attribute_map_definition_file: data_intervals_drogon.yml
 ## From path definitions:
 # paths:
 #   webviz_map_dir: sim2seis/input/attribute_maps
-#   modelled_horizon_dir: share/results/maps
-#   observed_horizon_dir: share/preprocessed/maps
 ```
 
 <span id="figure-1-seismic-attributes-in-yaml"><strong>Figure 1:</strong> Parameters in the sim2seis configuration file related to attribute maps.</span>
@@ -65,7 +63,9 @@ The `global` section defines parameters that apply to all interval definitions u
 
 - Horizon path: Controlled by `fmu-dataio`, default value shown.
 - Attributes: Select attributes to highlight important features in the 4D seismic.
-- Scale factor: Used to match values in similar attributes from observed seismic data.
+- Scale factor: Applied to **modelled** attributes only, to match their level to the observed seismic attributes.
+  Observed-data attributes define the reference level and are never scaled, so the factor cancels in any
+  modelled-versus-observed comparison unless it is applied to the modelled side alone.
 - Surface postfix: File-name postfix appended to each horizon name when reading the surface files (e.g. `--depth.gri`).
 - Metadata fields: (**Obsolete**) This is removed, as all metadata-related matters are handled by `fmu-dataio`.
 - Error settings: `error` and `error_path` define the observation error, see [Error settings](#error-settings).
@@ -176,12 +176,12 @@ This is how the example in [Figure 2](#figure-2-interval-definition-in-yaml) sho
 - For `relai_depth` cubes:
   - a single formation (or interval) is selected, named `volantis`
   - the gridding is set to the zone `Valysar`, with the coordinates from the top layer
-  - `min` and `mean` attributes are calculated from `Top Volantis` shifted 5 ms up, to `Base Volantis` shifted 10 ms down.
-  - `rms` attribute is calculated from `Top Volantis` shifted 15 ms up, to `Base Volantis` shifted 10 ms down (the base
+  - `min` and `mean` attributes are calculated from `Top Volantis` shifted 5 m up, to `Base Volantis` shifted 10 ms down.
+  - `rms` attribute is calculated from `Top Volantis` shifted 15 m up, to `Base Volantis` shifted 10 m down (the base
     shift is inherited from the formation). The standard scaling factor for `rms` attribute is modified to 1.05
 - For `amplitude_depth` cubes:
   - a single formation (or interval) is selected, named `volantis`
-  - the attributes are calculated from `Top Volantis` with a shift upwards of 17 ms, to `Base Volantis` with a shift upwards of 2 ms
+  - the attributes are calculated from `Top Volantis` with a shift upwards of 17 m, to `Base Volantis` with a shift upwards of 2 m
   - the gridding is set to the zone `Valysar`, with the coordinates from the top layer
   - `mean` attribute has a separate interval definition from `rms` and `min` with modified surface shifts
   - `min` has a different scaling factor than `rms` and `mean`
