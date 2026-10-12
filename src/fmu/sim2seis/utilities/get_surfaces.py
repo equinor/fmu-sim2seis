@@ -1,5 +1,5 @@
 """
-Get depth surfaces (HUM in prediction mode) to define velocity model from pairs
+Get time or depth surfaces (HUM in prediction mode) to define velocity model from pairs
 of depth and time surfaces. This is used to depth convert real seismic to
 the depth framework of the current realization.
 
@@ -23,6 +23,6 @@ def read_surfaces(
         f_in_name = horizon_dir / tmp_name_input
         srf = xtgeo.surface_from_file(f_in_name)
         srf.name = top
-        surface_dict[top] = srf
+        surface_dict[top.lower() + horizon_suffix] = srf
 
     return surface_dict
