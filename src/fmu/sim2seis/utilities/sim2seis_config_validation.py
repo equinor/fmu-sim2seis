@@ -38,7 +38,6 @@ _DIRECTORY_FIELDS = (
 
 _OBSERVED_DATA_DIRS = (
     "preprocessed_seismic_dir",
-    "observed_horizon_dir",
     "output_dir_observed_data",
 )
 
@@ -77,10 +76,6 @@ class Sim2SeisPaths(BaseModel):
         default=Path("share/results/maps"),
         description="The standard folder for horizons both of time and depth domain, "
         "as well as attribute maps",
-    )
-    observed_horizon_dir: SkipJsonSchema[Path] = Field(
-        default=Path("share/preprocessed/maps"),
-        description="The standard folder for horizons both of time and depth domain",
     )
     grid_dir: SkipJsonSchema[Path] = Field(
         default=Path("sim2seis/input/pem"),
