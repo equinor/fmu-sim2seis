@@ -22,7 +22,7 @@ def test_read_yaml_config(monkeypatch, data_dir):
     assert conf.model_json_schema()
 
 
-def test_read_comb_data_yaml_file(monkeypatch, data_dir):
+def test_read_canonical_yaml_file(monkeypatch, data_dir):
     config_dir = data_dir / "sim2seis" / "model"
     monkeypatch.chdir(data_dir)
     config_file = Path("sim2seis_config.yml")

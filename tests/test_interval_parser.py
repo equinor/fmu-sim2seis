@@ -13,9 +13,9 @@ from fmu.sim2seis.utilities import (
 )
 from fmu.sim2seis.utilities.interval_parser import (
     CubeConfig,
-    FormationSettings,
     GlobalConfig,
     RootConfig,
+    WindowSettings,
     _get_matching_cubes,
     _group_attributes_by_interval,
     _resolve_error_block,
@@ -62,7 +62,7 @@ def real_yaml_config(tmp_path):
         "cubes": {
             "relai_depth": {
                 "cube_prefix": "seismic--relai_depth--",
-                "formations": {
+                "windows": {
                     "volantis": {
                         "top_horizon": "topvolantis",
                         "bottom_horizon": "basevolantis",
@@ -79,7 +79,7 @@ def real_yaml_config(tmp_path):
             },
             "amplitude_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "volantis": {
                         "top_horizon": "topvolantis",
                         "bottom_horizon": "basevolantis",
@@ -188,7 +188,7 @@ def test_window_length_creates_virtual_bottom_surface(
         "cubes": {
             "window_depth": {
                 "cube_prefix": "seismic--window_depth--",
-                "formations": {
+                "windows": {
                     "alpha": {
                         "bottom_horizon": "basealpha",
                         "window_length": 25.0,
@@ -245,7 +245,7 @@ def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amp_depth--",
-                "formations": {
+                "windows": {
                     "beta": {
                         "top_horizon": "topbeta",
                         "bottom_horizon": "basebeta",
@@ -359,7 +359,7 @@ def test_value_property_applies_shifts_and_scale(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "gamma": {
                         "top_horizon": "topgamma",
                         "bottom_horizon": "basegamma",
@@ -427,7 +427,7 @@ def test_observed_data_attributes_are_not_scaled(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "gamma": {
                         "top_horizon": "topgamma",
                         "bottom_horizon": "basegamma",
@@ -487,7 +487,7 @@ def test_missing_surface_raises_value_error(patch_directory_validation):
         "cubes": {
             "x_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "zeta": {
                         "top_horizon": "topzeta",
                         "bottom_horizon": "basezeta",
@@ -530,7 +530,7 @@ def test_multiple_cubes_same_prefix_duplicate_attributes(patch_directory_validat
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "eta": {
                         "top_horizon": "topeta",
                         "bottom_horizon": "baseeta",
@@ -586,7 +586,7 @@ def test_window_interval_zeros_out_bottom_surface_shift(
         "cubes": {
             "win_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "iota": {
                         "top_horizon": "topiota",
                         "bottom_horizon": "baseiota",
@@ -622,7 +622,7 @@ def test_group_attributes_by_interval_all_same(patch_directory_validation):
         surface_postfix="--depth.gri",
         scale_factor=1.0,
     )
-    formation_settings = FormationSettings(
+    window_settings = WindowSettings(
         top_horizon="top",
         bottom_horizon="base",
         top_surface_shift=0.0,
@@ -630,9 +630,9 @@ def test_group_attributes_by_interval_all_same(patch_directory_validation):
         window_length=None,
     )
     result = _group_attributes_by_interval(
-        formation_settings=formation_settings,
+        window_settings=window_settings,
         global_config=global_config,
-        formation_name="my_formation",
+        window_name="my_window",
         cube_name="my_cube",
     )
     assert len(result) == 1
@@ -647,7 +647,7 @@ def test_group_attributes_by_interval_all_different(patch_directory_validation):
         surface_postfix="--depth.gri",
         scale_factor=1.0,
     )
-    formation_settings = FormationSettings(
+    window_settings = WindowSettings(
         top_horizon="top",
         bottom_horizon="base",
         top_surface_shift=0.0,
@@ -659,9 +659,9 @@ def test_group_attributes_by_interval_all_different(patch_directory_validation):
         min={"bottom_surface_shift": 10.0},
     )
     result = _group_attributes_by_interval(
-        formation_settings=formation_settings,
+        window_settings=window_settings,
         global_config=global_config,
-        formation_name="my_formation",
+        window_name="my_window",
         cube_name="my_cube",
     )
     assert len(result) == 3
@@ -696,7 +696,7 @@ def test_get_matching_cubes(match_results, expected_count):
         assert cube in result
 
 
-def test_multiple_formations_in_single_cube(patch_directory_validation):
+def test_multiple_windows_in_single_cube(patch_directory_validation):
     config = {
         "global": {
             "gridhorizon_path": "/grids",
@@ -707,7 +707,7 @@ def test_multiple_formations_in_single_cube(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "alpha": {
                         "top_horizon": "topalpha",
                         "bottom_horizon": "basealpha",
@@ -756,7 +756,7 @@ def test_attribute_with_only_horizon_override(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "kappa": {
                         "top_horizon": "topkappa",
                         "bottom_horizon": "basekappa",
@@ -808,7 +808,7 @@ def test_surface_loaded_only_once_when_reused(patch_directory_validation):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "nu": {
                         "top_horizon": "topnu",
                         "bottom_horizon": "basenu",
@@ -865,7 +865,7 @@ def test_attribute_with_window_length_override(
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "omicron": {
                         "top_horizon": "topomicron",
                         "bottom_horizon": "baseomicron",
@@ -971,7 +971,7 @@ def _root_config_dict(tmp_path, error, error_path=None):
         "cubes": {
             "amp_depth": {
                 "cube_prefix": "seismic--amplitude_depth--",
-                "formations": {
+                "windows": {
                     "beta": {"top_horizon": "topbeta", "bottom_horizon": "basebeta"}
                 },
             }
@@ -982,35 +982,33 @@ def _root_config_dict(tmp_path, error, error_path=None):
 def test_error_override_precedence(tmp_path):
     global_config = _global_config(tmp_path, error={"type": "relative", "value": 0.07})
     cube_with_error = CubeConfig(
-        cube_prefix="x", formations={}, error={"type": "absolute", "value": 0.1}
+        cube_prefix="x", windows={}, error={"type": "absolute", "value": 0.1}
     )
-    cube_without_error = CubeConfig(cube_prefix="x", formations={})
-    formation_with_error = FormationSettings(
+    cube_without_error = CubeConfig(cube_prefix="x", windows={})
+    window_with_error = WindowSettings(
         top_horizon="t", bottom_horizon="b", error={"type": "relative", "value": 0.2}
     )
-    formation_without_error = FormationSettings(top_horizon="t", bottom_horizon="b")
+    window_without_error = WindowSettings(top_horizon="t", bottom_horizon="b")
 
-    # Formation wins over cube and global
-    resolved = _resolve_error_block(
-        global_config, cube_with_error, formation_with_error
-    )
+    # Window wins over cube and global
+    resolved = _resolve_error_block(global_config, cube_with_error, window_with_error)
     assert resolved.value == 0.2
 
-    # Cube wins over global when formation has no error
+    # Cube wins over global when window has no error
     resolved = _resolve_error_block(
-        global_config, cube_with_error, formation_without_error
+        global_config, cube_with_error, window_without_error
     )
     assert resolved.value == 0.1
 
-    # Global applies when neither cube nor formation set an error
+    # Global applies when neither cube nor window set an error
     resolved = _resolve_error_block(
-        global_config, cube_without_error, formation_without_error
+        global_config, cube_without_error, window_without_error
     )
     assert resolved.value == 0.07
 
     # No error anywhere resolves to None
     resolved = _resolve_error_block(
-        _global_config(tmp_path), cube_without_error, formation_without_error
+        _global_config(tmp_path), cube_without_error, window_without_error
     )
     assert resolved is None
 
@@ -1081,14 +1079,14 @@ def test_zone_position_default_when_omitted(
     assert all(a.position == "center" for a in attrs)
 
 
-def test_formation_zone_position_propagate_to_attribute(
+def test_window_zone_position_propagate_to_attribute(
     real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
 ):
-    """Formation-level zone/position propagate to every attribute of that
-    formation, including attributes that override other interval settings."""
+    """Window-level zone/position propagate to every attribute of that
+    window, including attributes that override other interval settings."""
     for cube in real_yaml_config["cubes"].values():
-        cube["formations"]["volantis"]["zone"] = "Valysar"
-        cube["formations"]["volantis"]["position"] = "top"
+        cube["windows"]["volantis"]["zone"] = "Valysar"
+        cube["windows"]["volantis"]["position"] = "top"
 
     attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
     assert attrs
@@ -1101,7 +1099,7 @@ def test_all_positions_are_accepted(
     real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader, position
 ):
     for cube in real_yaml_config["cubes"].values():
-        cube["formations"]["volantis"]["position"] = position
+        cube["windows"]["volantis"]["position"] = position
 
     attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
     assert attrs
@@ -1111,7 +1109,7 @@ def test_all_positions_are_accepted(
 def test_invalid_position_is_rejected(
     real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
 ):
-    real_yaml_config["cubes"]["relai_depth"]["formations"]["volantis"]["position"] = (
+    real_yaml_config["cubes"]["relai_depth"]["windows"]["volantis"]["position"] = (
         "middle"
     )
     with pytest.raises(ValidationError):
@@ -1120,14 +1118,14 @@ def test_invalid_position_is_rejected(
 
 def test_position_override_creates_separate_interval_group(patch_directory_validation):
     """An attribute that overrides only `position` must not be grouped with the
-    formation default, and each group keeps its own position."""
+    window default, and each group keeps its own position."""
     global_config = GlobalConfig(
         gridhorizon_path="/grids",
         attributes=["rms", "mean"],
         surface_postfix="--depth.gri",
         scale_factor=1.0,
     )
-    formation_settings = FormationSettings(
+    window_settings = WindowSettings(
         top_horizon="top",
         bottom_horizon="base",
         top_surface_shift=0.0,
@@ -1137,9 +1135,9 @@ def test_position_override_creates_separate_interval_group(patch_directory_valid
         mean={"position": "base"},
     )
     result = _group_attributes_by_interval(
-        formation_settings=formation_settings,
+        window_settings=window_settings,
         global_config=global_config,
-        formation_name="my_formation",
+        window_name="my_window",
         cube_name="my_cube",
     )
     assert len(result) == 2
@@ -1151,14 +1149,14 @@ def test_position_override_creates_separate_interval_group(patch_directory_valid
 
 def test_zone_override_creates_separate_interval_group(patch_directory_validation):
     """An attribute that overrides only `zone` must not be grouped with the
-    formation default, and each group keeps its own zone."""
+    window default, and each group keeps its own zone."""
     global_config = GlobalConfig(
         gridhorizon_path="/grids",
         attributes=["rms", "mean"],
         surface_postfix="--depth.gri",
         scale_factor=1.0,
     )
-    formation_settings = FormationSettings(
+    window_settings = WindowSettings(
         top_horizon="top",
         bottom_horizon="base",
         top_surface_shift=0.0,
@@ -1168,9 +1166,9 @@ def test_zone_override_creates_separate_interval_group(patch_directory_validatio
         mean={"zone": "Therys"},
     )
     result = _group_attributes_by_interval(
-        formation_settings=formation_settings,
+        window_settings=window_settings,
         global_config=global_config,
-        formation_name="my_formation",
+        window_name="my_window",
         cube_name="my_cube",
     )
     assert len(result) == 2

@@ -65,7 +65,7 @@ The `global` section defines parameters that apply to all interval definitions u
 - Attributes: Select attributes to highlight important features in the 4D seismic.
 - Scale factor: Applied to **modelled** attributes only, to match their level to the observed seismic attributes. Observed-data attributes define the reference level and are never scaled.
 - Surface postfix: File-name postfix appended to each horizon name when reading the surface files (e.g. `--depth.gri`).
-- Metadata fields: (**Obsolete**) This is removed, as all metadata-related matters are handled by `fmu-dataio`.
+- Metadata fields: **Obsolete.** These have been removed, as all metadata-related matters are handled by `fmu-dataio`.
 - Error settings: `error` and `error_path` define the observation error, see [Error settings](#error-settings).
 
 ### Error settings
@@ -83,7 +83,7 @@ The observation error is written as an `OBS_ERROR` column in the exported CSV or
 All four combinations of `type` and source (scalar `value` or `error_surface`) are supported. The `error_path`
 directory is set once, in the `global` section only.
 
-The `error` block can be given at the `global`, cube, or formation level. A block at a more specific level fully
+The `error` block can be given at the `global`, cube, or window level. A block at a more specific level fully
 replaces the one at the level above it (whole-block replacement); individual fields are not merged. For example:
 
 ```yaml
@@ -103,15 +103,15 @@ global:
 cubes: # Setup for the cubes for which maps will be generated
   relai_depth: # arbitrary name of cube
     cube_prefix: seismic--relai_full_depth-- # start of cube name
-    # A cube- or formation-level 'error' block fully replaces the global one, e.g.:
+    # A cube- or window-level 'error' block fully replaces the global one, e.g.:
     # error:
     #   type: absolute
     #   error_surface: relai_error.gri # resolved against global 'error_path'
     #   minimum: 0.005
-    formations: # settings for each formation maps will be generated for
+    windows: # settings for each window maps will be generated for
       volantis:
-        top_horizon: topvolantis # Horizon used as top of the formation. ".gri" assumed as extension
-        bottom_horizon: basevolantis # Horizon used as base of the formation ".gri" assumed as extension
+        top_horizon: topvolantis # Horizon used as top of the window. ".gri" assumed as extension
+        bottom_horizon: basevolantis # Horizon used as base of the window ".gri" assumed as extension
         top_surface_shift: -5 # Extension of the window upwards from top surface
         bottom_surface_shift: 10 # Extension of the window downwards from bottom surface
         zone: Valysar
@@ -123,10 +123,10 @@ cubes: # Setup for the cubes for which maps will be generated
           scale_factor: 1.05
   amplitude_depth: # arbitrary name of cube
     cube_prefix: seismic--amplitude_full_depth-- # start of cube name
-    formations: # settings for each formation maps will be generated for
+    windows: # settings for each window maps will be generated for
       volantis:
-        top_horizon: topvolantis # Horizon used as top of the formation. ".gri" assumed as extension
-        bottom_horizon: basevolantis # Horizon used as base of the formation ".gri" assumed as extension
+        top_horizon: topvolantis # Horizon used as top of the window. ".gri" assumed as extension
+        bottom_horizon: basevolantis # Horizon used as base of the window ".gri" assumed as extension
         top_surface_shift: -17 # Extension of the window upwards from top surface
         bottom_surface_shift: -2
         zone: Valysar
@@ -146,18 +146,18 @@ cubes: # Setup for the cubes for which maps will be generated
 
 - Cube names: Arbitrary values.
 - `cube_prefix`: The leading, date-independent part of the cube name (e.g. `seismic--relai_full_depth--`). It is matched against each available cube name after the date component has been stripped, and thereby selects which cubes maps are generated for. The seismic dates themselves are resolved separately, when the cubes are imported and differenced.
-- `error`: Optional observation-error block that overrides the global one for all formations of this cube (observed data only); see [Error settings](#error-settings).
+- `error`: Optional observation-error block that overrides the global one for all windows of this cube (observed data only); see [Error settings](#error-settings).
 
-### Formations Section
+### Windows Section
 
-Several formations can be defined under each cube. Interval settings apply to all attribute calculations listed in the
+Several windows can be defined under each cube. Interval settings apply to all attribute calculations listed in the
 `global` section unless specific values are set. Intervals can be defined in two ways:
 
 1. **Top and Base Horizon**: Specify the top and base horizons, with optional shifts for each.
 2. **Top Horizon and Window Length**: Specify the top horizon and the window length, with an optional shift of the
    top horizon.
 
-In addition, each formation controls which grid cells the attribute is sampled from. These cells are then aggregated
+In addition, each window controls which grid cells the attribute is sampled from. These cells are then aggregated
 per region (from the Webviz grid and region definition files) when the ERT and Webviz attribute tables are written:
 
 - `zone`: name of the grid zone to sample within. Default is empty (`""`), which uses the full grid interval.
@@ -172,13 +172,13 @@ This is how the example in [Figure 2](#figure-2-interval-definition-in-yaml) sho
   - modelled attributes are scaled by a factor of 1.02 to match observed seismic attributes
   - the error for observed data is of type **relative** with a constant scalar of 0.07 and an absolute minimum of 0.005
 - For `relai_depth` cubes:
-  - a single formation (or interval) is selected, named `volantis`
+  - a single window is selected, named `volantis`
   - the gridding is set to the zone `Valysar`, with the coordinates from the top layer
   - `min` and `mean` attributes are calculated from `Top Volantis` shifted 5 m up, to `Base Volantis` shifted 10 m down.
   - `rms` attribute is calculated from `Top Volantis` shifted 15 m up, to `Base Volantis` shifted 10 m down (the base
-    shift is inherited from the formation). The standard scaling factor for `rms` attribute is modified to 1.05
+    shift is inherited from the window). The standard scaling factor for `rms` attribute is modified to 1.05
 - For `amplitude_depth` cubes:
-  - a single formation (or interval) is selected, named `volantis`
+  - a single window is selected, named `volantis`
   - the attributes are calculated from `Top Volantis` with a shift upwards of 17 m, to `Base Volantis` with a shift upwards of 2 m
   - the gridding is set to the zone `Valysar`, with the coordinates from the top layer
   - `mean` attribute has a separate interval definition from `rms` and `min` with modified surface shifts
