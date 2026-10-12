@@ -66,7 +66,7 @@ class RootConfig(BaseModel):
     def resolve_error_surfaces(self) -> RootConfig:
         """Validate and resolve every ``error_surface`` in the configuration.
 
-        Error blocks may appear at the global, cube, and formation level. Any
+        Error blocks may appear at the global, cube, and window level. Any
         ``error_surface`` name is resolved against the single global
         ``error_path`` and its existence is verified. The resolved absolute
         path is stored back on the error block so consumers do not need the
@@ -75,9 +75,7 @@ class RootConfig(BaseModel):
         error_blocks = [self.global_config.error]
         for cube in self.cubes.values():
             error_blocks.append(cube.error)
-            error_blocks.extend(
-                formation.error for formation in cube.formations.values()
-            )
+            error_blocks.extend(window.error for window in cube.windows.values())
 
         surface_errors = [
             error
@@ -102,7 +100,7 @@ class RootConfig(BaseModel):
         return self
 
 
-class FormationSettings(BaseModel):
+class WindowSettings(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     top_horizon: str | None = None
@@ -136,7 +134,7 @@ class FormationSettings(BaseModel):
         self,
         attribute: KnownAttributes,
         global_scale_factor: float,
-        formation_name: str,
+        window_name: str,
         cube_name: str,
     ) -> IntervalConfig:
         config_dict: dict[str, Any] = {
@@ -157,7 +155,7 @@ class FormationSettings(BaseModel):
             config_dict,
             context={
                 "cube_name": cube_name,
-                "formation_name": formation_name,
+                "window_name": window_name,
                 "attribute": attribute,
             },
         )
@@ -167,7 +165,7 @@ class CubeConfig(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     cube_prefix: str
-    formations: dict[str, FormationSettings]
+    windows: dict[str, WindowSettings]
     error: ErrorConfig | None = None
 
 
@@ -200,19 +198,18 @@ class IntervalConfig(BaseModel):
     def validate_horizon_requirements(self, info: ValidationInfo) -> IntervalConfig:
         ctx = info.context or {}
         cube_name = ctx.get("cube_name", "unknown")
-        formation_name = ctx.get("formation_name", "unknown")
+        window_name = ctx.get("window_name", "unknown")
         attribute = ctx.get("attribute", "unknown")
 
         location = (
-            f"In cube '{cube_name}', formation '{formation_name}'"
-            f", attribute '{attribute}'"
+            f"In cube '{cube_name}', window '{window_name}', attribute '{attribute}'"
         )
 
         if not self.top_horizon:
             raise PydanticCustomError(
                 "missing_top_horizon",
                 f"{location}: 'top_horizon' is required."
-                " Specify it either at the formation level "
+                " Specify it either at the window level "
                 "or in the attribute-specific override"
                 " (e.g., rms: {{top_horizon: ...}})",
             )
@@ -222,7 +219,7 @@ class IntervalConfig(BaseModel):
                 "missing_bottom_horizon",
                 f"{location}: Either 'bottom_horizon' or 'window_length' must be"
                 " specified. "
-                "Provide 'bottom_horizon' at formation level or in attribute override, "
+                "Provide 'bottom_horizon' at window level or in attribute override, "
                 "or use 'window_length' to calculate from 'top_horizon'",
             )
         if self.bottom_horizon is not None and self.window_length is not None:
@@ -239,24 +236,24 @@ class IntervalConfig(BaseModel):
 
 
 def _group_attributes_by_interval(
-    formation_settings: FormationSettings,
+    window_settings: WindowSettings,
     global_config: GlobalConfig,
-    formation_name: str,
+    window_name: str,
     cube_name: str,
 ) -> dict[IntervalConfig, list[KnownAttributes]]:
     """Group attributes that share the same interval configuration.
 
-    Each attribute (e.g., 'rms', 'mean', 'min') can override the formation's default
+    Each attribute (e.g., 'rms', 'mean', 'min') can override the window's default
     interval settings. Attributes that end up with identical settings are grouped
     together.
     """
 
     interval_groups = defaultdict(list)
     for attribute in global_config.attributes:
-        interval_key = formation_settings.build_interval_config(
+        interval_key = window_settings.build_interval_config(
             attribute,
             global_config.scale_factor,
-            formation_name,
+            window_name,
             cube_name,
         )
         interval_groups[interval_key].append(attribute)
@@ -295,7 +292,7 @@ def _create_seismic_attribute(
     global_config: GlobalConfig,
     cube_info: CubeConfig,
     cube: SeismicCube,
-    formation_name: str,
+    window_name: str,
     error: ErrorConfig | None = None,
     is_observed: bool = False,
 ) -> SeismicAttribute:
@@ -332,7 +329,7 @@ def _create_seismic_attribute(
         bottom_surface=attr_bottom_surface,
         top_surface_shift=interval_config.top_surface_shift,
         bottom_surface_shift=interval_config.bottom_surface_shift,
-        formation=formation_name,
+        window=window_name,
         info=cube_info,
         error=error,
         zone=interval_config.zone,
@@ -349,18 +346,18 @@ def _get_matching_cubes(cubes: CubeDict, cube_prefix: str) -> list[SeismicCube]:
     ]
 
 
-def _create_formation_attributes(
+def _create_window_attributes(
     interval_groups: dict[IntervalConfig, list[KnownAttributes]],
     cube_info: CubeConfig,
     cubes: CubeDict,
     surfaces: SurfaceDict,
     global_config: GlobalConfig,
-    formation_name: str,
+    window_name: str,
     error: ErrorConfig | None = None,
     is_observed: bool = False,
 ) -> list[SeismicAttribute]:
     """Create SeismicAttribute objects for each interval group and matching cube."""
-    formation_attributes = []
+    window_attributes = []
     for interval_config, attrs in interval_groups.items():
         matching_cubes = _get_matching_cubes(cubes, cube_info.cube_prefix)
         for seismic_cube in matching_cubes:
@@ -371,55 +368,55 @@ def _create_formation_attributes(
                 global_config=global_config,
                 cube_info=cube_info,
                 cube=seismic_cube,
-                formation_name=formation_name,
+                window_name=window_name,
                 error=error,
                 is_observed=is_observed,
             )
-            formation_attributes.append(attribute)
-    return formation_attributes
+            window_attributes.append(attribute)
+    return window_attributes
 
 
 def _resolve_error_block(
     global_config: GlobalConfig,
     cube_info: CubeConfig,
-    formation_settings: FormationSettings,
+    window_settings: WindowSettings,
 ) -> ErrorConfig | None:
-    """Select the observation error for a formation.
+    """Select the observation error for a window.
 
-    The most specific error block wins (whole-block replacement): formation
+    The most specific error block wins (whole-block replacement): window
     overrides cube, which overrides the global setting. ``error_surface`` paths
     have already been validated and resolved to absolute paths by
     ``RootConfig.resolve_error_surfaces``.
     """
-    return formation_settings.error or cube_info.error or global_config.error
+    return window_settings.error or cube_info.error or global_config.error
 
 
-def _process_formation(
+def _process_window(
     cube_name: str,
-    formation_name: str,
-    formation_settings: FormationSettings,
+    window_name: str,
+    window_settings: WindowSettings,
     cube_info: CubeConfig,
     cubes: CubeDict,
     surfaces: SurfaceDict,
     global_config: GlobalConfig,
     is_observed: bool = False,
 ) -> list[SeismicAttribute]:
-    """Process a single formation and create its SeismicAttribute objects."""
+    """Process a single window and create its SeismicAttribute objects."""
 
     interval_groups = _group_attributes_by_interval(
-        formation_settings=formation_settings,
+        window_settings=window_settings,
         global_config=global_config,
-        formation_name=formation_name,
+        window_name=window_name,
         cube_name=cube_name,
     )
-    error = _resolve_error_block(global_config, cube_info, formation_settings)
-    return _create_formation_attributes(
+    error = _resolve_error_block(global_config, cube_info, window_settings)
+    return _create_window_attributes(
         interval_groups=interval_groups,
         cube_info=cube_info,
         cubes=cubes,
         surfaces=surfaces,
         global_config=global_config,
-        formation_name=formation_name,
+        window_name=window_name,
         error=error,
         is_observed=is_observed,
     )
@@ -452,18 +449,18 @@ def populate_seismic_attributes(
     root_config = RootConfig(**config)
     seismic_attributes = []
     for cube_name, cube_info in root_config.cubes.items():
-        for formation_name, formation_settings in cube_info.formations.items():
-            formation_attributes = _process_formation(
+        for window_name, window_settings in cube_info.windows.items():
+            window_attributes = _process_window(
                 cube_name=cube_name,
-                formation_name=formation_name,
-                formation_settings=formation_settings,
+                window_name=window_name,
+                window_settings=window_settings,
                 cube_info=cube_info,
                 cubes=cubes,
                 surfaces=surfaces,
                 global_config=root_config.global_config,
                 is_observed=is_observed,
             )
-            seismic_attributes.extend(formation_attributes)
+            seismic_attributes.extend(window_attributes)
 
     if not seismic_attributes:
         raise ValueError(

@@ -119,7 +119,7 @@ def attribute_export(
                     ],
                     is_observation=is_observed,
                     preprocessed=is_preprocessed,
-                    name=attr.formation,
+                    name=attr.window,
                     tagname=tag_str,
                     vertical_domain=attr.from_cube.cube_name.domain,
                     rep_include=False,

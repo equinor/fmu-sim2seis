@@ -14,15 +14,15 @@ global:
 cubes: # Setup for the cubes for which maps will be generated
   relai_depth: # arbitrary name of cube
     cube_prefix: seismic--relai_full_depth-- # start of observed cube name
-    # A cube- or formation-level 'error' block fully replaces the global one, e.g.:
+    # A cube- or window-level 'error' block fully replaces the global one, e.g.:
     # error:
     #   type: absolute
     #   error_surface: relai_error.gri # resolved against global 'error_path'
     #   minimum: 0.005
-    formations: # settings for each formation maps will be generated for
+    windows: # settings for each window maps will be generated for
       volantis:
-        top_horizon: topvolantis # Horizon used as top of the formation. ".gri" assumed as extension
-        bottom_horizon: basevolantis # Horizon used as base of the formation ".gri" assumed as extension
+        top_horizon: topvolantis # Horizon used as top of the window. ".gri" assumed as extension
+        bottom_horizon: basevolantis # Horizon used as base of the window ".gri" assumed as extension
         top_surface_shift: -5 # Extension of the window upwards from top surface
         bottom_surface_shift: 10 # Extension of the window downwards from bottom surface
         zone: Valysar
@@ -34,10 +34,10 @@ cubes: # Setup for the cubes for which maps will be generated
           scale_factor: 1.05
   amplitude_depth: # arbitrary name of cube
     cube_prefix: seismic--amplitude_full_depth-- # start of cube name
-    formations: # settings for each formation maps will be generated for
+    windows: # settings for each window maps will be generated for
       volantis:
-        top_horizon: topvolantis # Horizon used as top of the formation. ".gri" assumed as extension
-        bottom_horizon: basevolantis # Horizon used as base of the formation ".gri" assumed as extension
+        top_horizon: topvolantis # Horizon used as top of the window. ".gri" assumed as extension
+        bottom_horizon: basevolantis # Horizon used as base of the window ".gri" assumed as extension
         top_surface_shift: -17 # Extension of the window upwards from top surface
         bottom_surface_shift: -2
         zone: Valysar
