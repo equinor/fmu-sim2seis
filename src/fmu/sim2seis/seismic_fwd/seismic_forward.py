@@ -88,33 +88,6 @@ def exe_seismic_forward(
     return depth_cubes, time_cubes
 
 
-def read_time_and_depth_horizons(
-    config: Sim2SeisConfig,
-) -> tuple[dict[str, xtgeo.RegularSurface], dict[str, xtgeo.RegularSurface]]:
-    """
-    Read the time and depth surfaces that are listed in the configuration file
-    for time/depth conversions
-    """
-    time_surfs = {}
-    depth_surfs = {}
-    for horizon in config.depth_conversion.horizon_names:
-        time_name = config.paths.modelled_horizon_dir.joinpath(
-            horizon.lower() + config.depth_conversion.time_suffix
-        )
-        time_surf = xtgeo.surface_from_file(str(time_name))
-        time_surf.name = horizon
-        time_surfs[time_name.name] = time_surf
-
-        depth_name = config.depth_conversion.horizon_dir.joinpath(
-            horizon.lower() + config.depth_conversion.depth_suffix
-        )
-        depth_surf = xtgeo.surface_from_file(str(depth_name))
-        depth_surf.name = horizon
-        depth_surfs[depth_name.name] = depth_surf
-
-    return time_surfs, depth_surfs
-
-
 def call_seismic_forward(model_file: Path, verbose: bool) -> bool:
     """
     Helper function for running seismic forward and handling errors
