@@ -2,8 +2,8 @@ import{_ as i,o as a,c as t,ae as n}from"./chunks/framework.BY2CgdFV.js";const g
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Seismic forward modelling settings</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Pickle files are used to transfer class objects between the different parts of the sim2seis workflow.Neither their</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># prefix names or the directory (in paths) will need to be modified, that will only lead to likely errors</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Pickle files are used to transfer class objects between the different parts of the sim2seis workflow. Neither their</span></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># prefix names nor the directory (in paths) should be modified; changing them will only lead to likely errors.</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">########################################################################################################################</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#region seis_fwd</span></span>
