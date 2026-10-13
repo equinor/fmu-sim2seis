@@ -31,7 +31,6 @@ import{_ as i,o as a,c as n,ae as e}from"./chunks/framework.BY2CgdFV.js";const o
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   modelled_horizon_dir: share/results/maps</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   time_horizon_dir: share/results/maps</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   depth_horizon_dir: share/results/maps</span></span>
-<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   observed_horizon_dir: share/preprocessed/maps</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   grid_dir: sim2seis/input/pem</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   webviz_map_dir: sim2seis/input/attribute_maps</span></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#   pickle_file_output_dir: share/results/pickle_files</span></span>
