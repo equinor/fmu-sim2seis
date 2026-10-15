@@ -57,6 +57,7 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
+    "jsonschema",
     "mypy",
     "pytest",
     "pytest-cov",

@@ -16,6 +16,9 @@ hero:
     - theme: brand
       text: Sim2seis configuration
       link: ./sim2seis-configuration
+    - theme: brand
+      text: Interval definition
+      link: ./interval-definition
     - theme: alt
       text: Input & output overview
       link: ./input-output
