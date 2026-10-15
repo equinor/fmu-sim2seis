@@ -85,6 +85,7 @@ logs
 
 # Documentation:
 fmu-sim2seis-schema.json
+fmu-sim2seis-intervals-schema.json
 **/.vitepress/dist
 **/.vitepress/cache
 Scripts/compare_si4ti.py
