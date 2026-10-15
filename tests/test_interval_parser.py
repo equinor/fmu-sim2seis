@@ -1,3 +1,5 @@
+import re
+import warnings
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
 
@@ -187,14 +189,12 @@ def test_window_length_creates_virtual_bottom_surface(
         },
         "cubes": {
             "window_depth": {
-                "cube_prefix": "seismic--window_depth--",
+                "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "alpha": {
+                        "top_horizon": "topalpha",
                         "bottom_horizon": "basealpha",
                         "window_length": 25.0,
-                        "rms": {
-                            "top_horizon": "topalpha",
-                        },
                     }
                 },
             }
@@ -204,7 +204,7 @@ def test_window_length_creates_virtual_bottom_surface(
     surfaces = {}
     cubes = {
         SeismicName(
-            process="seismic", attribute="window", domain="depth", date="20200101"
+            process="seismic", attribute="amplitude", domain="depth", date="20200101"
         ): Mock(spec=SingleSeismic)
     }
 
@@ -244,7 +244,7 @@ def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
         },
         "cubes": {
             "amp_depth": {
-                "cube_prefix": "seismic--amp_depth--",
+                "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "beta": {
                         "top_horizon": "topbeta",
@@ -256,7 +256,7 @@ def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
     }
     cubes = {
         SeismicName(
-            process="seismic", attribute="amp", domain="depth", date="20200101"
+            process="seismic", attribute="amplitude", domain="depth", date="20200101"
         ): Mock(spec=SingleSeismic)
     }
     surfaces: dict[str, xtgeo.RegularSurface] = {}
@@ -900,8 +900,10 @@ def test_attribute_with_window_length_override(
                 path.split("/")[-1], Mock(spec=xtgeo.RegularSurface)
             ),
         ),
-        pytest.warns(UserWarning),
+        warnings.catch_warnings(),
     ):
+        # The override replaces the window base, so no precedence warning
+        warnings.simplefilter("error")
         attrs = populate_seismic_attributes(config, cubes, surfaces)
 
     assert len(attrs) == 2
@@ -918,6 +920,53 @@ def test_attribute_with_window_length_override(
     assert rms_attrs[0].window_length is None
 
 
+def test_attribute_override_rejects_null():
+    with pytest.raises(ValidationError, match="must not be null"):
+        WindowSettings(
+            top_horizon="top",
+            bottom_horizon="base",
+            window_length=25.0,
+            mean={"window_length": None},
+        )
+
+
+def test_attribute_override_bottom_horizon_replaces_window_length():
+    window = WindowSettings(
+        top_horizon="top",
+        window_length=25.0,
+        mean={"bottom_horizon": "base"},
+    )
+
+    interval = window.build_interval_config("mean", 1.0, "window", "cube")
+
+    assert interval.bottom_horizon == "base"
+    assert interval.window_length is None
+
+
+def test_attribute_override_with_both_bounds_prefers_window_length():
+    window = WindowSettings(
+        top_horizon="top",
+        bottom_horizon="base",
+        mean={"bottom_horizon": "other", "window_length": 10.0},
+    )
+
+    with pytest.warns(UserWarning, match="'window_length' will take precedence"):
+        interval = window.build_interval_config("mean", 1.0, "window", "cube")
+
+    assert interval.bottom_horizon == "other"
+    assert interval.window_length == 10.0
+
+
+@pytest.mark.parametrize("window_length", [0, -1])
+def test_attribute_override_window_length_must_be_positive(window_length):
+    with pytest.raises(ValidationError, match="greater than 0"):
+        WindowSettings(
+            top_horizon="top",
+            bottom_horizon="base",
+            mean={"window_length": window_length},
+        )
+
+
 # ---------------------------------------------------------------------------
 # Observation error configuration
 # ---------------------------------------------------------------------------
@@ -928,6 +977,12 @@ def test_error_config_requires_exactly_one_source():
         ErrorConfig(type="relative")  # neither value nor error_surface
     with pytest.raises(ValidationError):
         ErrorConfig(type="relative", value=0.1, error_surface=Path("err.gri"))
+
+
+@pytest.mark.parametrize("error_surface", ["", "   "])
+def test_error_config_rejects_blank_surface(error_surface):
+    with pytest.raises(ValidationError, match="error_surface must be a non-empty"):
+        ErrorConfig(type="absolute", error_surface=error_surface)
 
 
 def test_error_config_rejects_negative_values():
@@ -954,6 +1009,35 @@ def _global_config(tmp_path, **error_kwargs):
     )
 
 
+@pytest.mark.parametrize("field", ["gridhorizon_path", "error_path"])
+def test_global_config_requires_existing_directories(tmp_path, field):
+    existing_dir = tmp_path / "existing"
+    existing_dir.mkdir()
+    config = {
+        "gridhorizon_path": existing_dir,
+        "attributes": ["rms"],
+        "surface_postfix": "--depth.gri",
+        "scale_factor": 1.0,
+        "error_path": existing_dir,
+    }
+    config[field] = tmp_path / "missing"
+
+    with pytest.raises(ValidationError, match=field):
+        GlobalConfig.model_validate(config)
+
+
+def test_global_config_path_validation_can_be_skipped(tmp_path):
+    config = {
+        "gridhorizon_path": tmp_path / "missing-grid",
+        "attributes": ["rms"],
+        "surface_postfix": "--depth.gri",
+        "scale_factor": 1.0,
+        "error_path": tmp_path / "missing-errors",
+    }
+
+    GlobalConfig.model_validate(config, context={"validate_paths": False})
+
+
 def _root_config_dict(tmp_path, error, error_path=None):
     grid_path = tmp_path / "maps"
     grid_path.mkdir(exist_ok=True)
@@ -962,8 +1046,9 @@ def _root_config_dict(tmp_path, error, error_path=None):
         "attributes": ["rms"],
         "scale_factor": 1.0,
         "surface_postfix": "--depth.gri",
-        "error": error,
     }
+    if error is not None:
+        global_section["error"] = error
     if error_path is not None:
         global_section["error_path"] = str(error_path)
     return {
@@ -981,14 +1066,17 @@ def _root_config_dict(tmp_path, error, error_path=None):
 
 def test_error_override_precedence(tmp_path):
     global_config = _global_config(tmp_path, error={"type": "relative", "value": 0.07})
+    prefix = "seismic--amplitude_depth--"
     cube_with_error = CubeConfig(
-        cube_prefix="x", windows={}, error={"type": "absolute", "value": 0.1}
+        cube_prefix=prefix, windows={}, error={"type": "absolute", "value": 0.1}
     )
-    cube_without_error = CubeConfig(cube_prefix="x", windows={})
+    cube_without_error = CubeConfig(cube_prefix=prefix, windows={})
     window_with_error = WindowSettings(
         top_horizon="t", bottom_horizon="b", error={"type": "relative", "value": 0.2}
     )
     window_without_error = WindowSettings(top_horizon="t", bottom_horizon="b")
+    assert cube_with_error.error.minimum == 0.0
+    assert window_with_error.error.minimum == 0.0
 
     # Window wins over cube and global
     resolved = _resolve_error_block(global_config, cube_with_error, window_with_error)
@@ -1013,19 +1101,62 @@ def test_error_override_precedence(tmp_path):
     assert resolved is None
 
 
-def test_error_surface_resolved_against_error_path(tmp_path):
+def test_error_fields_accept_error_config_instances(tmp_path):
+    error = ErrorConfig(type="relative", value=0.1)
+
+    assert _global_config(tmp_path, error=error).error == error
+    cube = CubeConfig(cube_prefix="seismic--amplitude_depth--", windows={}, error=error)
+    assert cube.error == error
+    assert WindowSettings(top_horizon="t", bottom_horizon="b", error=error).error == (
+        error
+    )
+
+
+@pytest.mark.parametrize(
+    ("section", "key", "path"),
+    [
+        ("global", "error", "global.error"),
+        ("window", "window_length", "cubes.amp_depth.windows.beta.window_length"),
+        ("window", "error", "cubes.amp_depth.windows.beta.error"),
+    ],
+)
+def test_root_config_rejects_null_values(tmp_path, section, key, path):
+    config = _root_config_dict(tmp_path, error=None)
+    target = (
+        config["global"]
+        if section == "global"
+        else config["cubes"]["amp_depth"]["windows"]["beta"]
+    )
+    target[key] = None
+
+    with pytest.raises(ValidationError, match=re.escape(path)):
+        RootConfig.model_validate(config)
+
+
+@pytest.mark.parametrize("level", ["global", "cube", "window"])
+def test_error_surface_resolved_against_error_path(tmp_path, level):
     error_dir = tmp_path / "errors"
     error_dir.mkdir()
     error_file = error_dir / "err.gri"
     error_file.write_bytes(b"x")
 
-    config = _root_config_dict(
-        tmp_path,
-        error={"type": "absolute", "error_surface": "err.gri"},
-        error_path=error_dir,
-    )
+    config = _root_config_dict(tmp_path, error=None, error_path=error_dir)
+    error = {"type": "absolute", "error_surface": "err.gri"}
+    if level == "global":
+        config["global"]["error"] = error
+    elif level == "cube":
+        config["cubes"]["amp_depth"]["error"] = error
+    else:
+        config["cubes"]["amp_depth"]["windows"]["beta"]["error"] = error
+
     root = RootConfig.model_validate(config)
-    assert root.global_config.error.error_surface == error_file.resolve()
+    if level == "global":
+        resolved_error = root.global_config.error
+    elif level == "cube":
+        resolved_error = root.cubes["amp_depth"].error
+    else:
+        resolved_error = root.cubes["amp_depth"].windows["beta"].error
+    assert resolved_error.error_surface == error_file.resolve()
 
 
 def test_error_surface_missing_file_raises(tmp_path):
@@ -1040,10 +1171,17 @@ def test_error_surface_missing_file_raises(tmp_path):
         RootConfig.model_validate(config)
 
 
-def test_error_surface_without_error_path_raises(tmp_path):
-    config = _root_config_dict(
-        tmp_path, error={"type": "absolute", "error_surface": "err.gri"}
-    )
+@pytest.mark.parametrize("level", ["global", "cube", "window"])
+def test_error_surface_without_error_path_raises(tmp_path, level):
+    config = _root_config_dict(tmp_path, error=None)
+    error = {"type": "absolute", "error_surface": "err.gri"}
+    if level == "global":
+        config["global"]["error"] = error
+    elif level == "cube":
+        config["cubes"]["amp_depth"]["error"] = error
+    else:
+        config["cubes"]["amp_depth"]["windows"]["beta"]["error"] = error
+
     with pytest.raises(ValidationError, match="error_path"):
         RootConfig.model_validate(config)
 
@@ -1116,64 +1254,139 @@ def test_invalid_position_is_rejected(
         populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
 
 
-def test_position_override_creates_separate_interval_group(patch_directory_validation):
-    """An attribute that overrides only `position` must not be grouped with the
-    window default, and each group keeps its own position."""
-    global_config = GlobalConfig(
-        gridhorizon_path="/grids",
-        attributes=["rms", "mean"],
-        surface_postfix="--depth.gri",
-        scale_factor=1.0,
-    )
-    window_settings = WindowSettings(
-        top_horizon="top",
-        bottom_horizon="base",
-        top_surface_shift=0.0,
-        bottom_surface_shift=0.0,
-        window_length=None,
-        position="center",
-        mean={"position": "base"},
-    )
-    result = _group_attributes_by_interval(
-        window_settings=window_settings,
-        global_config=global_config,
-        window_name="my_window",
-        cube_name="my_cube",
-    )
-    assert len(result) == 2
-    position_by_attr = {
-        attr: key.position for key, attrs in result.items() for attr in attrs
+@pytest.mark.parametrize("field", ["zone", "position", "error"])
+def test_window_only_fields_rejected_in_override(field):
+    """`zone`, `position` and `error` apply to the whole window and cannot be
+    adjusted per attribute."""
+    values = {
+        "zone": "Therys",
+        "position": "base",
+        "error": {"type": "absolute", "value": 0.1},
     }
-    assert position_by_attr == {"rms": "center", "mean": "base"}
+    with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
+        WindowSettings(
+            top_horizon="top",
+            bottom_horizon="base",
+            mean={field: values[field]},
+        )
 
 
-def test_zone_override_creates_separate_interval_group(patch_directory_validation):
-    """An attribute that overrides only `zone` must not be grouped with the
-    window default, and each group keeps its own zone."""
-    global_config = GlobalConfig(
-        gridhorizon_path="/grids",
-        attributes=["rms", "mean"],
-        surface_postfix="--depth.gri",
-        scale_factor=1.0,
-    )
-    window_settings = WindowSettings(
-        top_horizon="top",
-        bottom_horizon="base",
-        top_surface_shift=0.0,
-        bottom_surface_shift=0.0,
-        window_length=None,
-        zone="Valysar",
-        mean={"zone": "Therys"},
-    )
-    result = _group_attributes_by_interval(
-        window_settings=window_settings,
-        global_config=global_config,
-        window_name="my_window",
-        cube_name="my_cube",
-    )
-    assert len(result) == 2
-    zone_by_attr = {attr: key.zone for key, attrs in result.items() for attr in attrs}
-    assert zone_by_attr == {"rms": "Valysar", "mean": "Therys"}
+def test_override_for_unlisted_attribute_rejected(patch_directory_validation):
+    config = {
+        "global": {
+            "gridhorizon_path": "/grids",
+            "attributes": ["rms", "mean"],
+            "scale_factor": 1.0,
+            "surface_postfix": "--depth.gri",
+        },
+        "cubes": {
+            "amp": {
+                "cube_prefix": "seismic--amplitude_depth--",
+                "windows": {
+                    "win": {
+                        "top_horizon": "top",
+                        "bottom_horizon": "base",
+                        "max": {"scale_factor": 2.0},
+                    }
+                },
+            }
+        },
+    }
+    with pytest.raises(ValidationError, match=r"cube 'amp', window 'win'.*\['max'\]"):
+        RootConfig.model_validate(config)
+
+
+def test_window_requires_top_horizon_and_base():
+    with pytest.raises(ValidationError, match="top_horizon"):
+        WindowSettings(bottom_horizon="base")
+    with pytest.raises(ValidationError, match="at least 1 character"):
+        WindowSettings(top_horizon="", bottom_horizon="base")
+    with pytest.raises(ValidationError, match="match pattern"):
+        WindowSettings(top_horizon=" ", bottom_horizon="base")
+    with pytest.raises(ValidationError, match="at least 1 character"):
+        WindowSettings(top_horizon="top", bottom_horizon="")
+    with pytest.raises(ValidationError, match="match pattern"):
+        WindowSettings(top_horizon="top", bottom_horizon=" ")
+    with pytest.raises(ValidationError, match=r"bottom_horizon.*window_length"):
+        WindowSettings(top_horizon="top")
+    with pytest.raises(ValidationError, match="greater than 0"):
+        WindowSettings(top_horizon="top", window_length=-10.0)
+
+    with pytest.raises(ValidationError, match="at least 1 character"):
+        WindowSettings(
+            top_horizon="top",
+            bottom_horizon="base",
+            mean={"top_horizon": ""},
+        )
+    with pytest.raises(ValidationError, match="match pattern"):
+        WindowSettings(
+            top_horizon="top",
+            bottom_horizon="base",
+            mean={"top_horizon": " "},
+        )
+    with pytest.raises(ValidationError, match="at least 1 character"):
+        WindowSettings(
+            top_horizon="top",
+            bottom_horizon="base",
+            mean={"bottom_horizon": ""},
+        )
+    with pytest.raises(ValidationError, match="match pattern"):
+        WindowSettings(
+            top_horizon="top",
+            bottom_horizon="base",
+            mean={"bottom_horizon": " "},
+        )
+
+
+@pytest.mark.parametrize("key", ["botom_horizon", "rsm"])
+def test_unknown_window_key_rejected(key):
+    with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
+        WindowSettings(top_horizon="top", bottom_horizon="base", **{key: 1})
+
+
+def test_extract_attributes_does_not_mutate_input():
+    window_data = {
+        "top_horizon": "top",
+        "bottom_horizon": "base",
+        "rms": {"top_surface_shift": -15},
+    }
+
+    window = WindowSettings.model_validate(window_data)
+
+    assert window_data == {
+        "top_horizon": "top",
+        "bottom_horizon": "base",
+        "rms": {"top_surface_shift": -15},
+    }
+    assert window.attribute_overrides["rms"].top_surface_shift == -15
+
+
+def test_internal_attribute_overrides_key_rejected():
+    with pytest.raises(ValidationError, match=r"attribute_overrides.*is internal"):
+        WindowSettings(
+            top_horizon="top",
+            bottom_horizon="base",
+            attribute_overrides={"rms": {"top_horizon": "other"}},
+        )
+
+
+@pytest.mark.parametrize(
+    "prefix, valid",
+    [
+        ("seismic--relai_full_depth--", True),
+        ("seismic--amplitude_depth--", True),
+        ("seismic--amplitude_near_time", True),
+        ("seismic--relai_fulldepth--", False),
+        ("relai_full_depth", False),
+        ("seismic--relai_full_depth--20200101", False),
+    ],
+)
+def test_cube_prefix_pattern(prefix, valid):
+    if valid:
+        assert CubeConfig(cube_prefix=prefix, windows={}).cube_prefix == prefix
+    else:
+        with pytest.raises(ValidationError, match="should match pattern"):
+            CubeConfig(cube_prefix=prefix, windows={})
 
 
 def test_attribute_export_forwards_zone_position_tuple():

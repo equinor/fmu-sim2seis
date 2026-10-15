@@ -1,11 +1,11 @@
 global:
-  gridhorizon_path: share/results/maps # path for input horizons
-  attributes: # attributes to be made for each cube
+  gridhorizon_path: share/results/maps # path for horizons not provided by the depth conversion
+  attributes: # attributes to be made for each cube; only these can be adjusted per window
     - rms
     - mean
     - min
   scale_factor: 1.02
-  surface_postfix: --depth.gri
+  surface_postfix: --depth.gri # appended to horizon names when reading surface files
   error_path: share/results/maps # directory for error surface files (global only)
   error: # observation error for observed-data attribute maps (observed data only)
     type: relative # 'relative' (fraction of attribute) or 'absolute'
@@ -13,7 +13,7 @@ global:
     minimum: 0.005 # absolute floor applied after the error is computed
 cubes: # Setup for the cubes for which maps will be generated
   relai_depth: # arbitrary name of cube
-    cube_prefix: seismic--relai_full_depth-- # start of observed cube name
+    cube_prefix: seismic--relai_full_depth-- # exact date-independent observed cube name
     # A cube- or window-level 'error' block fully replaces the global one, e.g.:
     # error:
     #   type: absolute
@@ -21,24 +21,24 @@ cubes: # Setup for the cubes for which maps will be generated
     #   minimum: 0.005
     windows: # settings for each window maps will be generated for
       volantis:
-        top_horizon: topvolantis # Horizon used as top of the window. ".gri" assumed as extension
-        bottom_horizon: basevolantis # Horizon used as base of the window ".gri" assumed as extension
-        top_surface_shift: -5 # Extension of the window upwards from top surface
-        bottom_surface_shift: 10 # Extension of the window downwards from bottom surface
-        zone: Valysar
+        top_horizon: topvolantis # Horizon used as top of the window; name as given by the depth conversion
+        bottom_horizon: basevolantis # Horizon used as base of the window (alternative: window_length)
+        top_surface_shift: -5 # Shift of the top surface; negative is upwards
+        bottom_surface_shift: 10 # Shift of the bottom surface; positive is downwards
+        zone: Valysar # zone and position apply to the whole window and cannot be overridden
         position: top
-        rms: # Special requirements for 'rms' attribute
+        rms: # Special requirements for 'rms' attribute (must be listed under global attributes)
           top_horizon: topvolantis
           bottom_horizon: basevolantis
           top_surface_shift: -15
           scale_factor: 1.05
   amplitude_depth: # arbitrary name of cube
-    cube_prefix: seismic--amplitude_full_depth-- # start of cube name
+    cube_prefix: seismic--amplitude_full_depth-- # exact date-independent cube name
     windows: # settings for each window maps will be generated for
       volantis:
-        top_horizon: topvolantis # Horizon used as top of the window. ".gri" assumed as extension
-        bottom_horizon: basevolantis # Horizon used as base of the window ".gri" assumed as extension
-        top_surface_shift: -17 # Extension of the window upwards from top surface
+        top_horizon: topvolantis
+        bottom_horizon: basevolantis
+        top_surface_shift: -17
         bottom_surface_shift: -2
         zone: Valysar
         position: top
