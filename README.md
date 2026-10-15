@@ -61,8 +61,10 @@ Developing the user interface can be done by:
 ```bash
 cd ./documentation
 npm ci  # Install dependencies
-npm run create-json-schema  # Extract JSON schema from Python code
+npm run create-json-schema  # Extract JSON schemas from Python code
 npm run docs:dev  # Start local development server
 ```
 
-The JSON schema itself (type, title, description etc.) comes from the corresponding Pydantic models in the Python code.
+The JSON schemas themselves (type, title, description etc.) come from the corresponding Pydantic models in the Python code:
+`Sim2SeisConfig` for the main configuration file and `interval_parser.RootConfig` for the interval definition file.
+Adjustments that only serve the form editor are made in `editor_schema.interval_definition_schema()`, not in the models.

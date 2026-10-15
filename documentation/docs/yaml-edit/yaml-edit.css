@@ -1,0 +1,169 @@
+input.form-control, select.form-control {
+    background-color: rgb(245 245 245);
+    border-radius: 5px;
+    padding: 3px;
+    border: 1px solid;
+    border-color: #ccc;
+    box-shadow: 0 1px 25px -5px rgb(0 0 0 / 0.05);
+}
+
+input.form-control {
+    min-width: 400px;
+}
+
+select.form-control:hover {
+  cursor: pointer;
+}
+
+.dark input.form-control {
+  background-color: rgb(50 50 50);
+  border-color: #666;
+}
+
+.form-group {
+  margin-top: 20px;
+  margin-left: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.control-label {
+  font-weight: 500;
+}
+
+.field-description {
+  font-size: small;
+}
+
+legend {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Box each nested object so the level of Add/Delete buttons is visible */
+.rjsf fieldset fieldset,
+.rjsf .additional-entry {
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  padding: 5px 15px 15px 0;
+  margin: 15px 0 15px 15px;
+}
+
+.dark .rjsf fieldset fieldset,
+.dark .rjsf .additional-entry {
+  border-color: #555;
+}
+
+.rjsf fieldset fieldset legend {
+  font-size: 16px;
+  padding: 0 6px;
+}
+
+/* The entry box already frames the object; avoid a second border inside it */
+.rjsf .additional-entry > fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.additional-key {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 15px;
+  margin-top: 10px;
+}
+
+.additional-key input.form-control,
+.additional-key select.form-control {
+  min-width: 250px;
+}
+
+.btn-text {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 15px;
+  margin-top: 10px;
+}
+
+.additional-key .btn-text {
+  margin: 0;
+}
+
+.btn-text:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-text-add {
+  color: oklch(53.2% 0.157 131.589);
+  background-color: oklch(96.7% 0.067 122.328);
+  border-color: oklch(89.7% 0.196 126.665);
+}
+
+.btn-text-remove {
+  color: oklch(44.4% 0.177 26.899);
+  background-color: oklch(93.6% 0.032 17.717);
+  border-color: oklch(88.5% 0.062 18.334);
+}
+
+.btn-text-move {
+  color: oklch(68.1% 0.162 75.834);
+  background-color: oklch(97.3% 0.071 103.193);
+  border-color: oklch(94.5% 0.129 101.54);
+}
+
+/* rjsf squeezes the array toolbox and stretches its buttons; keep captions on one line */
+.array-item-toolbox {
+  flex: none;
+}
+
+.array-item-toolbox .btn-group {
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.array-item-toolbox .btn-text {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.checkbox > label {
+  display: flex;
+  gap: 10px;
+  font-weight: 500;
+}
+
+/* Opt-in checkboxes for optional blocks and additional entries */
+.optional-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+input[type='text']:read-only{
+  background: lightgrey;
+  cursor: not-allowed;
+}
+
+.text-danger {
+    color: oklch(57.7% 0.245 27.325);
+    background-color: oklch(93.6% 0.032 17.717);
+    padding: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
+    width: fit-content;
+}
+
+li.text-danger::marker {
+  content: "⚠";
+}
