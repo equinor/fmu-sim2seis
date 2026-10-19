@@ -14,7 +14,7 @@ the [fmu-tools documentation](https://equinor.github.io/fmu-tools/domain_convers
 Several parameters are required to control the domain conversion. [Figure 1](#figure-1-domain-conversion-in-yaml)
 illustrates the domain conversion section of the `sim2seis` configuration file. Horizon names and limits for the
 generated cubes in time and depth must be specified. Horizon file names are expected to be lowercase versions of the
-horizon names, with a postfix of `--time.gri` or `--depth.gri`, depending on the domain.
+horizon names, with a suffix of `--time.gri` or `--depth.gri`, depending on the domain.
 
 Depth parameters are specified in units of `m`, while time parameters are in units of `ms`.
 
