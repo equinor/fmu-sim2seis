@@ -13,6 +13,7 @@ import {
   LabelledMoveUpButton,
   LabelledRemoveButton,
   NoDuplicateLabelFieldTemplate,
+  TextNumberBaseInputTemplate,
 } from "./rjsf-extras";
 import "./yaml-edit.css";
 
@@ -258,6 +259,7 @@ export const YamlEdit = ({ schema = sim2seisSchema, uiSchema = {}, customValidat
             }}
             templates={{
               FieldTemplate: NoDuplicateLabelFieldTemplate,
+              BaseInputTemplate: TextNumberBaseInputTemplate,
               WrapIfAdditionalTemplate: KeyLabelWrapIfAdditionalTemplate,
               OptionalDataControlsTemplate: CheckboxOptionalDataControlsTemplate,
               ButtonTemplates: {
