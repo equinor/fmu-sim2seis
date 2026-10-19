@@ -12,8 +12,7 @@ global:
     value: 0.07 # single scalar; use 'error_surface' instead for a spatially varying error
     minimum: 0.005 # absolute floor applied after the error is computed
 cubes: # Setup for the cubes for which maps will be generated
-  relai_depth: # arbitrary name of cube
-    cube_prefix: seismic--relai_full_depth-- # exact date-independent observed cube name
+  - cube_prefix: seismic--relai_full_depth-- # exact date-independent cube name; must be unique
     # A cube- or window-level 'error' block fully replaces the global one, e.g.:
     # error:
     #   type: absolute
@@ -32,8 +31,7 @@ cubes: # Setup for the cubes for which maps will be generated
           bottom_horizon: basevolantis
           top_surface_shift: -15
           scale_factor: 1.05
-  amplitude_depth: # arbitrary name of cube
-    cube_prefix: seismic--amplitude_full_depth-- # exact date-independent cube name
+  - cube_prefix: seismic--amplitude_full_depth-- # exact date-independent cube name; must be unique
     windows: # settings for each window maps will be generated for
       volantis:
         top_horizon: topvolantis

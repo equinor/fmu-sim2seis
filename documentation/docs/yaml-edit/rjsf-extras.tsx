@@ -297,16 +297,30 @@ export const validateIntervalConfig: CustomValidator = (formData, errors) => {
   const globalConfig = asRecord(root?.global);
   const errorState = asRecord(errors);
   const globalErrorState = asRecord(errorState?.global);
-  const cubes = asRecord(root?.cubes);
+  const rootCubes = root?.cubes;
+  const cubes: unknown[] = Array.isArray(rootCubes) ? rootCubes : [];
+  const cubesErrorState = asRecord(errorState?.cubes);
   const globalAttributes = new Set(stringArray(globalConfig?.attributes));
   const errorPath = globalConfig?.error_path;
 
   validateErrorConfig(globalConfig?.error, globalErrorState?.error);
 
   let usesErrorSurface = errorHasSurface(globalConfig?.error);
-  for (const [cubeName, cubeData] of Object.entries(cubes ?? {})) {
+  const seenPrefixes = new Set<string>();
+  cubes.forEach((cubeData, cubeIndex) => {
     const cube = asRecord(cubeData);
-    const cubeErrorState = asRecord(asRecord(errorState?.cubes)?.[cubeName]);
+    const cubeErrorState = asRecord(cubesErrorState?.[cubeIndex]);
+    if (typeof cube?.cube_prefix === "string") {
+      // A trailing '--' does not change which cubes a prefix matches
+      const prefix = cube.cube_prefix.replace(/--$/, "");
+      if (seenPrefixes.has(prefix)) {
+        addValidationError(
+          cubeErrorState?.cube_prefix ?? cubeErrorState,
+          `cube_prefix '${cube.cube_prefix}' is given more than once.`,
+        );
+      }
+      seenPrefixes.add(prefix);
+    }
     validateErrorConfig(cube?.error, cubeErrorState?.error);
     usesErrorSurface ||= errorHasSurface(cube?.error);
 
@@ -334,7 +348,7 @@ export const validateIntervalConfig: CustomValidator = (formData, errors) => {
       validateErrorConfig(window?.error, asRecord(windowErrorState)?.error);
       usesErrorSurface ||= errorHasSurface(window?.error);
     }
-  }
+  });
 
   if (usesErrorSurface && !(typeof errorPath === "string" && errorPath.trim())) {
     // RJSF only creates error nodes for keys present in the data
@@ -350,10 +364,8 @@ export const validateIntervalConfig: CustomValidator = (formData, errors) => {
 export const intervalUiSchema: UiSchema = {
   cubes: {
     "ui:options": { addLabel: "Add cube" },
-    additionalProperties: {
-      // The key input identifies the entry; a "Cube" heading on top of it is noise
-      "ui:title": "",
-      "ui:options": { keyLabel: "Cube name:", removeLabel: "Delete cube" },
+    items: {
+      "ui:options": { removeLabel: "Delete cube" },
       error: optionalObject("Specify an observation error for this cube"),
       windows: {
         "ui:options": { addLabel: "Add window" },

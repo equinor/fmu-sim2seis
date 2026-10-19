@@ -61,7 +61,7 @@ def _null_paths(data: Any, path: str) -> list[str]:
     """Return the location of every ``None`` value in raw configuration data.
 
     Nested dicts and lists are searched recursively. Locations are written as
-    dotted keys with list indices in brackets, e.g. ``cubes.amp.windows.beta.error``
+    dotted keys with list indices in brackets, e.g. ``cubes[0].windows.beta.error``
     or ``global.attributes[0]``, prefixed by ``path`` (empty at the top level).
     """
     if data is None:
@@ -138,11 +138,10 @@ class RootConfig(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid", title="Interval definition")
 
     global_config: GlobalConfig = Field(alias="global")
-    cubes: dict[str, CubeConfig] = Field(
-        default_factory=dict,
-        description="Cubes to generate maps for. Each entry is identified by a "
-        "free-text key; choose a descriptive name such as `relai_depth` or "
-        "`amplitude_depth`.",
+    cubes: list[CubeConfig] = Field(
+        default_factory=list,
+        description="Cubes to generate maps for. Each entry is identified by its "
+        "`cube_prefix`, which must be unique.",
     )
 
     @model_validator(mode="before")
@@ -158,16 +157,30 @@ class RootConfig(BaseModel):
         return data
 
     @model_validator(mode="after")
+    def check_unique_cube_prefixes(self) -> RootConfig:
+        # A trailing '--' does not change which cubes a prefix matches
+        seen: set[str] = set()
+        for cube in self.cubes:
+            prefix = cube.cube_prefix.removesuffix("--")
+            if prefix in seen:
+                raise ValueError(
+                    f"cube_prefix '{cube.cube_prefix}' is given more than once; "
+                    "combine the windows into a single cube entry."
+                )
+            seen.add(prefix)
+        return self
+
+    @model_validator(mode="after")
     def check_override_attributes(self) -> RootConfig:
         """Reject overrides for attributes that are not calculated."""
         allowed = set(self.global_config.attributes)
-        for cube_name, cube in self.cubes.items():
+        for cube in self.cubes:
             for window_name, window in cube.windows.items():
                 unknown = [a for a in window.attribute_overrides if a not in allowed]
                 if unknown:
                     raise ValueError(
-                        f"In cube '{cube_name}', window '{window_name}': override "
-                        f"given for {unknown}, but only "
+                        f"In cube '{cube.cube_prefix}', window '{window_name}': "
+                        f"override given for {unknown}, but only "
                         f"{sorted(allowed)} are listed under 'global.attributes'."
                     )
         return self
@@ -183,7 +196,7 @@ class RootConfig(BaseModel):
         directory.
         """
         error_blocks = [self.global_config.error]
-        for cube in self.cubes.values():
+        for cube in self.cubes:
             error_blocks.append(cube.error)
             error_blocks.extend(window.error for window in cube.windows.values())
 
@@ -372,7 +385,7 @@ class WindowSettings(BaseModel):
         attribute: KnownAttributes,
         global_scale_factor: float,
         window_name: str,
-        cube_name: str,
+        cube_prefix: str,
     ) -> IntervalConfig:
         config_dict: dict[str, Any] = {
             "top_horizon": self.top_horizon,
@@ -396,7 +409,7 @@ class WindowSettings(BaseModel):
         return IntervalConfig.model_validate(
             config_dict,
             context={
-                "cube_name": cube_name,
+                "cube_prefix": cube_prefix,
                 "window_name": window_name,
                 "attribute": attribute,
             },
@@ -404,11 +417,7 @@ class WindowSettings(BaseModel):
 
 
 class CubeConfig(BaseModel):
-    """Windows and settings for all cubes matching `cube_prefix`.
-
-    The key of this entry is a free-text label used only to identify the
-    cube set in messages; pick a descriptive name, e.g. `relai_depth`.
-    """
+    """Windows and settings for all cubes matching `cube_prefix`."""
 
     model_config = ConfigDict(
         frozen=True,
@@ -459,12 +468,12 @@ class IntervalConfig(BaseModel):
     @model_validator(mode="after")
     def validate_horizon_requirements(self, info: ValidationInfo) -> IntervalConfig:
         ctx = info.context or {}
-        cube_name = ctx.get("cube_name", "unknown")
+        cube_prefix = ctx.get("cube_prefix", "unknown")
         window_name = ctx.get("window_name", "unknown")
         attribute = ctx.get("attribute", "unknown")
 
         location = (
-            f"In cube '{cube_name}', window '{window_name}', attribute '{attribute}'"
+            f"In cube '{cube_prefix}', window '{window_name}', attribute '{attribute}'"
         )
 
         if self.bottom_horizon is None and self.window_length is None:
@@ -492,7 +501,7 @@ def _group_attributes_by_interval(
     window_settings: WindowSettings,
     global_config: GlobalConfig,
     window_name: str,
-    cube_name: str,
+    cube_prefix: str,
 ) -> dict[IntervalConfig, list[KnownAttributes]]:
     """Group attributes that share the same interval configuration.
 
@@ -507,7 +516,7 @@ def _group_attributes_by_interval(
             attribute,
             global_config.scale_factor,
             window_name,
-            cube_name,
+            cube_prefix,
         )
         interval_groups[interval_key].append(attribute)
     return dict(interval_groups)
@@ -643,7 +652,6 @@ def _resolve_error_block(
 
 
 def _process_window(
-    cube_name: str,
     window_name: str,
     window_settings: WindowSettings,
     cube_info: CubeConfig,
@@ -658,7 +666,7 @@ def _process_window(
         window_settings=window_settings,
         global_config=global_config,
         window_name=window_name,
-        cube_name=cube_name,
+        cube_prefix=cube_info.cube_prefix,
     )
     error = _resolve_error_block(global_config, cube_info, window_settings)
     return _create_window_attributes(
@@ -699,10 +707,9 @@ def populate_seismic_attributes(
     """
     root_config = RootConfig(**config)
     seismic_attributes = []
-    for cube_name, cube_info in root_config.cubes.items():
+    for cube_info in root_config.cubes:
         for window_name, window_settings in cube_info.windows.items():
             window_attributes = _process_window(
-                cube_name=cube_name,
                 window_name=window_name,
                 window_settings=window_settings,
                 cube_info=cube_info,
