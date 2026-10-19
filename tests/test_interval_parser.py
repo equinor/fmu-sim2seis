@@ -61,8 +61,8 @@ def real_yaml_config(tmp_path):
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "relai_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--relai_depth--",
                 "windows": {
                     "volantis": {
@@ -79,7 +79,7 @@ def real_yaml_config(tmp_path):
                     }
                 },
             },
-            "amplitude_depth": {
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "volantis": {
@@ -97,7 +97,7 @@ def real_yaml_config(tmp_path):
                     }
                 },
             },
-        },
+        ],
     }
 
 
@@ -145,9 +145,9 @@ def test_basic_attribute_creation(
     )
 
     # There are 3 global attributes and 2 cubes.
-    # We get 2 and not 3 attributes from the relai_depth cube
+    # We get 2 and not 3 attributes from the relai cube
     # because 'mean' and 'min' have the exact same interval settings.
-    # We get 3 attributes from the amplitude_depth cube because all
+    # We get 3 attributes from the amplitude cube because all
     # attributes have different interval settings.
     assert len(result) == 5
 
@@ -187,8 +187,8 @@ def test_window_length_creates_virtual_bottom_surface(
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "window_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "alpha": {
@@ -198,7 +198,7 @@ def test_window_length_creates_virtual_bottom_surface(
                     }
                 },
             }
-        },
+        ],
     }
     top_surface, intermediate, final = create_chainable_surface()
     surfaces = {}
@@ -242,8 +242,8 @@ def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "beta": {
@@ -252,7 +252,7 @@ def test_missing_surfaces_are_loaded_from_disk(patch_directory_validation):
                     }
                 },
             }
-        },
+        ],
     }
     cubes = {
         SeismicName(
@@ -309,7 +309,7 @@ def test_attribute_specific_scale_factor_override(
     patch_surface_loader,
     patch_directory_validation,
 ):
-    # rms in relai_depth has scale_factor override = 1.02 while global is 1.0
+    # rms in the relai cube has scale_factor override = 1.02 while global is 1.0
     attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
     rms_attr = [
         a
@@ -331,7 +331,7 @@ def test_different_attribute_overrides_result_in_separate_groups(
     patch_surface_loader,
     patch_directory_validation,
 ):
-    # In amplitude_depth:
+    # In the amplitude cube:
     # mean overrides top/base shifts, min only scale_factor
     # => different interval configs
     attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
@@ -356,8 +356,8 @@ def test_value_property_applies_shifts_and_scale(patch_directory_validation):
             "scale_factor": 2.5,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "gamma": {
@@ -368,7 +368,7 @@ def test_value_property_applies_shifts_and_scale(patch_directory_validation):
                     }
                 },
             }
-        },
+        ],
     }
 
     top = Mock(spec=xtgeo.RegularSurface)
@@ -424,8 +424,8 @@ def test_observed_data_attributes_are_not_scaled(patch_directory_validation):
             "scale_factor": 2.5,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "gamma": {
@@ -436,7 +436,7 @@ def test_observed_data_attributes_are_not_scaled(patch_directory_validation):
                     }
                 },
             }
-        },
+        ],
     }
 
     top = Mock(spec=xtgeo.RegularSurface)
@@ -484,8 +484,8 @@ def test_missing_surface_raises_value_error(patch_directory_validation):
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "x_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "zeta": {
@@ -494,7 +494,7 @@ def test_missing_surface_raises_value_error(patch_directory_validation):
                     }
                 },
             }
-        },
+        ],
     }
     cubes = {
         SeismicName(
@@ -527,8 +527,8 @@ def test_multiple_cubes_same_prefix_duplicate_attributes(patch_directory_validat
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "eta": {
@@ -537,7 +537,7 @@ def test_multiple_cubes_same_prefix_duplicate_attributes(patch_directory_validat
                     }
                 },
             }
-        },
+        ],
     }
     top = Mock(spec=xtgeo.RegularSurface)
     bottom = Mock(spec=xtgeo.RegularSurface)
@@ -583,8 +583,8 @@ def test_window_interval_zeros_out_bottom_surface_shift(
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "win_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "iota": {
@@ -596,7 +596,7 @@ def test_window_interval_zeros_out_bottom_surface_shift(
                     }
                 },
             }
-        },
+        ],
     }
     top, _intermediate, _final = create_chainable_surface()
     surfaces = {"topiota--depth.gri": top}
@@ -633,7 +633,7 @@ def test_group_attributes_by_interval_all_same(patch_directory_validation):
         window_settings=window_settings,
         global_config=global_config,
         window_name="my_window",
-        cube_name="my_cube",
+        cube_prefix="my_cube",
     )
     assert len(result) == 1
     interval_key = next(iter(result.keys()))
@@ -662,7 +662,7 @@ def test_group_attributes_by_interval_all_different(patch_directory_validation):
         window_settings=window_settings,
         global_config=global_config,
         window_name="my_window",
-        cube_name="my_cube",
+        cube_prefix="my_cube",
     )
     assert len(result) == 3
 
@@ -704,8 +704,8 @@ def test_multiple_windows_in_single_cube(patch_directory_validation):
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "alpha": {
@@ -718,7 +718,7 @@ def test_multiple_windows_in_single_cube(patch_directory_validation):
                     },
                 },
             }
-        },
+        ],
     }
 
     surfaces = {}
@@ -753,8 +753,8 @@ def test_attribute_with_only_horizon_override(patch_directory_validation):
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "kappa": {
@@ -766,7 +766,7 @@ def test_attribute_with_only_horizon_override(patch_directory_validation):
                     }
                 },
             }
-        },
+        ],
     }
 
     surfaces = {
@@ -805,8 +805,8 @@ def test_surface_loaded_only_once_when_reused(patch_directory_validation):
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "nu": {
@@ -819,7 +819,7 @@ def test_surface_loaded_only_once_when_reused(patch_directory_validation):
                     },
                 },
             }
-        },
+        ],
     }
 
     surfaces = {}
@@ -862,8 +862,8 @@ def test_attribute_with_window_length_override(
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "omicron": {
@@ -875,7 +875,7 @@ def test_attribute_with_window_length_override(
                     }
                 },
             }
-        },
+        ],
     }
 
     top_surf, _inter, _final = create_chainable_surface()
@@ -1053,14 +1053,14 @@ def _root_config_dict(tmp_path, error, error_path=None):
         global_section["error_path"] = str(error_path)
     return {
         "global": global_section,
-        "cubes": {
-            "amp_depth": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "beta": {"top_horizon": "topbeta", "bottom_horizon": "basebeta"}
                 },
             }
-        },
+        ],
     }
 
 
@@ -1116,8 +1116,8 @@ def test_error_fields_accept_error_config_instances(tmp_path):
     ("section", "key", "path"),
     [
         ("global", "error", "global.error"),
-        ("window", "window_length", "cubes.amp_depth.windows.beta.window_length"),
-        ("window", "error", "cubes.amp_depth.windows.beta.error"),
+        ("window", "window_length", "cubes[0].windows.beta.window_length"),
+        ("window", "error", "cubes[0].windows.beta.error"),
     ],
 )
 def test_root_config_rejects_null_values(tmp_path, section, key, path):
@@ -1125,7 +1125,7 @@ def test_root_config_rejects_null_values(tmp_path, section, key, path):
     target = (
         config["global"]
         if section == "global"
-        else config["cubes"]["amp_depth"]["windows"]["beta"]
+        else config["cubes"][0]["windows"]["beta"]
     )
     target[key] = None
 
@@ -1145,17 +1145,17 @@ def test_error_surface_resolved_against_error_path(tmp_path, level):
     if level == "global":
         config["global"]["error"] = error
     elif level == "cube":
-        config["cubes"]["amp_depth"]["error"] = error
+        config["cubes"][0]["error"] = error
     else:
-        config["cubes"]["amp_depth"]["windows"]["beta"]["error"] = error
+        config["cubes"][0]["windows"]["beta"]["error"] = error
 
     root = RootConfig.model_validate(config)
     if level == "global":
         resolved_error = root.global_config.error
     elif level == "cube":
-        resolved_error = root.cubes["amp_depth"].error
+        resolved_error = root.cubes[0].error
     else:
-        resolved_error = root.cubes["amp_depth"].windows["beta"].error
+        resolved_error = root.cubes[0].windows["beta"].error
     assert resolved_error.error_surface == error_file.resolve()
 
 
@@ -1171,6 +1171,19 @@ def test_error_surface_missing_file_raises(tmp_path):
         RootConfig.model_validate(config)
 
 
+@pytest.mark.parametrize(
+    "second_prefix", ["seismic--amplitude_depth--", "seismic--amplitude_depth"]
+)
+def test_duplicate_cube_prefix_rejected(tmp_path, second_prefix):
+    config = _root_config_dict(tmp_path, error=None)
+    config["cubes"].append({**config["cubes"][0], "cube_prefix": second_prefix})
+
+    with pytest.raises(
+        ValidationError, match=f"cube_prefix '{second_prefix}' is given more than once"
+    ):
+        RootConfig.model_validate(config)
+
+
 @pytest.mark.parametrize("level", ["global", "cube", "window"])
 def test_error_surface_without_error_path_raises(tmp_path, level):
     config = _root_config_dict(tmp_path, error=None)
@@ -1178,9 +1191,9 @@ def test_error_surface_without_error_path_raises(tmp_path, level):
     if level == "global":
         config["global"]["error"] = error
     elif level == "cube":
-        config["cubes"]["amp_depth"]["error"] = error
+        config["cubes"][0]["error"] = error
     else:
-        config["cubes"]["amp_depth"]["windows"]["beta"]["error"] = error
+        config["cubes"][0]["windows"]["beta"]["error"] = error
 
     with pytest.raises(ValidationError, match="error_path"):
         RootConfig.model_validate(config)
@@ -1222,7 +1235,7 @@ def test_window_zone_position_propagate_to_attribute(
 ):
     """Window-level zone/position propagate to every attribute of that
     window, including attributes that override other interval settings."""
-    for cube in real_yaml_config["cubes"].values():
+    for cube in real_yaml_config["cubes"]:
         cube["windows"]["volantis"]["zone"] = "Valysar"
         cube["windows"]["volantis"]["position"] = "top"
 
@@ -1236,7 +1249,7 @@ def test_window_zone_position_propagate_to_attribute(
 def test_all_positions_are_accepted(
     real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader, position
 ):
-    for cube in real_yaml_config["cubes"].values():
+    for cube in real_yaml_config["cubes"]:
         cube["windows"]["volantis"]["position"] = position
 
     attrs = populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
@@ -1247,9 +1260,7 @@ def test_all_positions_are_accepted(
 def test_invalid_position_is_rejected(
     real_yaml_config, mock_surfaces, mock_cubes, patch_surface_loader
 ):
-    real_yaml_config["cubes"]["relai_depth"]["windows"]["volantis"]["position"] = (
-        "middle"
-    )
+    real_yaml_config["cubes"][0]["windows"]["volantis"]["position"] = "middle"
     with pytest.raises(ValidationError):
         populate_seismic_attributes(real_yaml_config, mock_cubes, mock_surfaces)
 
@@ -1279,8 +1290,8 @@ def test_override_for_unlisted_attribute_rejected(patch_directory_validation):
             "scale_factor": 1.0,
             "surface_postfix": "--depth.gri",
         },
-        "cubes": {
-            "amp": {
+        "cubes": [
+            {
                 "cube_prefix": "seismic--amplitude_depth--",
                 "windows": {
                     "win": {
@@ -1290,9 +1301,12 @@ def test_override_for_unlisted_attribute_rejected(patch_directory_validation):
                     }
                 },
             }
-        },
+        ],
     }
-    with pytest.raises(ValidationError, match=r"cube 'amp', window 'win'.*\['max'\]"):
+    with pytest.raises(
+        ValidationError,
+        match=r"cube 'seismic--amplitude_depth--', window 'win'.*\['max'\]",
+    ):
         RootConfig.model_validate(config)
 
 

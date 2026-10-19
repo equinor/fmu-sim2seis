@@ -43,6 +43,6 @@ def test_interval_schema_matches_yaml_layout(data_dir):
     jsonschema.validate(example, schema)
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(
-            {"global": example["global"], "cubes": {"c": {"cube_prefix": "x"}}},
+            {"global": example["global"], "cubes": [{"cube_prefix": "x"}]},
             schema,
         )
