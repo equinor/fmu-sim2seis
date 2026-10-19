@@ -67,7 +67,7 @@ The `global` section defines parameters that apply to all interval definitions u
 - Attributes: Select attributes to highlight important features in the 4D seismic. Only attributes listed here may be
   adjusted per attribute within a window.
 - Scale factor: Applied to **modelled** attributes only, to match their level to the observed seismic attributes. Observed-data attributes define the reference level and are never scaled.
-- Surface postfix: File-name postfix appended to each horizon name when reading the surface files (e.g. `--depth.gri`).
+- Surface suffix: File-name suffix appended to each horizon name when reading the surface files (e.g. `--depth.gri`).
 - Error settings: `error` and `error_path` define the observation error, see [Error settings](#error-settings).
 
 Unknown keys are rejected at every level of the file, so obsolete settings from older versions (e.g. the former
