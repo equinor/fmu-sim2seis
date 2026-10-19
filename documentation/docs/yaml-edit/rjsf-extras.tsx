@@ -11,6 +11,7 @@ import {
   titleId,
   TranslatableString,
   type FieldTemplateProps,
+  type BaseInputTemplateProps,
   type CustomValidator,
   type IconButtonProps,
   type ObjectFieldTemplateProps,
@@ -20,6 +21,7 @@ import {
 } from "@rjsf/utils";
 
 const DefaultFieldTemplate = getDefaultRegistry().templates.FieldTemplate;
+const DefaultBaseInputTemplate = getDefaultRegistry().templates.BaseInputTemplate;
 const WindowOverrideKeysContext = React.createContext<string[]>([]);
 
 function stringArray(value: unknown): string[] {
@@ -34,6 +36,16 @@ export function NoDuplicateLabelFieldTemplate(props: FieldTemplateProps) {
   const { schema, displayLabel } = props;
   const isAdditionalObject = ADDITIONAL_PROPERTY_FLAG in schema && getSchemaType(schema) === "object";
   return <DefaultFieldTemplate {...props} displayLabel={displayLabel && !isAdditionalObject} />;
+}
+
+/** Default input template, with numbers in plain text inputs: native number inputs change
+ *  their value on scroll-wheel and spinner use. rjsf still converts the text to a number. */
+export function TextNumberBaseInputTemplate(props: BaseInputTemplateProps) {
+  const schemaType = getSchemaType(props.schema);
+  if (schemaType !== "number" && schemaType !== "integer") {
+    return <DefaultBaseInputTemplate {...props} />;
+  }
+  return <DefaultBaseInputTemplate {...props} options={{ ...props.options, inputType: "text" }} />;
 }
 
 /** Default rjsf template, with the key input label taken from `ui:options.keyLabel` when given. */
