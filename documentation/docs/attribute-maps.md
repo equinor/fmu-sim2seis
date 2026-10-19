@@ -56,17 +56,22 @@ configuration YAML file.
 
 The interval definition file provides flexibility in defining intervals, which may result in a complex structure.
 [Figure 2](#figure-2-interval-definition-in-yaml) illustrates the structure of the interval definition YAML file.
+The file can also be created or checked with the [interval definition form](./interval-definition.md), which is
+generated from the same validation rules as described below.
 
 ### Global Section
 
 The `global` section defines parameters that apply to all interval definitions unless overridden later:
 
-- Horizon path: Controlled by `fmu-dataio`, default value shown.
-- Attributes: Select attributes to highlight important features in the 4D seismic.
+- Horizon path: Directory for horizons that are not provided by the depth conversion. Controlled by `fmu-dataio`, default value shown.
+- Attributes: Select attributes to highlight important features in the 4D seismic. Only attributes listed here may be
+  adjusted per attribute within a window.
 - Scale factor: Applied to **modelled** attributes only, to match their level to the observed seismic attributes. Observed-data attributes define the reference level and are never scaled.
-- Surface postfix: File-name postfix appended to each horizon name when reading the surface files (e.g. `--depth.gri`).
-- Metadata fields: **Obsolete.** These have been removed, as all metadata-related matters are handled by `fmu-dataio`.
+- Surface suffix: File-name suffix appended to each horizon name when reading the surface files (e.g. `--depth.gri`).
 - Error settings: `error` and `error_path` define the observation error, see [Error settings](#error-settings).
+
+Unknown keys are rejected at every level of the file, so obsolete settings from older versions (e.g. the former
+metadata fields, now handled by `fmu-dataio`) must be removed.
 
 ### Error settings
 
@@ -88,21 +93,20 @@ replaces the one at the level above it (whole-block replacement); individual fie
 
 ```yaml
 global:
-  gridhorizon_path: share/results/maps # path for input horizons
-  attributes: # attributes to be made for each cube
+  gridhorizon_path: share/results/maps # path for horizons not provided by the depth conversion
+  attributes: # attributes to be made for each cube; only these can be adjusted per window
     - rms
     - mean
     - min
   scale_factor: 1.02
-  surface_postfix: --depth.gri
+  surface_postfix: --depth.gri # appended to horizon names when reading surface files
   error_path: share/results/maps # directory for error surface files (global only)
   error: # observation error for observed-data attribute maps (observed data only)
     type: relative # 'relative' (fraction of attribute) or 'absolute'
     value: 0.07 # single scalar; use 'error_surface' instead for a spatially varying error
     minimum: 0.005 # absolute floor applied after the error is computed
 cubes: # Setup for the cubes for which maps will be generated
-  relai_depth: # arbitrary name of cube
-    cube_prefix: seismic--relai_full_depth-- # start of cube name
+  - cube_prefix: seismic--relai_full_depth-- # exact date-independent cube name; must be unique
     # A cube- or window-level 'error' block fully replaces the global one, e.g.:
     # error:
     #   type: absolute
@@ -110,24 +114,23 @@ cubes: # Setup for the cubes for which maps will be generated
     #   minimum: 0.005
     windows: # settings for each window maps will be generated for
       volantis:
-        top_horizon: topvolantis # Horizon used as top of the window. ".gri" assumed as extension
-        bottom_horizon: basevolantis # Horizon used as base of the window ".gri" assumed as extension
-        top_surface_shift: -5 # Extension of the window upwards from top surface
-        bottom_surface_shift: 10 # Extension of the window downwards from bottom surface
-        zone: Valysar
+        top_horizon: topvolantis # Horizon used as top of the window; name as given by the depth conversion
+        bottom_horizon: basevolantis # Horizon used as base of the window (alternative: window_length)
+        top_surface_shift: -5 # Shift of the top surface; negative is upwards
+        bottom_surface_shift: 10 # Shift of the bottom surface; positive is downwards
+        zone: Valysar # zone and position apply to the whole window and cannot be overridden
         position: top
-        rms: # Special requirements for 'rms' attribute
+        rms: # Special requirements for 'rms' attribute (must be listed under global attributes)
           top_horizon: topvolantis
           bottom_horizon: basevolantis
           top_surface_shift: -15
           scale_factor: 1.05
-  amplitude_depth: # arbitrary name of cube
-    cube_prefix: seismic--amplitude_full_depth-- # start of cube name
+  - cube_prefix: seismic--amplitude_full_depth-- # exact date-independent cube name; must be unique
     windows: # settings for each window maps will be generated for
       volantis:
-        top_horizon: topvolantis # Horizon used as top of the window. ".gri" assumed as extension
-        bottom_horizon: basevolantis # Horizon used as base of the window ".gri" assumed as extension
-        top_surface_shift: -17 # Extension of the window upwards from top surface
+        top_horizon: topvolantis
+        bottom_horizon: basevolantis
+        top_surface_shift: -17
         bottom_surface_shift: -2
         zone: Valysar
         position: top
@@ -144,24 +147,50 @@ cubes: # Setup for the cubes for which maps will be generated
 
 ### Cube Section
 
-- Cube names: Arbitrary values.
-- `cube_prefix`: The leading, date-independent part of the cube name (e.g. `seismic--relai_full_depth--`). It is matched against each available cube name after the date component has been stripped, and thereby selects which cubes maps are generated for. The seismic dates themselves are resolved separately, when the cubes are imported and differenced.
+`cubes` is a list with one entry per set of cubes. Each entry has the following settings:
+
+- `cube_prefix`: The date-independent cube name, following the pattern
+  `seismic--<amplitude|relai>_[<full|near|mid|far>_]<time|depth>`, optionally followed by `--` (e.g.
+  `seismic--relai_full_depth--` or `seismic--amplitude_near_time`). The pattern is checked when the file is read.
+  The value is compared for exact equality with each available cube name
+  after its date component has been stripped; the stack must match as well. Seismic dates are resolved separately,
+  when the cubes are imported and differenced. The `cube_prefix` identifies the entry in error messages and must be
+  unique within the file; a trailing `--` is ignored in this comparison.
 - `error`: Optional observation-error block that overrides the global one for all windows of this cube (observed data only); see [Error settings](#error-settings).
 
 ### Windows Section
 
-Several windows can be defined under each cube. Interval settings apply to all attribute calculations listed in the
-`global` section unless specific values are set. Intervals can be defined in two ways:
+Several windows can be defined under each cube. Each window must define its interval, which applies to all attribute
+calculations listed in the `global` section unless adjusted per attribute. Intervals can be defined in two ways:
 
 1. **Top and Base Horizon**: Specify the top and base horizons, with optional shifts for each.
 2. **Top Horizon and Window Length**: Specify the top horizon and the window length, with an optional shift of the
-   top horizon.
+   top horizon. If both `bottom_horizon` and `window_length` are given, `window_length` takes precedence and a warning
+   is issued.
+
+`top_horizon` is always required, and one of `bottom_horizon` or `window_length` (which must be positive) must be
+given. Keys must not be left empty (`null`) anywhere in the file; omit a key to use its default. Horizon names are those produced by the depth conversion; any other horizon is read from `gridhorizon_path` as
+`<name><surface_postfix>`. Surface shifts are signed: negative values move a surface upwards (shallower), positive
+values downwards.
 
 In addition, each window controls which grid cells the attribute is sampled from. These cells are then aggregated
 per region (from the Webviz grid and region definition files) when the ERT and Webviz attribute tables are written:
 
 - `zone`: name of the grid zone to sample within. Default is empty (`""`), which uses the full grid interval.
 - `position`: vertical sampling position within that zone, one of `top`, `center`, or `base`. Default is `center`.
+
+### Attribute overrides
+
+A window may contain one block per attribute, named after the attribute (`rms:`, `mean:`, …), that adjusts the
+interval for that attribute only. The attribute must be listed under `global.attributes`; an override for any other
+attribute is an error. An override may set `top_horizon`, `bottom_horizon`, `top_surface_shift`,
+`bottom_surface_shift`, `window_length` and `scale_factor`. `zone`, `position` and `error` apply to the whole window
+(or cube) and cannot be overridden per attribute. Attributes that end up with identical interval settings are
+calculated together.
+
+The base of the interval is replaced as a unit. When an override sets `bottom_horizon` or `window_length`, neither
+value is inherited from the window, so an override can use a base horizon even when the window uses `window_length`,
+and vice versa. If an override sets both, `window_length` takes precedence as for windows.
 
 ### Example in Figure 2 explained
 
@@ -171,13 +200,13 @@ This is how the example in [Figure 2](#figure-2-interval-definition-in-yaml) sho
   - three attributes are selected (rms, mean, min)
   - modelled attributes are scaled by a factor of 1.02 to match observed seismic attributes
   - the error for observed data is of type **relative** with a constant scalar of 0.07 and an absolute minimum of 0.005
-- For `relai_depth` cubes:
+- For `seismic--relai_full_depth--` cubes:
   - a single window is selected, named `volantis`
   - the gridding is set to the zone `Valysar`, with the coordinates from the top layer
   - `min` and `mean` attributes are calculated from `Top Volantis` shifted 5 m up, to `Base Volantis` shifted 10 m down.
   - `rms` attribute is calculated from `Top Volantis` shifted 15 m up, to `Base Volantis` shifted 10 m down (the base
     shift is inherited from the window). The standard scaling factor for `rms` attribute is modified to 1.05
-- For `amplitude_depth` cubes:
+- For `seismic--amplitude_full_depth--` cubes:
   - a single window is selected, named `volantis`
   - the attributes are calculated from `Top Volantis` with a shift upwards of 17 m, to `Base Volantis` with a shift upwards of 2 m
   - the gridding is set to the zone `Valysar`, with the coordinates from the top layer

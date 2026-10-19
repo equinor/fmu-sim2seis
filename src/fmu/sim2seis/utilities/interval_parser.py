@@ -13,7 +13,6 @@ import xtgeo
 from pydantic import (
     BaseModel,
     ConfigDict,
-    DirectoryPath,
     Field,
     ValidationInfo,
     model_validator,
@@ -21,14 +20,19 @@ from pydantic import (
 from pydantic_core import PydanticCustomError
 
 from .sim2seis_class_definitions import (
+    AttributeDef,
     DifferenceSeismic,
+    DomainDef,
     ErrorConfig,
     KnownAttributes,
     PositionType,
+    ProcessDef,
     SeismicAttribute,
     SeismicName,
     SingleSeismic,
+    StackDef,
 )
+from .sim2seis_config_validation import Sim2SeisPaths
 
 # Type aliases
 SeismicCube = SingleSeismic | DifferenceSeismic
@@ -36,31 +40,150 @@ SurfaceDict = dict[str, xtgeo.RegularSurface]
 CubeDict = dict[SeismicName, SeismicCube]
 
 
-class GlobalConfig(BaseModel):
-    """Global configuration settings for seismic attribute generation.
+def _alternatives(literal: Any) -> str:
+    return "|".join(get_args(literal))
 
-    Args:
-        gridhorizon_path: Path to directory containing surface files
-        attributes: List of attribute types to calculate (e.g., ['rms', 'mean'])
-        surface_postfix: Postfix to append to surface names
-        scale_factor: Global scaling factor applied to all modelled values
+
+# Date-independent part of a cube name, see SeismicName.__str__
+CUBE_PREFIX_PATTERN = (
+    rf"^({_alternatives(ProcessDef)})--({_alternatives(AttributeDef)})_"
+    rf"(({_alternatives(StackDef)})_)?({_alternatives(DomainDef)})(--)?$"
+)
+
+_HORIZON_NOTE = (
+    "Horizon names are those produced by the depth conversion; any other "
+    "horizon is read from `gridhorizon_path` as `<name><surface_postfix>`."
+)
+_SHIFT_NOTE = "Negative values move the surface up (shallower), positive values down."
+
+
+def _null_paths(data: Any, path: str) -> list[str]:
+    """Return the location of every ``None`` value in raw configuration data.
+
+    Nested dicts and lists are searched recursively. Locations are written as
+    dotted keys with list indices in brackets, e.g. ``cubes[0].windows.beta.error``
+    or ``global.attributes[0]``, prefixed by ``path`` (empty at the top level).
     """
+    if data is None:
+        return [path]
+    if isinstance(data, dict):
+        return [
+            null_path
+            for key, value in data.items()
+            for null_path in _null_paths(value, f"{path}.{key}" if path else str(key))
+        ]
+    if isinstance(data, list):
+        return [
+            null_path
+            for index, value in enumerate(data)
+            for null_path in _null_paths(value, f"{path}[{index}]")
+        ]
+    return []
 
-    model_config = ConfigDict(frozen=True)
 
-    gridhorizon_path: DirectoryPath
-    attributes: list[KnownAttributes]
-    surface_postfix: str
-    scale_factor: float
-    error: ErrorConfig | None = None
-    error_path: DirectoryPath | None = None
+class GlobalConfig(BaseModel):
+    """Settings that apply to every cube and window unless overridden."""
+
+    model_config = ConfigDict(
+        frozen=True,
+        extra="forbid",
+        title="Global settings",
+    )
+
+    gridhorizon_path: Path = Field(
+        default=Sim2SeisPaths.model_fields["depth_horizon_dir"].default,
+        description="Directory with horizon surface files. " + _HORIZON_NOTE,
+    )
+    attributes: list[KnownAttributes] = Field(
+        description="Attributes calculated for every window. Only these attributes "
+        "may be adjusted by per-attribute overrides within a window."
+    )
+    surface_postfix: str = Field(
+        default="--depth.gri",
+        description="Postfix appended to a horizon name to form the surface file "
+        "name, e.g. `--depth.gri`.",
+    )
+    scale_factor: float = Field(
+        default=1.0,
+        description="Scaling applied to modelled attributes only, to match their "
+        "level to the observed attributes. Observed data is never scaled.",
+    )
+    error: ErrorConfig | None = Field(
+        default=None,
+        description="Default observation error for observed-data attribute maps. "
+        "A cube- or window-level `error` block replaces this one entirely.",
+    )
+    error_path: Path | None = Field(
+        default=None,
+        description="Directory containing `error_surface` files. Required when "
+        "any `error_surface` is used.",
+    )
+
+    @model_validator(mode="after")
+    def validate_directories(self, info: ValidationInfo) -> GlobalConfig:
+        if (info.context or {}).get("validate_paths") is False:
+            return self
+        for field_name, path in (
+            ("gridhorizon_path", self.gridhorizon_path),
+            ("error_path", self.error_path),
+        ):
+            if path is not None and not path.is_dir():
+                raise ValueError(f"{field_name}: '{path}' is not an existing directory")
+        return self
 
 
 class RootConfig(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    """Interval definitions for attribute map generation."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid", title="Interval definition")
 
     global_config: GlobalConfig = Field(alias="global")
-    cubes: dict[str, CubeConfig] = Field(default_factory=dict)
+    cubes: list[CubeConfig] = Field(
+        default_factory=list,
+        description="Cubes to generate maps for. Each entry is identified by its "
+        "`cube_prefix`, which must be unique.",
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def reject_null(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            null_paths = _null_paths(data, "")
+            if null_paths:
+                raise ValueError(
+                    "Null values are not allowed in the interval definition; "
+                    f"omit the key instead: {', '.join(null_paths)}"
+                )
+        return data
+
+    @model_validator(mode="after")
+    def check_unique_cube_prefixes(self) -> RootConfig:
+        # A trailing '--' does not change which cubes a prefix matches
+        seen: set[str] = set()
+        for cube in self.cubes:
+            prefix = cube.cube_prefix.removesuffix("--")
+            if prefix in seen:
+                raise ValueError(
+                    f"cube_prefix '{cube.cube_prefix}' is given more than once; "
+                    "combine the windows into a single cube entry."
+                )
+            seen.add(prefix)
+        return self
+
+    @model_validator(mode="after")
+    def check_override_attributes(self) -> RootConfig:
+        """Reject overrides for attributes that are not calculated."""
+        allowed = set(self.global_config.attributes)
+        for cube in self.cubes:
+            for window_name, window in cube.windows.items():
+                unknown = [a for a in window.attribute_overrides if a not in allowed]
+                if unknown:
+                    raise ValueError(
+                        f"In cube '{cube.cube_prefix}', window '{window_name}': "
+                        f"override given for {unknown}, but only "
+                        f"{sorted(allowed)} are listed under 'global.attributes'."
+                    )
+        return self
 
     @model_validator(mode="after")
     def resolve_error_surfaces(self) -> RootConfig:
@@ -73,7 +196,7 @@ class RootConfig(BaseModel):
         directory.
         """
         error_blocks = [self.global_config.error]
-        for cube in self.cubes.values():
+        for cube in self.cubes:
             error_blocks.append(cube.error)
             error_blocks.extend(window.error for window in cube.windows.values())
 
@@ -100,20 +223,133 @@ class RootConfig(BaseModel):
         return self
 
 
+class AttributeOverride(BaseModel):
+    """Adjustments of the window interval for a single attribute.
+
+    The key of this entry is the attribute name, e.g. `rms`, and must be one
+    of the attributes listed under `global.attributes`. Only the fields given
+    here replace the window settings; `zone`, `position` and `error` are
+    window-level and cannot be overridden.
+
+    The base of the interval is replaced as a unit: when `bottom_horizon` or
+    `window_length` is given here, neither is inherited from the window. If
+    both are given here, `window_length` takes precedence.
+    """
+
+    model_config = ConfigDict(
+        frozen=True,
+        extra="forbid",
+        title="Attribute override",
+    )
+
+    top_horizon: str | None = Field(
+        default=None,
+        min_length=1,
+        pattern=r"\S",
+        description="Replaces the window `top_horizon`.",
+    )
+    bottom_horizon: str | None = Field(
+        default=None,
+        min_length=1,
+        pattern=r"\S",
+        description="Base horizon for this attribute. When given, the window "
+        "`bottom_horizon` and `window_length` are not inherited.",
+    )
+    top_surface_shift: float | None = Field(
+        default=None,
+        description="Replaces the window `top_surface_shift`. " + _SHIFT_NOTE,
+    )
+    bottom_surface_shift: float | None = Field(
+        default=None,
+        description="Replaces the window `bottom_surface_shift`. " + _SHIFT_NOTE,
+    )
+    window_length: float | None = Field(
+        default=None,
+        gt=0,
+        description="Window length for this attribute. When given, the window "
+        "`bottom_horizon` and `window_length` are not inherited; takes "
+        "precedence over a `bottom_horizon` in the same override.",
+    )
+    scale_factor: float | None = Field(
+        default=None,
+        description="Replaces the global `scale_factor` for this attribute. "
+        "Modelled data only.",
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def reject_null(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            null_keys = [key for key, value in data.items() if value is None]
+            if null_keys:
+                raise ValueError(
+                    f"{null_keys} must not be null; omit the key to inherit the "
+                    "window value."
+                )
+        return data
+
+
 class WindowSettings(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    """Interval definition for one window.
 
-    top_horizon: str | None = None
-    bottom_horizon: str | None = None
+    The key of this entry is a free-text name that is also used as the name
+    of the exported attribute maps, e.g. `volantis`.
 
-    top_surface_shift: float = 0
-    bottom_surface_shift: float = 0
-    window_length: float | None = None
-    error: ErrorConfig | None = None
-    zone: str = ""
-    position: PositionType = "center"
+    Besides the fields below, a window may contain one block per attribute
+    listed in `global.attributes` (e.g. `rms: {top_surface_shift: -15}`) that
+    adjusts the interval for that attribute only.
+    """
 
-    attribute_overrides: dict[KnownAttributes, dict[str, Any]] = Field(
+    model_config = ConfigDict(
+        frozen=True,
+        extra="forbid",
+        title="Window",
+    )
+
+    top_horizon: str = Field(
+        min_length=1,
+        pattern=r"\S",
+        description="Horizon defining the top of the window. " + _HORIZON_NOTE,
+    )
+    bottom_horizon: str | None = Field(
+        default=None,
+        min_length=1,
+        pattern=r"\S",
+        description="Horizon defining the base of the window. Either this or "
+        "`window_length` must be given; `window_length` takes precedence.",
+    )
+    top_surface_shift: float = Field(
+        default=0,
+        description="Shift of the top surface in depth units. " + _SHIFT_NOTE,
+    )
+    bottom_surface_shift: float = Field(
+        default=0,
+        description="Shift of the bottom surface in depth units. Ignored when "
+        "`window_length` is used. " + _SHIFT_NOTE,
+    )
+    window_length: float | None = Field(
+        default=None,
+        gt=0,
+        description="Window thickness measured from the shifted top surface. "
+        "Alternative to `bottom_horizon`; takes precedence when both are given, "
+        "and `bottom_horizon` is then ignored.",
+    )
+    error: ErrorConfig | None = Field(
+        default=None,
+        description="Observation error for this window (observed data only). "
+        "Replaces the cube- or global-level block entirely.",
+    )
+    zone: str = Field(
+        default="",
+        description="Grid zone to sample attribute values within. Empty means the "
+        "full grid interval.",
+    )
+    position: PositionType = Field(
+        default="center",
+        description="Vertical sampling position within the zone.",
+    )
+
+    attribute_overrides: dict[KnownAttributes, AttributeOverride] = Field(
         default_factory=dict, exclude=True
     )
 
@@ -122,6 +358,12 @@ class WindowSettings(BaseModel):
     def extract_attributes(cls, data: Any) -> Any:
         if not isinstance(data, dict):
             return data
+        data = dict(data)
+        if "attribute_overrides" in data:
+            raise ValueError(
+                "'attribute_overrides' is internal; specify overrides using "
+                "attribute names directly, e.g. 'rms'."
+            )
         attribute_overrides = {}
         for attr in get_args(KnownAttributes):
             if attr in data:
@@ -130,12 +372,20 @@ class WindowSettings(BaseModel):
         data["attribute_overrides"] = attribute_overrides
         return data
 
+    @model_validator(mode="after")
+    def require_base(self) -> WindowSettings:
+        if self.bottom_horizon is None and self.window_length is None:
+            raise ValueError(
+                "Either 'bottom_horizon' or 'window_length' must be specified."
+            )
+        return self
+
     def build_interval_config(
         self,
         attribute: KnownAttributes,
         global_scale_factor: float,
         window_name: str,
-        cube_name: str,
+        cube_prefix: str,
     ) -> IntervalConfig:
         config_dict: dict[str, Any] = {
             "top_horizon": self.top_horizon,
@@ -148,13 +398,18 @@ class WindowSettings(BaseModel):
             "position": self.position,
         }
 
-        if attribute in self.attribute_overrides:
-            config_dict.update(self.attribute_overrides[attribute])
+        override = self.attribute_overrides.get(attribute)
+        if override is not None:
+            values = override.model_dump(exclude_unset=True)
+            if values.keys() & {"bottom_horizon", "window_length"}:
+                config_dict["bottom_horizon"] = None
+                config_dict["window_length"] = None
+            config_dict.update(values)
 
         return IntervalConfig.model_validate(
             config_dict,
             context={
-                "cube_name": cube_name,
+                "cube_prefix": cube_prefix,
                 "window_name": window_name,
                 "attribute": attribute,
             },
@@ -162,30 +417,46 @@ class WindowSettings(BaseModel):
 
 
 class CubeConfig(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    """Windows and settings for all cubes matching `cube_prefix`."""
 
-    cube_prefix: str
-    windows: dict[str, WindowSettings]
-    error: ErrorConfig | None = None
+    model_config = ConfigDict(
+        frozen=True,
+        extra="forbid",
+        title="Cube",
+    )
+
+    cube_prefix: str = Field(
+        pattern=CUBE_PREFIX_PATTERN,
+        description="Date-independent cube name in the format "
+        "`seismic--<amplitude|relai>_[<full|near|mid|far>_]<time|depth>`, "
+        "optionally followed by `--` (e.g. `seismic--relai_full_depth--` or "
+        "`seismic--amplitude_near_time`). The cube name without its date must "
+        "match this value exactly.",
+    )
+    error: ErrorConfig | None = Field(
+        default=None,
+        description="Observation error for all windows of this cube (observed "
+        "data only). Replaces the global block entirely.",
+    )
+    windows: dict[str, WindowSettings] = Field(
+        description="Windows to generate maps for. Each entry is identified by a "
+        "free-text key that also becomes the name of the exported maps; use a "
+        "descriptive name such as the reservoir zone, e.g. `volantis`."
+    )
 
 
 class IntervalConfig(BaseModel):
-    """Configuration for a seismic interval.
+    """Resolved interval for one attribute group.
 
-    An interval is uniquely defined by six parameters:
-    - top_horizon: Name of the upper boundary surface
-    - bottom_horizon: Name of the lower boundary surface (ignored if window_length is
-    set)
-    - top_surface_shift: Vertical shift applied to the top surface
-    - bottom_surface_shift: Vertical shift applied to the bottom surface
-    - window_length: Optional fixed interval length from top surface
-    - scale_factor: Scaling factor applied to the values
+    Two attributes share an interval (and hence a SeismicAttribute) when all
+    fields below are equal. `zone` and `position` always come from the window;
+    the remaining fields may be adjusted per attribute.
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    top_horizon: str | None = None
-    bottom_horizon: str | None = None
+    top_horizon: str = Field(min_length=1, pattern=r"\S")
+    bottom_horizon: str | None = Field(default=None, min_length=1, pattern=r"\S")
 
     top_surface_shift: float
     bottom_surface_shift: float
@@ -197,22 +468,13 @@ class IntervalConfig(BaseModel):
     @model_validator(mode="after")
     def validate_horizon_requirements(self, info: ValidationInfo) -> IntervalConfig:
         ctx = info.context or {}
-        cube_name = ctx.get("cube_name", "unknown")
+        cube_prefix = ctx.get("cube_prefix", "unknown")
         window_name = ctx.get("window_name", "unknown")
         attribute = ctx.get("attribute", "unknown")
 
         location = (
-            f"In cube '{cube_name}', window '{window_name}', attribute '{attribute}'"
+            f"In cube '{cube_prefix}', window '{window_name}', attribute '{attribute}'"
         )
-
-        if not self.top_horizon:
-            raise PydanticCustomError(
-                "missing_top_horizon",
-                f"{location}: 'top_horizon' is required."
-                " Specify it either at the window level "
-                "or in the attribute-specific override"
-                " (e.g., rms: {{top_horizon: ...}})",
-            )
 
         if self.bottom_horizon is None and self.window_length is None:
             raise PydanticCustomError(
@@ -239,7 +501,7 @@ def _group_attributes_by_interval(
     window_settings: WindowSettings,
     global_config: GlobalConfig,
     window_name: str,
-    cube_name: str,
+    cube_prefix: str,
 ) -> dict[IntervalConfig, list[KnownAttributes]]:
     """Group attributes that share the same interval configuration.
 
@@ -254,7 +516,7 @@ def _group_attributes_by_interval(
             attribute,
             global_config.scale_factor,
             window_name,
-            cube_name,
+            cube_prefix,
         )
         interval_groups[interval_key].append(attribute)
     return dict(interval_groups)
@@ -297,10 +559,8 @@ def _create_seismic_attribute(
     is_observed: bool = False,
 ) -> SeismicAttribute:
     """Create a single SeismicAttribute object for a given interval configuration."""
-    # Pydantic validation in IntervalConfig ensures top_horizon is always set
-    top_horizon = cast(str, interval_config.top_horizon)
     attr_top_surface = _load_surface(
-        surface_name=top_horizon,
+        surface_name=interval_config.top_horizon,
         surfaces=surfaces,
         horizon_postfix=global_config.surface_postfix,
         gridhorizon_path=global_config.gridhorizon_path,
@@ -309,7 +569,7 @@ def _create_seismic_attribute(
         # Calculated in post init of SeismicAttribute
         attr_bottom_surface = None
     else:
-        # Pydantic validation in IntervalConfig ensures bottom_horizon is always set
+        # Without window_length, IntervalConfig requires bottom_horizon.
         bottom_horizon = cast(str, interval_config.bottom_horizon)
         attr_bottom_surface = _load_surface(
             surface_name=bottom_horizon,
@@ -392,7 +652,6 @@ def _resolve_error_block(
 
 
 def _process_window(
-    cube_name: str,
     window_name: str,
     window_settings: WindowSettings,
     cube_info: CubeConfig,
@@ -407,7 +666,7 @@ def _process_window(
         window_settings=window_settings,
         global_config=global_config,
         window_name=window_name,
-        cube_name=cube_name,
+        cube_prefix=cube_info.cube_prefix,
     )
     error = _resolve_error_block(global_config, cube_info, window_settings)
     return _create_window_attributes(
@@ -448,10 +707,9 @@ def populate_seismic_attributes(
     """
     root_config = RootConfig(**config)
     seismic_attributes = []
-    for cube_name, cube_info in root_config.cubes.items():
+    for cube_info in root_config.cubes:
         for window_name, window_settings in cube_info.windows.items():
             window_attributes = _process_window(
-                cube_name=cube_name,
                 window_name=window_name,
                 window_settings=window_settings,
                 cube_info=cube_info,

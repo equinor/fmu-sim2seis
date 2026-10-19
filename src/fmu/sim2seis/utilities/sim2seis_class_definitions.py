@@ -11,6 +11,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
+    Any,
     Literal,
     Self,
     get_args,
@@ -18,7 +19,7 @@ from typing import (
 
 import numpy as np
 import xtgeo
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 if TYPE_CHECKING:
     from .interval_parser import CubeConfig
@@ -70,12 +71,37 @@ class ErrorConfig(BaseModel):
     therefore holds an absolute path.
     """
 
-    model_config = ConfigDict(frozen=True, extra="forbid")
+    model_config = ConfigDict(
+        frozen=True,
+        extra="forbid",
+        title="Observation error",
+    )
 
-    type: ErrorType
-    value: float | None = None
-    error_surface: Path | None = None
-    minimum: float = 0.0
+    type: ErrorType = Field(
+        description="`relative`: the error is a fraction of the attribute value. "
+        "`absolute`: the error is given directly in attribute units."
+    )
+    value: float | None = Field(
+        default=None,
+        description="Single scalar error. Exactly one of `value` and "
+        "`error_surface` must be given.",
+    )
+    error_surface: Path | None = Field(
+        default=None,
+        description="File name of a spatially varying error map, relative to the "
+        "global `error_path`. Must have the same geometry as the attribute maps.",
+    )
+    minimum: float = Field(
+        default=0.0,
+        description="Absolute floor applied after the error has been computed.",
+    )
+
+    @field_validator("error_surface", mode="before")
+    @classmethod
+    def reject_blank_error_surface(cls, value: Any) -> Any:
+        if isinstance(value, str) and not value.strip():
+            raise ValueError("error_surface must be a non-empty file name.")
+        return value
 
     @model_validator(mode="after")
     def validate_source(self) -> ErrorConfig:
