@@ -104,13 +104,15 @@ Before every `git commit`:
 2. **Ruff format**: `.venv/bin/ruff format <changed files>`
 3. **Tests**: `pytest tests/` (or the specific test file)
 
-This shell uses **tcsh**. Important tcsh limitations:
-- No heredoc (`<<EOF`) and no multi-line quoted strings — write long strings to a
-  file with `create_file`, then reference the file (e.g. `git commit -F <file>`).
-- `rm` is aliased to `rm -i`; use `\rm` to skip confirmation prompts.
-- Remove all temporary files (commit messages, scripts) immediately after use with
-  `\rm <file>`.
-- `ruff` is not on `PATH`; invoke it as `.venv/bin/ruff`.
+The agent terminal uses **bash**. Notes:
+- Heredocs and `2>&1` redirection work; for long commit messages, still prefer writing
+  the message to a file with `create_file` and using `git commit -F <file>`.
+- Remove all temporary files (commit messages, scripts) immediately after use.
+- `ruff` is not on `PATH` unless the virtual environment is activated; invoke it as
+  `.venv/bin/ruff`.
+- `tests/test_run_sim2seis_ert.py` calls `ert` via `PATH`; run the full suite with the
+  virtual environment activated or as
+  `PATH="$PWD/.venv/bin:$PATH" .venv/bin/pytest tests/`.
 
 ## Commit style
 
