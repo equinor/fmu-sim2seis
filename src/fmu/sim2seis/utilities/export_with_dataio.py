@@ -7,6 +7,7 @@ import xtgeo
 from fmu import dataio, tools
 from fmu.pem.pem_utilities import restore_dir
 
+from .run_log import s2s_log
 from .sim2seis_class_definitions import (
     DifferenceSeismic,
     ErrorConfig,
@@ -144,6 +145,12 @@ def attribute_export(
                     region=region_def,
                     zone=zone_def,
                     position=(attr.zone, attr.position),
+                )
+                s2s_log(
+                    f"attribute sampling: cube={key}, window={attr.window}, "
+                    f"calculation={calc}, zone={attr.zone or '<full grid>'}, "
+                    f"position={attr.position}: "
+                    f"{len(attr_df)} valid grid-sampled points"
                 )
                 meta_data = Path(export_obj.export(attr_df))
                 with restore_dir(output_path):

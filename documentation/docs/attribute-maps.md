@@ -179,6 +179,11 @@ per region (from the Webviz grid and region definition files) when the ERT and W
 - `zone`: name of the grid zone to sample within. Default is empty (`""`), which uses the full grid interval.
 - `position`: vertical sampling position within that zone, one of `top`, `center`, or `base`. Default is `center`.
 
+With verbose logging enabled (`<VERBOSE>=True` for the ERT forward-model step, or `--verbose true` on the command line),
+each sampled attribute reports the number of valid grid-sampled points, together with the cube, window, calculation,
+zone and position. This is the number of rows in the exported attribute table after sampling and filtering, not a
+count of physical 3D grid cells. Missing attribute, error or region values can reduce the count.
+
 ### Attribute overrides
 
 A window may contain one block per attribute, named after the attribute (`rms:`, `mean:`, …), that adjusts the
