@@ -59,11 +59,15 @@ Users can visit <https://equinor.github.io/fmu-sim2seis/> in order to get help c
 Developing the user interface can be done by:
 
 ```bash
+pip install -e ".[tests]"  # Includes Node.js (node, npm) through nodejs-wheel
 cd ./documentation
 npm ci  # Install dependencies
 npm run create-json-schema  # Extract JSON schemas from Python code
 npm run docs:dev  # Start local development server
 ```
+
+With the virtual environment activated, `node` and `npm` are taken from the environment, so no separate Node.js
+installation is needed.
 
 The JSON schemas themselves (type, title, description etc.) come from the corresponding Pydantic models in the Python code:
 `Sim2SeisConfig` for the main configuration file and `interval_parser.RootConfig` for the interval definition file.
