@@ -2,6 +2,7 @@ import pytest
 import yaml
 
 from fmu.sim2seis.utilities.editor_schema import interval_definition_schema
+from fmu.sim2seis.utilities.interval_parser import RootConfig
 from fmu.sim2seis.utilities.sim2seis_config_validation import Sim2SeisPaths
 
 
@@ -46,3 +47,38 @@ def test_interval_schema_matches_yaml_layout(data_dir):
             {"global": example["global"], "cubes": [{"cube_prefix": "x"}]},
             schema,
         )
+
+
+def test_interval_schema_observation_error_is_optional(data_dir):
+    """The form hides observation error settings behind checkboxes, so neither
+    the editor schema nor ``RootConfig`` may require them."""
+    jsonschema = pytest.importorskip("jsonschema")
+    schema = interval_definition_schema()
+    definitions = schema["$defs"]
+
+    assert {"error", "error_path"}.isdisjoint(
+        definitions["GlobalConfig"].get("required", [])
+    )
+    for model in ("CubeConfig", "WindowSettings"):
+        assert "error" not in definitions[model].get("required", [])
+
+    example = yaml.safe_load(
+        (data_dir / "sim2seis" / "model" / "data_intervals_drogon.yml").read_text()
+    )
+    example["global"].pop("error", None)
+    example["global"].pop("error_path", None)
+    for cube in example["cubes"]:
+        cube.pop("error", None)
+        for window in cube["windows"].values():
+            window.pop("error", None)
+
+    jsonschema.validate(example, schema)
+    config = RootConfig.model_validate(example, context={"validate_paths": False})
+    assert config.global_config.error is None
+    assert config.global_config.error_path is None
+    assert all(cube.error is None for cube in config.cubes)
+    assert all(
+        window.error is None
+        for cube in config.cubes
+        for window in cube.windows.values()
+    )
