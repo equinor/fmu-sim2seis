@@ -7,6 +7,7 @@ import { getDefaultFormState, type CustomValidator, type RJSFSchema, type UiSche
 import { sim2seisSchema } from "./schema";
 import {
   CheckboxOptionalDataControlsTemplate,
+  hasObservationError,
   KeyLabelWrapIfAdditionalTemplate,
   LabelledAddButton,
   LabelledMoveDownButton,
@@ -238,7 +239,7 @@ export const YamlEdit = ({ schema = sim2seisSchema, uiSchema = {}, customValidat
             validator={validator}
             customValidate={customValidate}
             formData={initialConfig}
-            formContext={{ globalAttributes }}
+            formContext={{ globalAttributes, observationErrorSelected: hasObservationError(initialConfig) }}
             experimental_defaultFormStateBehavior={{
               emptyObjectFields: "skipDefaults",
             }}

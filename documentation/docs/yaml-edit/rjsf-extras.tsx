@@ -31,9 +31,14 @@ function stringArray(value: unknown): string[] {
 }
 
 /** Default field template, minus the label that rjsf repeats above additional-property objects
- *  (the key input already shows the name). */
+ *  (the key input already shows the name). A field with `ui:options.visibleWhen` is hidden while
+ *  that `formContext` flag is false, unless the field already has a value. */
 export function NoDuplicateLabelFieldTemplate(props: FieldTemplateProps) {
-  const { schema, displayLabel } = props;
+  const { schema, displayLabel, formData, registry, uiSchema } = props;
+  const { visibleWhen } = getUiOptions(uiSchema);
+  if (typeof visibleWhen === "string" && formData === undefined && !asRecord(registry.formContext)?.[visibleWhen]) {
+    return null;
+  }
   const isAdditionalObject = ADDITIONAL_PROPERTY_FLAG in schema && getSchemaType(schema) === "object";
   return <DefaultFieldTemplate {...props} displayLabel={displayLabel && !isAdditionalObject} />;
 }
@@ -264,6 +269,22 @@ function asRecord(value: unknown): Record<string, unknown> | undefined {
     : undefined;
 }
 
+/** True when an observation `error` block is selected at global, cube or window level. */
+export function hasObservationError(formData: unknown): boolean {
+  const root = asRecord(formData);
+  if (asRecord(root?.global)?.error !== undefined) {
+    return true;
+  }
+  const cubes = Array.isArray(root?.cubes) ? root.cubes : [];
+  return cubes.some((cubeData) => {
+    const cube = asRecord(cubeData);
+    return (
+      cube?.error !== undefined ||
+      Object.values(asRecord(cube?.windows) ?? {}).some((window) => asRecord(window)?.error !== undefined)
+    );
+  });
+}
+
 function errorHasSurface(error: unknown): boolean {
   const errorConfig = asRecord(error);
   const errorSurface = errorConfig?.error_surface;
@@ -374,6 +395,10 @@ export const validateIntervalConfig: CustomValidator = (formData, errors) => {
 
 /** Labels and opt-in controls for the interval definition form. */
 export const intervalUiSchema: UiSchema = {
+  global: {
+    error: optionalObject("Specify a default observation error"),
+    error_path: { "ui:options": { visibleWhen: "observationErrorSelected" } },
+  },
   cubes: {
     "ui:options": { addLabel: "Add cube" },
     items: {
