@@ -1101,6 +1101,20 @@ def test_error_override_precedence(tmp_path):
     assert resolved is None
 
 
+def test_root_config_without_observation_error_settings(tmp_path):
+    """Observation error settings are optional at global, cube and window level."""
+    config = RootConfig.model_validate(_root_config_dict(tmp_path, error=None))
+
+    assert config.global_config.error is None
+    assert config.global_config.error_path is None
+    cube = config.cubes[0]
+    assert cube.error is None
+    assert cube.windows["beta"].error is None
+    assert (
+        _resolve_error_block(config.global_config, cube, cube.windows["beta"]) is None
+    )
+
+
 def test_error_fields_accept_error_config_instances(tmp_path):
     error = ErrorConfig(type="relative", value=0.1)
 
