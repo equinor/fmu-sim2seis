@@ -54,6 +54,19 @@ legend {
   border-color: #555;
 }
 
+/* Let wrappers grow to their widest child (fieldsets already do), so nested boxes never cut through */
+.rjsf,
+.rjsf .form-group,
+.rjsf .additional-entry {
+  min-width: min-content;
+}
+
+.yaml-edit-card {
+  width: 800px;
+  flex-shrink: 0;
+  min-width: min-content;
+}
+
 .rjsf fieldset fieldset legend {
   font-size: 16px;
   padding: 0 6px;
@@ -120,6 +133,12 @@ legend {
 /* rjsf squeezes the array toolbox and stretches its buttons; keep captions on one line */
 .array-item-toolbox {
   flex: none;
+}
+
+/* Put the toolbox of object items (e.g. cubes) below the item, not beside it, to save width */
+.rjsf-field-array-of-object > .array-item-list > .rjsf-array-item {
+  flex-direction: column;
+  align-items: stretch !important; /* overrides rjsf's inline style */
 }
 
 .array-item-toolbox .btn-group {
