@@ -232,7 +232,7 @@ export const YamlEdit = ({ schema = sim2seisSchema, uiSchema = {}, customValidat
 
       </div>
       <div className="flex justify-center my-20">
-        <div className="p-10 shadow-lg rounded bg-slate-50 border-2 border-slate-50" style={{minWidth: 800}}>
+        <div className="yaml-edit-card p-10 shadow-lg rounded bg-slate-50 border-2 border-slate-50">
           <Form
             key={formInstance}
             schema={schema}
