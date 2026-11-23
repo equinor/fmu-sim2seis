@@ -59,6 +59,7 @@ dependencies = [
 tests = [
     "jsonschema",
     "mypy",
+    "nodejs-wheel",
     "pytest",
     "pytest-cov",
     "pytest-xdist",
